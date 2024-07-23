@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Sedan+SC&display=swap');
+
+body {
+    /* font-family: "Sedan SC", serif; */
+    font-weight: 400;
+    font-style: normal;
+    /* background-color: rgb(95, 88, 80); */
+    /* background-image: linear-gradient(to top ,grey,grey); */
+    /* background-image: url('assets/bg.jpg');
+    height: 100vh;
+    background-size: cover;
+    background-position: center center; */
+}
+
+.center-div {
+    padding-top: 10%;
+
+}
+
+.btn.btn-dark {
+    
+    margin-top: 1.5em;
+    padding: .4em 2em;
+}
+
+form {
+    padding: 0 3em;
+}

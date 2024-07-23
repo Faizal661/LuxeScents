@@ -1,0 +1,56 @@
+<%-include('header') -%>
+
+    <body style="background-color:antiquewhite;">
+        <div class="text-center center-div" id="login"">
+        <!-- <% if(locals.logout){ %> -->
+            <!-- <h5 class=" text-primary text-center fw-bold"> -->
+            <!-- <%= logout %> -->
+            <!-- </h5> -->
+            <!-- <% } %> -->
+            <h5 class="text-primary text-center fw-bold" id="logout">
+                <span></span>
+            </h5>
+            <h5 class="text-success text-center fw-bold" id="newuser">
+                <span></span>
+            </h5>
+            <div class="container w-25 border rounded py-5 shadow-lg" style="border: 2px solid black !important; ">
+                <div class="title pb-5">
+                    <h2 class="font-weight-bold">Login Page</h2>
+                </div>
+                <form action="/login" method="post">
+                    <div class="form-group">
+                        <input type="text" class="form-control mb-3" placeholder="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" placeholder="password" required>
+                    </div>
+                    <div class="text-danger text-center mt-2" id="msg">
+                        <span></span>
+                    </div>
+                    <button type="submit" class="btn btn-dark rounded-pill">SUBMIT</button>
+                </form>
+                <div class="mt-4">
+                    don't have an account?<a href="/signup" class=" text-decoration-none"> Sign up</a>
+                </div>
+            </div>
+        </div>
+        <script>
+
+            const url = window.location.search.substring(1)
+            console.log(url)
+            if (url === 'invalid') {
+                const spanMsg = document.getElementById('msg').querySelector('span');
+                spanMsg.innerText = "Invalid Username and Password";
+            } else if (url === 'logout') {
+                const spanMsg = document.getElementById('logout').querySelector('span');
+                spanMsg.innerText = "Logout successfully";
+            }
+            else if (url === 'newuser') {
+                const spanMsg = document.getElementById('newuser').querySelector('span');
+                spanMsg.innerText = "User Created successfully ";
+            }
+
+        </script>
+
+
+        <%-include('footer') -%>
