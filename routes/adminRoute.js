@@ -199,8 +199,8 @@ adminRouter.get('/delete/:id',adminRequireLogin, (req, res) => {
         });
 })
 
-// adminRouter.get('*', (req, res) => {
-//     res.render('admin/404')
-// })
+adminRouter.get('*', (req, res) => {
+    res.render('admin/404')
+})
 
 module.exports = adminRouter;

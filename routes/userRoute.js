@@ -101,8 +101,8 @@ router.get('/logout', requireLogin, (req, res) => {
 
 
 //----------------------------------------------------
-// router.get('*', (req, res) => {
-//     res.render('users/404')
-// })
+router.get('*', (req, res) => {
+    res.render('users/404')
+})
 
 module.exports = router;
