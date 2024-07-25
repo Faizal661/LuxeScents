@@ -1,108 +1,39 @@
 var express = require('express')
-var url = require('url')
-var router = express.Router();
+var userRouter = express.Router();
+const { requireLogin } = require('../middlewares/authentication');
+const userController=require('../controllers/userController')
+const upload=require('../middlewares/multer')
+
 const User = require('../models/users')
-const multer = require('multer')
-const fs = require('fs');
-const users = require('../models/users');
-const {requireLogin } = require('../middlewares/authentication');
+var url = require('url')
 
-
-router.get('/', (req, res) => {
-   res.render('users/signin', { title: 'Login page' })        
-
-})
 
 
 
 //------------------------------------- User Page  ------------------------- 
+//------------ login-get route
+userRouter.get('/',userController.loadLogin)
+//------------signup-get route
+userRouter.get('/signup',userController.loadSignup)
 
-//------------signup route
-router.get('/signup', (req, res) => {
-    res.render('users/signup',{title: 'signUp page'})
-})
 
-
-//image upload
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './uploads');
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
-    },
-
-})
  
-var upload = multer({
-    storage: storage,
-}).single('image');
+//------------signup-post route
+userRouter.post('/register_new', upload,userController.registerNew);
 
 
-router.post('/register_new', upload, (req, res) => {
-    const user = new User({
-        name: req.body.name,
-        email: req.body.email, 
-        phone: req.body.phone, 
-        image: req.file.filename,
-        password: req.body.password,
-    });
-
-    user.save()
-        .then(() => {
-            res.redirect('/?newuser')
-        })
-        .catch((err) => {
-            console.log(err)
-            res.redirect('/');
-        }); 
-});
-
-
-// ---------- user login
-router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    //console.log(username,password);
-    const user = await User.findOne({ name: username });
-    //console.log(user);
-    if (user && await user.isValidPassword(password)) {
-        req.session.userId = user._id;
-        return res.redirect('/homepage');
-    } else {
-        res.redirect('/?invalid')
-    }
-});
+// ---------- user login-post
+userRouter.post('/login',userController.userLogin );
 
 
 //---------user homepage 
-router.get('/homepage', requireLogin, async (req, res) => {
-    if (req.session.userId) {
-        const user = await User.findOne({ _id: req.session.userId });
-        console.log(user);
-        res.render('users/dashboard', { user: user.name, email: user.email, phone: user.phone, image: user.image })
-    } else {
-        res.render('users/dashboard', { msg: "Unauthorized User" })
-    }
-})
+userRouter.get('/homepage', requireLogin,userController.loadHomepage )
 
 //---------user logout
-router.get('/logout', requireLogin, (req, res) => {
-    req.session.destroy(function (err) {
-        if (err) {
-            console.log(err)
-            res.send("Error")
-        } else {
-            // res.render('signin',{logout:"logout successfully...!"}) 
-            res.redirect('/?logout')
-        }
-    })
-})
+userRouter.get('/logout', requireLogin,userController.userLogout)
 
 
-
+// userRouter.get('*', userController.pageNotfound)
 //----------------------------------------------------
-router.get('*', (req, res) => {
-    res.render('users/404')
-})
-
-module.exports = router;
+ 
+module.exports = userRouter; 
