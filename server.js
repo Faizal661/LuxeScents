@@ -36,6 +36,7 @@ app.use(session({
 }))
 
 
+app.use(express.static('uploads'))
 
 app.use((req, res, next) => {
     res.locals.message = req.session.message;
@@ -44,12 +45,14 @@ app.use((req, res, next) => {
 });
  
 
-app.set('view engine','ejs');
+app.set('view engine','ejs'); 
 app.set('views', path.join(__dirname, 'views'));
+
 
 app.use('/static',express.static(path.join(__dirname,'public')))
 app.use('/assets',express.static(path.join(__dirname,'public/assets')))
-app.use(express.static('uploads'))
+
+
 
  
 app.use('/',userRouter)

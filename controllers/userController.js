@@ -11,6 +11,37 @@ const loadLogin = async (req, res) => {
     }
 }
 
+const loadForgotPassword = async (req, res) => {
+    try {
+        res.render('users/forgotPassword', { title: 'forgot password' })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const sendOtpToChangePassword=async(req,res)=>{
+    const email  = req.body.username;
+    try {
+        const user = await User.findOne({ email: email });
+        if (user) {
+            res.redirect('/loadChangePasswordPage')
+        } else {
+            res.redirect('/forgotPassword?invalid')
+        }
+    } catch(error){
+        console.log(error.message);
+    }
+}
+
+const loadChangePasswordPage= async (req, res) => {
+    try {
+        // res.send('dsafg')
+        res.render('users/changePassword', { title: 'change password' })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 const loadSignup = async (req, res) => {
     try {
         res.render('users/signup', { title: 'signUp page' })
@@ -109,6 +140,9 @@ const pageNotfound = async (req, res) => {
 
 module.exports = {
     loadLogin,
+    loadForgotPassword,
+    sendOtpToChangePassword,
+    loadChangePasswordPage,
     loadSignup,
     registerNew,
     userLogin,

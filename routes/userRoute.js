@@ -21,9 +21,13 @@ userRouter.get('/signup',userController.loadSignup)
 //------------signup-post route
 userRouter.post('/register_new', upload,userController.registerNew);
 
-
+ 
 // ---------- user login-post
 userRouter.post('/login',userController.userLogin );
+
+userRouter.get('/forgotPassword',userController.loadForgotPassword)
+userRouter.post('/sendOtpToChangePassword',userController.sendOtpToChangePassword)
+userRouter.get('/loadChangePasswordPage',userController.loadChangePasswordPage)
 
 
 //---------user homepage 
