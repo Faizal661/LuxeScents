@@ -9,31 +9,23 @@
         <div class="text-center pt-2">
             <div class="container w-50  rounded pt-5 ">
                 <div class="title pb-5">
-                    <h3></h3>
+                    <h3>OTP Verification</h3>
                 </div>
                 <div class="border border-2 py-5 rounded-4 shadow-lg">
                     <div>
-                        <h2> Change Password</h2>
+                        <h3>Enter the OTP received on your registered Email</h3>
                     </div>
                     <div class="d-flex justify-content-center align-items-center ">
                         <div class="w-50 ">
-                            <form action="/login" method="post">
-                                <label for="" class="float-start fw-semibold pt-3">OTP</label>
+                            <form action="/sendOtpToChangePassword" method="post">
+                                <label for="" class="float-start fw-semibold pt-3">Enter OTP</label>
                                 <div class="form-group">
-                                    <input type="string" class="form-control mb-3" name="otp" required>
-                                </div>
-                                 <label for="" class="float-start fw-semibold pt-3">New Password</label>
-                                <div class="form-group">
-                                    <input type="password" class="form-control mb-3" name="newPassword" required>
-                                </div>
-                                <label for="" class="float-start fw-semibold pt-3">Confirm Password</label>
-                                <div class="form-group">
-                                    <input type="text" class="form-control mb-3" name="confirmPassword" required>
+                                    <input type="text" class="form-control mb-3" name="otp" required pattern="[0-9]{6}">
                                 </div>
                                 <div class="text-danger text-center mt-2" id="msg">
                                     <span></span>
                                 </div>
-                                <button type="submit" class="btn btn-dark rounded-pill w-100">Change Password</button>
+                                <button type="submit" class="btn btn-dark rounded-pill w-100">Submit</button>
                             </form>
                             <div class="mt-4">
                                 <a href="/" class=" text-decoration-none me-5"> Resent OTP</a>
@@ -47,9 +39,9 @@
 
                 const url = window.location.search.substring(1)
                 console.log(url)
-                if (url === 'notSame') {
+                if (url === 'incorrect') {
                     const spanMsg = document.getElementById('msg').querySelector('span');
-                    spanMsg.innerText = "Password and confirm password is not same";
+                    spanMsg.innerText = "incorrect OTP";
                 }
             </script>
 

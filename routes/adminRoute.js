@@ -9,6 +9,15 @@ const upload = require('../middlewares/multer')
 adminRouter.get('/',adminController.loadAdminLogin)
 //handle admin login
 adminRouter.post('/admin_login',adminController.adminLogin) 
+
+//forgot password &&change password
+adminRouter.get('/forgotPassword',adminController.loadForgotPassword)
+adminRouter.post('/sendOtpToChangePassword',adminController.sendOtpToChangePassword)
+adminRouter.get('/loadChangePasswordPage',adminController.loadChangePasswordPage)
+
+
+ 
+
 //admin homepage  //display all users 
 adminRouter.get('/admin_home', adminRequireLogin,adminController.loadAdminHomePage)
 adminRouter.get('/logoutadmin',adminRequireLogin,adminController.adminLogout)

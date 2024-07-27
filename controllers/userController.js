@@ -19,8 +19,8 @@ const loadForgotPassword = async (req, res) => {
     }
 }
 
-const sendOtpToChangePassword=async(req,res)=>{
-    const email  = req.body.username;
+const sendOtpToChangePassword = async (req, res) => {
+    const email = req.body.email;
     try {
         const user = await User.findOne({ email: email });
         if (user) {
@@ -28,12 +28,12 @@ const sendOtpToChangePassword=async(req,res)=>{
         } else {
             res.redirect('/forgotPassword?invalid')
         }
-    } catch(error){
+    } catch (error) {
         console.log(error.message);
     }
 }
 
-const loadChangePasswordPage= async (req, res) => {
+const loadChangePasswordPage = async (req, res) => {
     try {
         // res.send('dsafg')
         res.render('users/changePassword', { title: 'change password' })
@@ -50,19 +50,40 @@ const loadSignup = async (req, res) => {
     }
 }
 
-const registerNew = async (req, res) => {
+const loadSignUpOtpPage=async (req, res) => {
     try {
+        res.render('users/signupOtpConfirm', { title: 'signUp page' })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+const registerNew = async (req, res) => {
+    const name= req.body.username;
+    const email= req.body.email; 
+    const password= req.body.password;
+    try {
+        const name1 = await User.findOne({ name: name });
+        const email1 = await User.findOne({ email: email });
+       
+        if (name1) {
+            return res.redirect('/signup?usertTaken')
+        }else if(email1){
+            return res.redirect('/signup?emailTaken')
+        }else if(password.length<3){
+            return res.redirect('/signup?weakPass')
+        }
+
         const user = new User({
-            name: req.body.name,
+            name: req.body.username,
             email: req.body.email,
-            phone: req.body.phone,
-            image: req.file.filename,
             password: req.body.password,
         });
-
         user.save()
             .then(() => {
-                res.redirect('/?newuser')
+                res.redirect('/signUpOtpConfirm')
+                // res.redirect('/?newuser')
             })
             .catch((err) => {
                 console.log(err)
@@ -103,7 +124,6 @@ const loadHomepage = async (req, res) => {
     } catch (error) {
         console.log(error.message)
     }
-
 }
 
 const userLogout = async (req, res) => {
@@ -125,10 +145,6 @@ const userLogout = async (req, res) => {
 
 
 
-
-
-
-
 const pageNotfound = async (req, res) => {
     try {
         res.render('users/404')
@@ -144,6 +160,7 @@ module.exports = {
     sendOtpToChangePassword,
     loadChangePasswordPage,
     loadSignup,
+    loadSignUpOtpPage,
     registerNew,
     userLogin,
     loadHomepage,

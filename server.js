@@ -1,8 +1,8 @@
 const express = require('express')
 const mongoose=require('mongoose')
 mongoose.connect('mongodb://localhost:27017/LuxeScents')
-.then(()=>console.log('mongodb connected..'))
-.catch(err=>console.log('erroe connecting to the database..',err))
+.then(()=>console.log('mongodb √√√'))
+.catch(err=>console.log('error connecting to the database..',err))
 
 require('dotenv').config();
 
@@ -43,7 +43,7 @@ app.use((req, res, next) => {
     delete req.session.message;
     next();
 });
- 
+  
 
 app.set('view engine','ejs'); 
 app.set('views', path.join(__dirname, 'views'));

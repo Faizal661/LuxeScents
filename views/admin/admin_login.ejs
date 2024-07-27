@@ -1,46 +1,63 @@
 <%-include('header') -%>
 
-<body  style="background-color:rgba(156, 156, 156, 0.507); color: rgb(0, 0, 0);">
-    <div class="text-center center-div" id="login"">
-        <!-- <% if(locals.logout){ %> -->
-            <!-- <h5 class="text-primary text-center fw-bold"> -->
-                <!-- <%= logout %> -->
+    <body>
+        <header>
+            <div class="title pb-5 border border-bottom" style="height: 60px;">
+                <h1 class="font-weight-bold text-center logo">Luxe Scents</h1>
+            </div>
+        </header>
+        <div class="text-center pt-5" id="login">
+            <!-- <% if(locals.logout){ %> -->
+            <!-- <h5 class=" text-primary text-center fw-bold"> -->
+            <!-- <%= logout %> -->
             <!-- </h5> -->
             <!-- <% } %> -->
-            <h5 class="text-primary text-center fw-bold" id="logout">
+            <h5 class="text-success text-center fw-bold" id="logout">
                 <span></span>
             </h5>
-                <div class="container w-25 border rounded py-5 shadow-lg" style="border: 2px solid rgb(0, 0, 0) !important;background-color:rgb(156, 156, 156) ; " >
-                    <div class="title pb-5">
-                        <h2 class="font-weight-bold">Admin Login </h2>
-                    </div>
-                    <form action="/admin/admin_login" method="post">
-                        <div class="form-group">
-                            <input type="text" class="form-control mb-3" placeholder="username" name="adminname" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="password" class="form-control" name="password" placeholder="password" required>
-                        </div>
-                        <div class="text-danger text-center my-3 " id="msg">
-                            <span></span>
-                        </div>
-                        <button type="submit" class="btn btn-dark rounded-pill">SUBMIT</button>
-                    </form>
-                    
+            <div class="container w-25  rounded pt-5 ">
+                <div class="title pb-5">
+                    <h3 class="fw-semibold">Admin Sign in</h3>
                 </div>
-    </div>
-    <script>
 
-        const url = window.location.search.substring(1)
-        console.log(url)
-        if (url === 'invalid') {
-            const spanMsg= document.getElementById('msg').querySelector('span');
-            spanMsg.innerText = "Invalid Username and Password";
-        }else if(url === 'logout') {
-            const spanMsg= document.getElementById('logout').querySelector('span');
-            spanMsg.innerText = "Logout successfully";
-        }
+                <form action="/admin/admin_login" method="post">
+                    <label for="" class="float-start fw-semibold pt-3">Email</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control mb-3" name="adminname" required>
+                    </div>
+                    <div class="pt-3">
+                        <label for="" class="float-start fw-semibold ">Password</label>
+                        <a href="/admin/forgotPassword"><span
+                                class="float-end text-decoration-underline text-black">Forgot password
+                                ?</span></a>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+                    <div class="text-danger text-center mt-2" id="msg">
+                        <span></span>
+                    </div>
+                    <button type="submit" class="btn btn-dark rounded-pill w-100">Sign In</button>
+                </form>
+               
 
-    </script>
 
-<%-include('footer') -%>
+            </div>
+        </div>
+        <script>
+
+            const url = window.location.search.substring(1)
+            console.log(url)
+            if (url === 'invalid') {
+                const spanMsg = document.getElementById('msg').querySelector('span');
+                spanMsg.innerText = "Invalid Username and Password";
+            } else if (url === 'logout') {
+                const spanMsg = document.getElementById('logout').querySelector('span');
+                spanMsg.innerText = "Admin Logged Out Successfully";
+            }
+
+        </script>
+
+        <%-include('footer') -%>
+
+         

@@ -43,7 +43,7 @@
                     </div>
                     <div class="pt-3">
                         <label for="" class="float-start fw-semibold ">Password</label>
-                        <a href="/forgotPassword"><span class="float-end ">Forgot password ?</span></a>
+                        <a href="/forgotPassword"><span class="float-end text-decoration-underline text-black">Forgot password ?</span></a>
                     </div>
                     <div class="form-group">
                         <input type="password" class="form-control" name="password" required>
@@ -54,7 +54,7 @@
                     <button type="submit" class="btn btn-dark rounded-pill w-100">Sign In</button>
                 </form>
                 <div class="mt-4">
-                    Don't have an account?<a href="/signup" class=" text-decoration-none"> Sign up</a>
+                    Don't have an account ?  <a href="/signup" class=" text-black">Sign up</a>
                 </div>
 
             </div>
@@ -72,7 +72,7 @@
             }
             else if (url === 'newuser') {
                 const spanMsg = document.getElementById('newuser').querySelector('span');
-                spanMsg.innerText = "User Created successfully ";
+                spanMsg.innerText = "User registered successfully now login with your account ";
             }
 
         </script>

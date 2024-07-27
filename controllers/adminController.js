@@ -17,7 +17,7 @@ const adminLogin = async (req, res) => {
         // console.log('sdfsdfsdf');
         const { adminname, password } = req.body;
         // console.log(username,password);
-        const admin = await Admin.findOne({ name: adminname });
+        const admin = await Admin.findOne({ email: adminname });
         //console.log(admin);
         if (admin && await admin.isValidPassword(password)) {
             req.session.adminId = admin._id;
@@ -26,6 +26,38 @@ const adminLogin = async (req, res) => {
         } else {
             res.redirect('/admin?invalid')
         }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+const loadForgotPassword = async (req, res) => {
+    try {
+        res.render('admin/forgotPassword', { title: 'forgot password' })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const sendOtpToChangePassword = async (req, res) => {
+    const email = req.body.email;
+    try {
+        const admin = await Admin.findOne({ email: email });
+        if (admin) {
+            res.redirect('/admin/loadChangePasswordPage')
+        } else {
+            res.redirect('/admin/forgotPassword?invalid')
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const loadChangePasswordPage = async (req, res) => {
+    try {
+        // res.send('dsafg')
+        res.render('admin/changePassword', { title: 'change password' })
     } catch (error) {
         console.log(error.message);
     }
@@ -206,6 +238,9 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
     loadAdminLogin,
+    loadForgotPassword,
+    sendOtpToChangePassword,
+    loadChangePasswordPage,
     adminLogin,
     loadAdminHomePage,
     adminLogout,

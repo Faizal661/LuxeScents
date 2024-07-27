@@ -19,7 +19,8 @@ userRouter.get('/signup',userController.loadSignup)
 
  
 //------------signup-post route
-userRouter.post('/register_new', upload,userController.registerNew);
+userRouter.post('/register_new',userController.registerNew);
+userRouter.get('/signUpOtpConfirm',userController.loadSignUpOtpPage)
 
  
 // ---------- user login-post
