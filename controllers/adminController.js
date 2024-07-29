@@ -1,5 +1,5 @@
-const User = require('../models/users')
-const Admin = require('../models/admin')
+const User = require('../models/userSchema')
+const Admin = require('../models/adminSchema')
 const fs = require('fs');
 
 
@@ -7,7 +7,8 @@ const loadAdminLogin = async (req, res) => {
     try {
         res.render('admin/admin_login', { title: 'Admin' })
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -27,7 +28,8 @@ const adminLogin = async (req, res) => {
             res.redirect('/admin?invalid')
         }
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -36,7 +38,8 @@ const loadForgotPassword = async (req, res) => {
     try {
         res.render('admin/forgotPassword', { title: 'forgot password' })
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -50,7 +53,8 @@ const sendOtpToChangePassword = async (req, res) => {
             res.redirect('/admin/forgotPassword?invalid')
         }
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -59,7 +63,8 @@ const loadChangePasswordPage = async (req, res) => {
         // res.send('dsafg')
         res.render('admin/changePassword', { title: 'change password' })
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -75,7 +80,8 @@ const adminLogout = async (req, res) => {
             }
         })
     } catch (error) {
-        console.log(error.message)
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -98,7 +104,8 @@ const loadAdminHomePage = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error.message)
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -106,7 +113,8 @@ const loadAddUserPage = async (req, res) => {
     try {
         res.render('admin/add_users')
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -137,7 +145,8 @@ const addNewUser = async (req, res) => {
                 res.redirect('/admin/admin_home');
             });
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -160,7 +169,8 @@ const loadEditUserPage = async (req, res) => {
                 res.redirect('/admin');
             });
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -198,7 +208,8 @@ const editUser = async (req, res) => {
                 res.json({ message: err.message, type: 'danger' });
             });
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -225,7 +236,8 @@ const deleteUser = async (req, res) => {
                 res.json({ message: err.message });
             });
     } catch (error) {
-        console.log(error.message)
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 

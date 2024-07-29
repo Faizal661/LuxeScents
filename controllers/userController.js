@@ -1,4 +1,4 @@
-const User = require('../models/users')
+const User = require('../models/userSchema')
 
 
 
@@ -7,7 +7,8 @@ const loadLogin = async (req, res) => {
     try {
         res.render('users/signin', { title: 'Login page' })
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -15,7 +16,8 @@ const loadForgotPassword = async (req, res) => {
     try {
         res.render('users/forgotPassword', { title: 'forgot password' })
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -29,7 +31,8 @@ const sendOtpToChangePassword = async (req, res) => {
             res.redirect('/forgotPassword?invalid')
         }
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -38,7 +41,8 @@ const loadChangePasswordPage = async (req, res) => {
         // res.send('dsafg')
         res.render('users/changePassword', { title: 'change password' })
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -46,7 +50,8 @@ const loadSignup = async (req, res) => {
     try {
         res.render('users/signup', { title: 'signUp page' })
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -54,7 +59,8 @@ const loadSignUpOtpPage=async (req, res) => {
     try {
         res.render('users/signupOtpConfirm', { title: 'signUp page' })
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -90,7 +96,8 @@ const registerNew = async (req, res) => {
                 res.redirect('/');
             });
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -98,7 +105,7 @@ const userLogin = async (req, res) => {
     try {
         const { username, password } = req.body;
         //console.log(username,password);
-        const user = await User.findOne({ name: username });
+        const user = await User.findOne({ email: username });
         //console.log(user);
         if (user && await user.isValidPassword(password)) {
             req.session.userId = user._id;
@@ -107,7 +114,8 @@ const userLogin = async (req, res) => {
             res.redirect('/?invalid')
         }
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 
 }
@@ -122,7 +130,8 @@ const loadHomepage = async (req, res) => {
             res.render('users/dashboard', { msg: "Unauthorized User" })
         }
     } catch (error) {
-        console.log(error.message)
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -139,7 +148,8 @@ const userLogout = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error.message);
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 
@@ -150,7 +160,8 @@ const pageNotfound = async (req, res) => {
         res.render('users/404')
     }
     catch (error) {
-        console.log(error.message)
+        console.log(error,'page not found');
+        res.status(500).send("server error")
     }
 }
 

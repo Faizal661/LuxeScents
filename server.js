@@ -4,7 +4,7 @@ mongoose.connect('mongodb://localhost:27017/LuxeScents')
 .then(()=>console.log('mongodb √√√'))
 .catch(err=>console.log('error connecting to the database..',err))
 
-require('dotenv').config();
+const env = require('dotenv').config();
 
 const path=require('path')
 const bodyparser=require( "body-parser")
@@ -20,7 +20,7 @@ const userController=require('./controllers/userController')
 const app =express()   
 
 const port=3000;
- 
+  
 
   
 app.use(nocache())

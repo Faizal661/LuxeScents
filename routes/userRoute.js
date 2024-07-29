@@ -1,10 +1,12 @@
 var express = require('express')
 var userRouter = express.Router();
-const { requireLogin } = require('../middlewares/authentication');
 const userController=require('../controllers/userController')
+
+
+const { requireLogin } = require('../middlewares/authentication');
 const upload=require('../middlewares/multer')
 
-const User = require('../models/users')
+const User = require('../models/userSchema')
 var url = require('url')
 
 
