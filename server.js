@@ -32,8 +32,18 @@ app.use(session({
     secret:uuidv4(),
     resave:false,
     saveUninitialized:true,
-    cookie:{maxAge:3600000} 
+    cookie:{
+        secure:false,//in production turn to true ,
+        httpOnly:true,
+        maxAge:3600000,
+    } 
 }))
+
+app.use((req,res,next)=>{
+    res.set('cache-control','no-store')
+    next()
+})
+
 
 
 app.use(express.static('uploads'))

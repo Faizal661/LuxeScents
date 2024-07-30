@@ -1,5 +1,5 @@
 const User = require('../models/userSchema')
-
+const nodemailer = require("nodemailer")
 
 
 //--------------------Log In 
@@ -67,41 +67,90 @@ const loadSignUpOtpPage=async (req, res) => {
     }
 }
 
-const registerNew = async (req, res) => {
-    const name= req.body.username;
-    const email= req.body.email; 
-    const phone= req.body.phone; 
-    const password= req.body.password;
+function generateOtp(){
+    return Math.floor(100000+Math.random()*900000).toString();
+}
 
-    console.log(name,email,phone,password);
+async function sendVerificationEmail(email,otp){
     try {
-        //Checking the entered name and password is already is in db.
-        const name1 = await User.findOne({ name: name });
-        const email1 = await User.findOne({ email: email });
-       
-        if (name1) {
-            return res.redirect('/signup?usertTaken')
+        const transporter=nodemailer.createTransport({
+            service:'gmail',
+            port:587,
+            secure:false,
+            requireTLS:true,
+            auth:{
+                user:"mohammedfaizal.t.bca.2@gmail.com",
+                pass:"uzsd xbey dlox ehbx"
+            }
+        })
+
+        const info = await transporter.sendMail({
+            from :"mohammedfaizal.t.bca.2@gmail.com",
+            to:email,
+            subject:"Verify your account",
+            text : `Your OTP is ${otp}`,
+            html:`<b> Your OTP : ${otp} </b>`
+        })
+
+        return info.accepted.length > 0
+
+    } catch (error) {
+        console.error("Error sending email",error);
+        return false;
+    }
+}
+
+const registerNew = async (req, res) => {
+    // const name= req.body.username;
+    // const phone= req.body.phone; 
+    
+
+    try {
+        const {email,name}=req.body
+
+        //Checking the entered name and email is already is in db.
+        const findUser = await User.findOne({ name:name  });
+        if (findUser) {
+            return res.render("signup",{message:"User name already taken"})
         }
-        if(email1){
-            return res.redirect('/signup?emailTaken')
+        const findEmail = await User.findOne({ email: email });
+        if(findEmail){
+            return res.render("signup",{message:"User with this Email already exist"})
         }
+
+        const  otp= generateOtp();
+        const emailSent = await sendVerificationEmail(email,otp);
+
+        if(!emailSent){
+            return res.json("email-error")
+        }
+
+        req.session.userOtp= otp;
+        req.session.userData={email,name};
+
+
+        //render otp entering page
+      // res.render('signupOtpConfirm')
+        console.log('OTP Sent',otp);
+
+
 
         //saving userdata into db
-        const newUser = new User({name,email,phone,password});
+        // const newUser = new User({name,email,phone,password});
 
-        console.log(newUser);
-        newUser.save()
-            .then(() => {
-                // res.redirect('/signUpOtpConfirm')
-                res.redirect('/login?newuser')
-            })
-            .catch((err) => {
-                console.log(err)
-                res.redirect('/login');
-            });
+        // console.log(newUser);
+        // newUser.save()
+        //     .then(() => {
+        //         // res.redirect('/signUpOtpConfirm')
+        //         res.redirect('/login?newuser')
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //         res.redirect('/login');
+        //     });
     } catch (error) {
-        console.log(error,'page not found');
-        res.status(500).send("server error")
+        console.log(error,'signup error');
+        res.render('404')
     }
 }
 
