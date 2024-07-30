@@ -2,10 +2,11 @@ const User = require('../models/userSchema')
 
 
 
+//--------------------Log In 
 
 const loadLogin = async (req, res) => {
     try {
-        res.render('users/signin', { title: 'Login page' })
+        res.render('signin', { title: 'Login page' })
     } catch (error) {
         console.log(error,'page not found');
         res.status(500).send("server error")
@@ -14,7 +15,7 @@ const loadLogin = async (req, res) => {
 
 const loadForgotPassword = async (req, res) => {
     try {
-        res.render('users/forgotPassword', { title: 'forgot password' })
+        res.render('forgotPassword', { title: 'forgot password' })
     } catch (error) {
         console.log(error,'page not found');
         res.status(500).send("server error")
@@ -39,67 +40,76 @@ const sendOtpToChangePassword = async (req, res) => {
 const loadChangePasswordPage = async (req, res) => {
     try {
         // res.send('dsafg')
-        res.render('users/changePassword', { title: 'change password' })
+        res.render('changePassword', { title: 'change password' })
     } catch (error) {
         console.log(error,'page not found');
         res.status(500).send("server error")
     }
 }
 
+//------------------sign Up
+
 const loadSignup = async (req, res) => {
     try {
-        res.render('users/signup', { title: 'signUp page' })
+        res.render('signup', { title: 'signUp page' })
     } catch (error) {
-        console.log(error,'page not found');
+        console.log(error,'Sign up page not found');
         res.status(500).send("server error")
     }
 }
 
 const loadSignUpOtpPage=async (req, res) => {
     try {
-        res.render('users/signupOtpConfirm', { title: 'signUp page' })
+        res.render('signupOtpConfirm', { title: 'signUp page' })
     } catch (error) {
         console.log(error,'page not found');
         res.status(500).send("server error")
     }
 }
 
-
 const registerNew = async (req, res) => {
     const name= req.body.username;
     const email= req.body.email; 
+    const phone= req.body.phone; 
     const password= req.body.password;
+
+    console.log(name,email,phone,password);
     try {
+        //Checking the entered name and password is already is in db.
         const name1 = await User.findOne({ name: name });
         const email1 = await User.findOne({ email: email });
        
         if (name1) {
             return res.redirect('/signup?usertTaken')
-        }else if(email1){
+        }
+        if(email1){
             return res.redirect('/signup?emailTaken')
-        }else if(password.length<3){
-            return res.redirect('/signup?weakPass')
         }
 
-        const user = new User({
-            name: req.body.username,
-            email: req.body.email,
-            password: req.body.password,
-        });
-        user.save()
+        //saving userdata into db
+        const newUser = new User({name,email,phone,password});
+
+        console.log(newUser);
+        newUser.save()
             .then(() => {
-                res.redirect('/signUpOtpConfirm')
-                // res.redirect('/?newuser')
+                // res.redirect('/signUpOtpConfirm')
+                res.redirect('/login?newuser')
             })
             .catch((err) => {
                 console.log(err)
-                res.redirect('/');
+                res.redirect('/login');
             });
     } catch (error) {
         console.log(error,'page not found');
         res.status(500).send("server error")
     }
 }
+
+ 
+
+
+//---------------------
+
 
 const userLogin = async (req, res) => {
     try {
@@ -125,9 +135,11 @@ const loadHomepage = async (req, res) => {
         if (req.session.userId) {
             const user = await User.findOne({ _id: req.session.userId });
             console.log(user);
-            res.render('users/dashboard', { user: user.name, email: user.email, phone: user.phone, image: user.image })
+            res.render('homepage')
+            // res.render('dashboard', { user: user.name, email: user.email, phone: user.phone, image: user.image })
         } else {
-            res.render('users/dashboard', { msg: "Unauthorized User" })
+            res.render('homepage')
+            // res.render('dashboard', { msg: "Unauthorized User" })
         }
     } catch (error) {
         console.log(error,'page not found');
@@ -157,7 +169,7 @@ const userLogout = async (req, res) => {
 
 const pageNotfound = async (req, res) => {
     try {
-        res.render('users/404')
+        res.render('404')
     }
     catch (error) {
         console.log(error,'page not found');

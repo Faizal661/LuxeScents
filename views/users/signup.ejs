@@ -1,43 +1,54 @@
-<%-include('../partials/users/header') -%>
-    <body>
+<%- include('../partials/users/header') -%>
+
+    <body class=" bg-success bg-opacity-10">
         <header>
             <div class="title pb-5 border border-bottom" style="height: 60px;">
-                <h1 class="font-weight-bold text-center logo">Luxe Scents</h1>
+                <h2 class="font-weight-bold ms-5 logo">Luxe Scents</h2>
             </div>
         </header>
         <div class="text-center pt-4" id="login">
-            <div class="container w-25  rounded pt-5 ">
+            <div class="container w-25  rounded py-5 ">
                 <div class="title pb-4">
                     <h3 class="fw-semibold">Sign Up</h3>
                 </div>
 
 
-                <form action="/register_new" method="post">
+                <form id="signform" action="/register_new" method="post" >
+
                     <div class="form-group">
                         <label for="" class="float-start fw-semibold pt-2">Username</label>
-                        <input type="text" class="form-control mb-1" name="username" required>
+                        <input type="text" class="form-control mb-1" id="username" name="username" required>
                     </div>
-                    <div class="text-danger mb-1" id="usertTaken">
-                        <span ></span>
+                    <div class="text-danger mb-1" id="errorName">
+                        <span></span>
                     </div>
 
                     <div class="form-group">
                         <label for="" class="float-start fw-semibold pt-2">Email</label>
-                        <input type="text" class="form-control mb-1" name="email" required>
+                        <input type="text" class="form-control mb-1" id="email" name="email" required>
                     </div>
-                    <div class="text-danger text-center mt-2" id="emailTaken">
+                    <div class="text-danger text-center mt-2" id="errorEmail">
                         <span></span>
                     </div>
+
+                    <div class="form-group">
+                        <label for="" class="float-start fw-semibold pt-2">Phone</label>
+                        <input type="text" class="form-control mb-1" id="phone" name="phone" required>
+                    </div>
+                    <div class="text-danger text-center mt-2" id="errorPhone">
+                        <span></span>
+                    </div>
+
                     <div class="form-group">
                         <label for="" class="float-start fw-semibold pt-2">Password</label>
-                        <input type="password" class="form-control" name="password" required>
+                        <input type="password" class="form-control" id="password" name="password" required>
                     </div>
-                    <div class="text-warning text-center mt-2" id="weakPass">
+                    <div class="text-danger text-center mt-2" id="errorPassword">
                         <span></span>
                     </div>
 
 
-                 
+
                     <button type="submit" class="btn btn-dark rounded-pill w-100">Sign Up</button>
                 </form>
                 <div class="d-flex align-items-center pt-4">
@@ -47,35 +58,131 @@
                 </div>
                 <div class="title py-2">
                     <a href="">
-                        <button class="font-weight-bold btn rounded-pill border border-2 w-100">
-                            <img src="assets/images/googleLogo.png" alt="" height="22">
+                        <button class="font-weight-bold btn rounded-pill border border-2 w-100 text-dark">
+                            <img src="img/googleLogo.png" alt="" height="22">
                             Sign in with Google
                         </button></a>
                 </div>
 
 
                 <div class="mt-4">
-                    Already have an account ? <a href="/" class=" text-black">Sign In</a>
+                    Already have an account ? <a href="/login" class=" text-black">Sign In</a>
                 </div>
 
             </div>
         </div>
         <script>
+            const nameid = document.getElementById("username")
+            const emailid = document.getElementById("email")
+            const phoneid = document.getElementById("phone")
+            const passwordid = document.getElementById("password")
+            const errorName = document.getElementById("errorName")
+            const errorEmail = document.getElementById("errorEmail")
+            const errorPhone = document.getElementById("errorPhone")
+            const errorPassword = document.getElementById("errorPassword")
+            const signform = document.getElementById("signform")
+
+            function nameValidateChecking(e) {
+                
+                const nameval = nameid.value;
+                const namepattern = /^[A-Za-z\s]+$/;
+                if (nameval.trim() === "") {
+                    errorName.style.display = "block";
+                    errorName.innerHTML = "Please enter a valid name"
+                } else if (!namepattern.test(nameval)) {
+                    errorName.style.display = "block";
+                    errorName.innerHTML = "Name can only contain alphabets and spaces"
+                } else {
+                    errorName.style.display = "none";
+                    errorName.innerHTML = ""
+                }
+            }
+
+            function emailValidateChecking(e) {
+               
+                const emailval = emailid.value;
+                                     
+                const emailpattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!emailpattern.test(emailval)) {
+                    errorEmail.style.display = "block";
+                    errorEmail.innerHTML = "Invalid Email Format"
+                } else {
+                    errorEmail.style.display = "none";
+                    errorEmail.innerHTML = "";
+                }
+            }
+
+            function phoneValidateChecking(e) {
+               
+                const phoneval = phoneid.value;
+
+                if (phoneval.trim() === "") {
+                    errorPhone.style.display = "block"
+                    errorPhone.innerHTML = "Enter valid phone number"
+                } else if (phoneval.length > 10 || phoneval.length < 10) {
+                    errorPhone.style.display = "block"
+                    errorPhone.innerHTML = "Enter  10 digit"
+                } else {
+                    errorPhone.style.display = "none";
+                    errorPhone.innerHTML = "";
+                }
+            }
+
+            function passValidateChecking(e) {
+                
+                const passval = passwordid.value;
+                const alpha = /[a-zA-Z]/;
+                const digit = /\d/;
+
+                if(passval.length<8){
+                    errorPassword.style.dispaly="block";
+                    errorPassword.innerHTML="Should contain atleasst 8 characters";
+
+                }else if(!alpha.test(passval)  || !digit.test(passval)){
+                    errorPassword.style.display="block"
+                    errorPassword.innerHTML="Should contain alphabets and numbers"
+                }else{
+                    errorPassword.style.display="none"
+                    errorPassword.innerHTML=""
+                }
+            }
+
+
+
+
+            document.addEventListener("DOMContentLoaded", function () {
+                signform.addEventListener("submit", function (e) {
+                    nameValidateChecking();
+                    emailValidateChecking();
+                    phoneValidateChecking();
+                    passValidateChecking();
+
+                    if (
+                        !nameid || !emailid || !phoneid || !passwordid || !errorName || !errorEmail || !errorPassword || !errorPhone || !signform
+                    ) {
+                        console.error("One or more elements not found.")
+                    }
+                    if (
+                        errorName.innerHTML || errorEmail.innerHTML || errorPhone.innerHTML || errorPassword.innerHTML
+                    ) {
+                         e.preventDefault()
+                    }
+                })
+            })
+
+
 
             const url = window.location.search.substring(1)
             console.log(url)
             if (url === 'usertTaken') {
-                const spanMsg = document.getElementById('usertTaken').querySelector('span');
+                const spanMsg = document.getElementById('errorName').querySelector('span');
                 spanMsg.innerText = "username already taken";
-            } else if (url === 'emailTaken') {
-                const spanMsg = document.getElementById('emailTaken').querySelector('span');
-                spanMsg.innerText = "email already taken";
             }
-            else if (url === 'weakPass') {
-                const spanMsg = document.getElementById('weakPass').querySelector('span');
-                spanMsg.innerText = "Entered password is too weak \n Password must be atleast 4 characters \n Add alphanumerical and symbols ";
+            if (url === 'emailTaken') {
+                const spanMsg = document.getElementById('errorEmail').querySelector('span');
+                spanMsg.innerText = "email already taken";
             }
         </script>
 
 
-<%-include('../partials/users/footer') -%>
+        <%- include("../partials/users/userFooter") -%>

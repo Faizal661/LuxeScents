@@ -1,12 +1,12 @@
-<%-include('../partials/users/header') -%>
+<%- include('../partials/users/header') -%>
 
-    <body>
+    <body class=" bg-success bg-opacity-10">
         <header>
             <div class="title pb-5 border border-bottom" style="height: 60px;">
-                <h1 class="font-weight-bold text-center logo">Luxe Scents</h1>
+                <h2 class="font-weight-bold ms-5 logo">Luxe Scents</h2>
             </div>
         </header>
-        <div class="text-center pt-5" id="login">
+        <div class="text-center pt-5 pb-3" id="login">
             <!-- <% if(locals.logout){ %> -->
             <!-- <h5 class=" text-primary text-center fw-bold"> -->
             <!-- <%= logout %> -->
@@ -18,15 +18,15 @@
             <h5 class="text-success text-center fw-bold" id="newuser">
                 <span></span>
             </h5>
-            <div class="container w-25  rounded pt-5 ">
+            <div class="container w-25  rounded pt-5 mb-5">
                 <div class="title pb-5">
                     <h3 class="fw-semibold">Sign in</h3>
                 </div>
                 <div class="title pb-4 ">
                     <a href="">
                         
-                        <button class="font-weight-bold btn rounded-pill border border-2 w-100">
-                            <img src="assets/images/googleLogo.png" alt=""  height="22">
+                        <button class="font-weight-bold btn rounded-pill border border-2 w-100 text-dark">
+                            <img src="img/googleLogo.png" alt=""  height="22">
                             Sign in with Google
                         </button></a>
                 </div>
@@ -53,7 +53,7 @@
                     </div>
                     <button type="submit" class="btn btn-dark rounded-pill w-100">Sign In</button>
                 </form>
-                <div class="mt-4">
+                <div class="mb-5 mt-4">
                     Don't have an account ?  <a href="/signup" class=" text-black">Sign up</a>
                 </div>
 
@@ -78,4 +78,4 @@
         </script>
 
 
-<%-include('../partials/users/footer') -%>
+<%- include('../partials/users/userFooter') -%>

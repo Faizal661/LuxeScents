@@ -46,11 +46,11 @@ app.use((req, res, next) => {
   
 
 app.set('view engine','ejs'); 
-app.set('views', path.join(__dirname, 'views'));
+app.set('views',[ path.join(__dirname, 'views/users'), path.join(__dirname, 'views/admin')]);
 
 
-app.use('/static',express.static(path.join(__dirname,'public')))
-app.use('/assets',express.static(path.join(__dirname,'public/assets')))
+app.use(express.static(path.join(__dirname,'public')))
+// app.use('/assets',express.static(path.join(__dirname,'public/assets')))
 
 
 

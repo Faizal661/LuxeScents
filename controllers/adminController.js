@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const loadAdminLogin = async (req, res) => {
     try {
-        res.render('admin/admin_login', { title: 'Admin' })
+        res.render('admin_login', { title: 'Admin' })
     } catch (error) {
         console.log(error,'page not found');
         res.status(500).send("server error")
@@ -36,7 +36,7 @@ const adminLogin = async (req, res) => {
 
 const loadForgotPassword = async (req, res) => {
     try {
-        res.render('admin/forgotPassword', { title: 'forgot password' })
+        res.render('forgotPassword', { title: 'forgot password' })
     } catch (error) {
         console.log(error,'page not found');
         res.status(500).send("server error")
@@ -61,7 +61,7 @@ const sendOtpToChangePassword = async (req, res) => {
 const loadChangePasswordPage = async (req, res) => {
     try {
         // res.send('dsafg')
-        res.render('admin/changePassword', { title: 'change password' })
+        res.render('changePassword', { title: 'change password' })
     } catch (error) {
         console.log(error,'page not found');
         res.status(500).send("server error")
@@ -91,16 +91,16 @@ const loadAdminHomePage = async (req, res) => {
         if (req.session.adminId) {
             User.find()
                 .then((data) => {
-                    res.render('admin/home', {
+                    res.render('home', {
                         title: 'Home Page',
                         users: data,
                     })
                 })
                 .catch(() => {
-                    res.render('admin/home')
+                    res.render('home')
                 })
         } else {
-            res.render('admin/404')
+            res.render('404')
         }
     }
     catch (error) {
@@ -111,7 +111,7 @@ const loadAdminHomePage = async (req, res) => {
 
 const loadAddUserPage = async (req, res) => {
     try {
-        res.render('admin/add_users')
+        res.render('add_users')
     } catch (error) {
         console.log(error,'page not found');
         res.status(500).send("server error")
@@ -158,7 +158,7 @@ const loadEditUserPage = async (req, res) => {
                 if (!user) {
                     res.redirect('/admin');
                 } else {
-                    res.render('admin/edit_users', {
+                    res.render('edit_users', {
                         title: 'Edit User',
                         user: user,
                     });
