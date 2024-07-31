@@ -43,6 +43,11 @@
                         <label for="" class="float-start fw-semibold pt-2">Password</label>
                         <input type="password" value="1234567q" class="form-control" id="password" name="password" required>
                     </div>
+                    <% if(locals.message && message.length>0 ) {%>
+                        <div class="alert alert-danger text-center mt-2"  >
+                            <%= message %>
+                        </div>
+                        <% } %>
                     <div class="text-danger text-center mt-2" id="errorPassword">
                         <span></span>
                     </div>

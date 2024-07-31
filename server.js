@@ -1,10 +1,11 @@
 const express = require('express')
+require('dotenv').config();
+
+
 const mongoose=require('mongoose')
-mongoose.connect('mongodb://localhost:27017/LuxeScents')
+mongoose.connect(process.env.DB_URI)
 .then(()=>console.log('mongodb √√√'))
 .catch(err=>console.log('error connecting to the database..',err))
-
-require('dotenv').config();
 
 
 const path=require('path')
@@ -75,7 +76,7 @@ app.use(express.static(path.join(__dirname,'public')))
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
  
-app.get('*', userController.pageNotfound)
+// app.get('*', userController.pageNotfound)
 
 
 

@@ -39,7 +39,7 @@
                 <form action="/login" method="post" >
                     <label for="" class="float-start fw-semibold pt-3">Email</label>
                     <div class="form-group">
-                        <input type="text" class="form-control mb-3" name="username" required>
+                        <input type="email" class="form-control mb-3" name="email" required>
                     </div>
                     <div class="pt-3">
                         <label for="" class="float-start fw-semibold ">Password</label>
@@ -48,6 +48,11 @@
                     <div class="form-group">
                         <input type="password" class="form-control" name="password" required>
                     </div>
+                    <% if(locals.message && message.length>0 ) {%>
+                        <div class="alert alert-danger text-center mt-2"  >
+                            <%= message %>
+                        </div>
+                        <% } %>
                     <div class="text-warning text-center mt-2" id="msg">
                         <span></span>
                     </div>
