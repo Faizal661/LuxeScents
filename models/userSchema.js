@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: true,
+        required: false,
         unique: false,
         sparse: true,
         default: null
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: false
     },
     isBlocked: {
         type: Boolean,

@@ -5,7 +5,7 @@ const userController=require('../controllers/userController')
 
 const { requireLogin } = require('../middlewares/authentication');
 const upload=require('../middlewares/multer')
-
+const passport=require('passport')
 const User = require('../models/userSchema')
 var url = require('url')
 
@@ -35,6 +35,14 @@ userRouter.post('/register_new', userController.registerNew);
 //userRouter.get('/signUpOtpConfirm',userController.loadSignUpOtpPage)
 userRouter.post('/verify-otp',userController.verifyOtp)
 userRouter.post('/resend-otp',userController.resendOtp)
+
+
+//goole authenticaion routes
+userRouter.get('/auth/google/',passport.authenticate('google',{scope:['profile','email']}));
+
+userRouter.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
+    res.redirect('/')
+})
 
 
 

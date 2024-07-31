@@ -14,7 +14,7 @@ const userRouter=require('./routes/userRoute')
 const adminRouter=require('./routes/adminRoute')
 const nocache = require('nocache');
 const userController=require('./controllers/userController')
-
+const passport=require('./config/passport')
    
 
 const app =express()   
@@ -38,6 +38,12 @@ app.use(session({
         maxAge:3600000,
     } 
 }))
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 
 app.use((req,res,next)=>{
     res.set('cache-control','no-store')
