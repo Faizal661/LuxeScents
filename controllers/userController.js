@@ -48,7 +48,7 @@ const userLogin = async (req, res) => {
 
 
     } catch (error) {
-        console.error('login error',error);
+        console.error('login error', error);
         res.render("signin", { message: "Login failed ,please try again later" })
     }
 
@@ -268,36 +268,37 @@ const resendOtp = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
     try {
-        if (req.session.userId) {
-            const user = await User.findOne({ _id: req.session.userId });
-            console.log(user);
-            res.render('homepage')
+        const user = req.session.user;
+        if (user) {
+            const userData = await User.findOne({ _id: user });
+            //console.log(userData);
+            res.render('homepage', { user: userData })
             // res.render('dashboard', { user: user.name, email: user.email, phone: user.phone, image: user.image })
         } else {
-            res.render('homepage')
+            return res.render('homepage')
             // res.render('dashboard', { msg: "Unauthorized User" })
         }
     } catch (error) {
-        console.log(error, 'page not found');
+        console.log(error, 'Homepage not loading');
         res.status(500).send("server error")
     }
 }
 
 const userLogout = async (req, res) => {
     try {
-        req.session.destroy(function (err) {
+        req.session.destroy((err) => {
             if (err) {
-                console.log(err)
-                res.send("Error")
-            } else {
-                // res.render('signin',{logout:"logout successfully...!"}) 
-                res.redirect('/?logout')
+                console.log("Session destruction error", err.message)
+                return res.redirect("/pageNotfound")
             }
+            // res.render('signin',{logout:"logout successfully...!"}) 
+            return res.redirect('/login?logout')
+
         })
 
     } catch (error) {
-        console.log(error, 'page not found');
-        res.status(500).send("server error")
+        console.log(error, 'Logout error');
+        res.redirect("/pageNotfound")
     }
 }
 

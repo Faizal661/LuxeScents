@@ -50,7 +50,7 @@ userRouter.get('/auth/google/callback',passport.authenticate('google',{failureRe
 userRouter.get('/homepage',userController.loadHomepage )
 
 //---------user logout
-userRouter.get('/logout', requireLogin,userController.userLogout)
+userRouter.get('/logout',userController.userLogout)
 
 
 // userRouter.get('*', userController.pageNotfound)
