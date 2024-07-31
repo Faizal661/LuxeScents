@@ -23,6 +23,8 @@ userRouter.post('/login',userController.userLogin );
 userRouter.get('/forgotPassword',userController.loadForgotPassword)
 userRouter.post('/sendOtpToChangePassword',userController.sendOtpToChangePassword)
 userRouter.get('/loadChangePasswordPage',userController.loadChangePasswordPage)
+//,,,,,,,,,,,,
+
 
 
 //------------signup-get route
@@ -30,7 +32,9 @@ userRouter.get('/signup',userController.loadSignup)
 
 //------------signup-post route
 userRouter.post('/register_new', userController.registerNew);
-userRouter.get('/signUpOtpConfirm',userController.loadSignUpOtpPage)
+//userRouter.get('/signUpOtpConfirm',userController.loadSignUpOtpPage)
+userRouter.post('/verify-otp',userController.verifyOtp)
+userRouter.post('/resend-otp',userController.resendOtp)
 
 
 
