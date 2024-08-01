@@ -3,7 +3,7 @@ var userRouter = express.Router();
 const userController=require('../controllers/userController')
 
 
-const { requireLogin } = require('../middlewares/authentication');
+const { userAuth } = require('../middlewares/authentication');
 const upload=require('../middlewares/multer')
 const passport=require('passport')
 const User = require('../models/userSchema')
