@@ -2,6 +2,7 @@ const express = require('express')
 const adminRouter = express.Router();
 const {userAuth,adminAuth} = require('../middlewares/authentication');
 const adminController=require('../controllers/AdminController')
+const customerController=require('../controllers/customerController')
 const upload = require('../middlewares/multer')
 
 
@@ -12,7 +13,15 @@ adminRouter.post('/admin-login',adminController.adminLogin)
 adminRouter.get('/',adminAuth,adminController.loadDashboard) 
 adminRouter.get('/logoutadmin',adminAuth,adminController.adminLogout)
 
+//users
+adminRouter.get('/users',adminAuth,customerController.customerInfo)
+adminRouter.get('/blockCustomer',adminAuth,customerController.customerBlocked)
+adminRouter.get('/unblockCustomer',adminAuth,customerController.customerunBlocked)
 
+
+ 
+ 
+ 
 
 
 
@@ -23,8 +32,20 @@ adminRouter.get('/forgotPassword',adminController.loadForgotPassword)
 adminRouter.post('/sendOtpToChangePassword',adminController.sendOtpToChangePassword)
 adminRouter.get('/loadChangePasswordPage',adminController.loadChangePasswordPage)
 
- 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //admin homepage  //display all users 
 adminRouter.get('/dashboard', adminAuth,adminController.loadDashboard)
