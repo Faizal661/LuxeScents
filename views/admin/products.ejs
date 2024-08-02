@@ -1,15 +1,14 @@
 <%- include("../../views/partials/admin/header") %>
     <div class="content-header row">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="content-title card-title"style=" padding: 2rem; font-family: 'Material Icons Round'; text-transform: uppercase;">
-                Customers</h2>
-
+            <h2 class="content-title card-title" style=" padding: 2rem; font-family: 'Material Icons Round'; text-transform: uppercase;">
+                Products</h2>
         </div>
     </div>
     </div>
 
     <header class="card-header text-center mb-20 me-5 float-end">
-        <form action="/admin/users/" method="get" class="d-inline">
+        <form action="/admin/products/" method="get" class="d-inline">
             <div class="input-group input-group-sm border border-2 border-grey rounded-pill"
                 style="width: 500px; margin-left: 230px;">
                 <input type="text" class="form-control border-0 rounded-pill " placeholder=" Search Users..."
@@ -22,37 +21,37 @@
         <table class="table table-striped border border-2">
             <thead class=" border border-2">
                 <tr>
-                    <th scope="col" class=" border border-2 text-center h6"><b>ID</b></th>
-                    <th scope="col" class=" border border-2 text-center h6"><b>Name</b></th>
-                    <th scope="col" class=" border border-2 text-center h6"><b>Email</b></th>
-                    <th scope="col" class=" border border-2 text-center h6"><b>Phone No</b></th>
-                    <th scope="col" class=" border border-2 text-center h6"><b>Action</b></th>
+                    <th scope="col" class=" border border-2 text-center h6"><b>Product Name</b></th>
+                    <th scope="col" class=" border border-2 text-center h6"><b>Price</b></th>
+                    <th scope="col" class=" border border-2 text-center h6"><b>Stock </b></th>
+                    <th scope="col" class=" border border-2 text-center h6"><b>Actions</b></th>
                 </tr>
             </thead>
             <tbody>
                 <% for(let i=0;i<data.length;i++) {%>
                     <tr>
-                        <td  class=" border border-2 text-center">
-                            <%= data[i]._id %> 
+                        <td class=" border border-2 text-center">
+                            <%= data[i].productName %>
                         </td>
-                        <td  class=" border border-2 text-center">
-                            <%= data[i].name %>
+                        <td class=" border border-2 text-center">
+                            <%= data[i].salePrice %>
+                        </td class=" border border-2">
+                        <td class=" border border-2 text-center">
+                            <%= data[i].quantity %>
                         </td>
-                        <td  class=" border border-2 text-center">
-                            <%= data[i].email %>
-                        </td >
-                        <td  class=" border border-2 text-center">
-                            <%= data[i].phone %>
-                        </td>
-                        <td  class=" border border-2 text-center ">
+                        <td class=" border border-2 d-flex justify-content-evenly ">
+                            <button class="btn btn-info" style="width: 80px;">
+                                <a href="/admin/editProduct?id=<%= data[i]._id %>" class="text-white"
+                                    style="text-decoration: none;">Edit</a>
+                            </button>
                             <% if(data[i].isBlocked===false) {%>
                                 <button class="btn btn-danger" style="width: 80px;">
-                                    <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="text-white"
+                                    <a href="/admin/blockProduct?id=<%= data[i]._id %>" class="text-white"
                                         style="text-decoration: none;">Block</a>
                                 </button>
                                 <% }else{ %>
                                     <button class="btn btn-success" style="width: 80px;">
-                                        <a href="/admin/unblockCustomer?id=<%= data[i]._id %>" class="text-white"
+                                        <a href="/admin/unblockProduct?id=<%= data[i]._id %>" class="text-white"
                                             style="text-decoration: none;">Unblock</a>
                                     </button>
                                     <% } %>

@@ -27,7 +27,7 @@ const userLogin = async (req, res) => {
         const { email, password } = req.body;
         //console.log(username,password);
         const findUser = await User.findOne({ isAdmin: 0, email: email });
-        //console.log(user);
+        // console.log(user);
         //no user
         if (!findUser) {
             return res.render("signin", { message: "User not found" })
@@ -133,7 +133,7 @@ async function sendVerificationEmail(email, otp) {
         const info = await transporter.sendMail({
             from: "mohammedfaizal.t.bca.2@gmail.com",
             to: email,
-            subject: "Verify your account",
+            subject: "Verify your account for sign up to Luxe Scent",
             text: `Your OTP is ${otp}`,
             html: `<b> Your OTP : ${otp} </b>`
         })
@@ -177,20 +177,6 @@ const registerNew = async (req, res) => {
         console.log('OTP Sent', otp);
 
 
-
-        //saving userdata into db
-        // const newUser = new User({name,email,phone,password});
-
-        // console.log(newUser);
-        // newUser.save()
-        //     .then(() => {
-        //         // res.redirect('/signUpOtpConfirm')
-        //         res.redirect('/login?newuser')
-        //     })
-        //     .catch((err) => {
-        //         console.log(err)
-        //         res.redirect('/login');
-        //     });
     } catch (error) {
         console.log('signup error', error);
         res.render('404')
@@ -271,7 +257,7 @@ const loadHomepage = async (req, res) => {
         const user = req.session.user;
         if (user) {
             const userData = await User.findOne({ _id: user });
-            //console.log(userData);
+            console.log(userData);
             res.render('homepage', { user: userData })
             // res.render('dashboard', { user: user.name, email: user.email, phone: user.phone, image: user.image })
         } else {
@@ -283,6 +269,32 @@ const loadHomepage = async (req, res) => {
         res.status(500).send("server error")
     }
 }
+
+
+const loadShopPage=async(req,res)=>{
+    try {
+        // console.log('sadfsdfas');
+            res.render('shop')
+            // res.render('dashboard', { user: user.name, email: user.email, phone: user.phone, image: user.image })
+       
+    } catch (error) {
+        console.log(error, 'ShopPage not loading');
+        res.status(500).send("server error")
+    }
+}
+
+const loadSingleProduct=async(req,res)=>{
+    try {
+            res.render('singleProduct')
+            // res.render('dashboard', { user: user.name, email: user.email, phone: user.phone, image: user.image })
+       
+    } catch (error) {
+        console.log(error, 'Product detailed page is not loading');
+        res.status(500).send("server error")
+    }
+}
+
+
 
 const userLogout = async (req, res) => {
     try {
@@ -333,6 +345,8 @@ module.exports = {
     resendOtp,
 
     loadHomepage,
+    loadShopPage,
+    loadSingleProduct,
 
     userLogout,
     pageNotfound,

@@ -6,8 +6,8 @@
     <title>
         <%= locals.title ? title :"Luxe Scents" %>
     </title>
-    <link rel="icon" href="img/favicon.png" type="image/x-icon">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="../../../public/img/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../../public/css/style.css">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,11 +26,11 @@
         }
 
         .navbar {
-            background-color: #c9ffde;
+            background-color:  rgba(0, 8, 255, 0.2);;
         }
 
         .navbar-aside {
-            background-color: #e2c8ff;
+            background-color:  rgba(255,0,0,.2);;
         }
 
         .menu-item a.menu-link {
@@ -59,7 +59,7 @@
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top title">
             <a href="/" class="text-decoration-none">
-                <h4 class="logo">Luxe Scents</h4>
+                <h4 class="logo fw-bold">Luxe Scents</h4>
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i>
@@ -67,21 +67,21 @@
             </div>
         </div>
         <nav>
-            <ul class="menu-aside">
-                <li class="menu-item">
+            <ul class="menu-aside ">
+                <li class="menu-item ">
                     <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
-                        <span class="text">Dashboard</span>
+                        <span class="text h6">Dashboard</span>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-person"></i>
-                        <span class="text">Users</span>
+                        <span class="text h6">Users</span>
                     </a>
 
                 </li>
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-stars"></i>
-                        <span class="text">Category</span>
+                        <span class="text h6">Category</span>
                     </a>
 
                 </li>
@@ -91,28 +91,28 @@
                 </li> -->
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/addProducts"> <i class="icon material-icons md-add_box"></i>
-                        <span class="text">Add product</span>
+                        <span class="text h6">Add product</span>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
-                        <span class="text">Products</span>
+                        <span class="text h6">Products</span>
                     </a>
                 </li>
 
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/coupon"> <i class="icon material-icons md-class"></i>
-                        <span class="text">Coupon</span> </a>
+                        <span class="text h6">Coupon</span> </a>
                 </li>
-                <li class="menu-item">
+                <!-- <li class="menu-item">
                     <a class="menu-link" href="/admin/banner"> <i
                             class="icon material-icons md-photo_size_select_actual"></i>
-                        <span class="text">Banner</span> </a>
-                </li>
+                        <span class="text h6">Banner</span> </a>
+                </li> -->
 
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/orderList"> <i class="icon material-icons md-shopping_cart"></i>
-                        <span class="text">Orders</span>
+                        <span class="text h6">Orders</span>
                     </a>
                 </li>
             </ul>

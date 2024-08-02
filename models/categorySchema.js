@@ -11,15 +11,15 @@ const categorySchema = new mongoose.Schema({
         required:true,
 
     },
-    isListed:{
-        type:Boolean,
-        default:true
+    // isListed:{
+    //     type:Boolean,
+    //     default:true
 
-    },
-    categoryOffer:{
-        type:Number,
-        default:0
-    },
+    // },
+    // categoryOffer:{
+    //     type:Number,
+    //     default:0
+    // },
     createdAt:{
         type:Date,
         default:Date.now

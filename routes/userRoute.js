@@ -42,6 +42,8 @@ userRouter.get('/auth/google/callback',passport.authenticate('google',{failureRe
     res.redirect('/')
 })
 
+userRouter.get('/shoppage',userController.loadShopPage )
+userRouter.get('/singleProduct',userController.loadSingleProduct )
 
 
 

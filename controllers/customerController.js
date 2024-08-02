@@ -1,7 +1,7 @@
 const User= require('../models/userSchema')
 
 const customerInfo= async(req,res)=>{
-    try {
+    try { 
         let search= "";
         if(req.query.search){
             search = req.query.search
@@ -10,7 +10,7 @@ const customerInfo= async(req,res)=>{
         if(req.query.page){
             page=req.query.page
         }
-        const limit=3
+        const limit=4
         const userData=await User.find({
             isAdmin:false,
             $or:[
@@ -37,7 +37,8 @@ const customerInfo= async(req,res)=>{
         })
 
     } catch (error) {
-        
+        console.error(error);
+        res.redirect("/pageerror")
     }
 }
 
