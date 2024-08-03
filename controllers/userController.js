@@ -250,8 +250,6 @@ const resendOtp = async (req, res) => {
 }
 
 
-
-
 const loadHomepage = async (req, res) => {
     try {
         const user = req.session.user;

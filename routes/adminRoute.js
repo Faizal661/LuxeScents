@@ -1,7 +1,7 @@
 const express = require('express')
 const adminRouter = express.Router();
 const {userAuth,adminAuth} = require('../middlewares/authentication');
-const adminController=require('../controllers/AdminController')
+const adminController=require('../controllers/adminController')
 const customerController=require('../controllers/customerController')
 const categoryController=require('../controllers/categoryController')
 const productController=require('../controllers/productController')
@@ -14,6 +14,9 @@ adminRouter.get('/pageerror',adminController.pageerror)
 
 adminRouter.get('/login',adminController.loadAdminLogin)
 adminRouter.post('/admin-login',adminController.adminLogin) 
+
+//admin homepage  
+adminRouter.get('/dashboard', adminAuth,adminController.loadDashboard)
 adminRouter.get('/',adminAuth,adminController.loadDashboard) 
 adminRouter.get('/logoutadmin',adminAuth,adminController.adminLogout)
 
@@ -51,8 +54,7 @@ adminRouter.get('/addProducts',adminAuth,productController.addProducts)
 
 
 
-//admin homepage  //display all users 
-adminRouter.get('/dashboard', adminAuth,adminController.loadDashboard)
+
 
 
 // adminRouter.get('/add_users',adminAuth,adminController.loadAddUserPage)

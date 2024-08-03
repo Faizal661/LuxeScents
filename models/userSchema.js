@@ -51,10 +51,10 @@ const userSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Order"
     }],
-    createdOn: {
-        type: Date,
-        default: Date.now
-    },
+    // createdOn: {
+    //     type: Date,
+    //     default: Date.now
+    // },
     searchHistory:[{
         category:{
             type:mongoose.Schema.Types.ObjectId,

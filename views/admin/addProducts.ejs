@@ -88,7 +88,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
@@ -96,6 +96,19 @@
                                         id="product_name" />
                                     <div id="name-error" class="error-message"></div>
                                 </div>
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Brand Name</label>
+                                    <input type="text" name="name" placeholder="Type here" class="form-control"
+                                        id="product_name" />
+                                    <div id="name-error" class="error-message"></div>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Price</label>
+                                    <input type="text" name="name" placeholder="Type here" class="form-control"
+                                        id="product_name" />
+                                    <div id="name-error" class="error-message"></div>
+                                </div>
+                             
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
                                     <textarea placeholder="Type here" name="description" class="form-control"
@@ -107,6 +120,29 @@
                                         Add products
                                     </button>
                                 </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Stock</label>
+                                    <input type="text" name="name" placeholder="Type here" class="form-control"
+                                        id="product_name" />
+                                    <div id="name-error" class="error-message"></div>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Status</label>
+                                    <input type="text" name="name" placeholder="Type here" class="form-control"
+                                        id="product_name" />
+                                    <div id="name-error" class="error-message"></div>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Sizes</label>
+                                    <input type="text" name="name" placeholder="Type here" class="form-control"
+                                        id="product_name" />
+                                    <div id="name-error" class="error-message"></div>
+                                </div>
+                              
                             </form>
                         </div>
                         <div class="col-md-8 ml-10">

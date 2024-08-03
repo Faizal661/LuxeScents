@@ -3,7 +3,9 @@
     <body class=" bg-success bg-opacity-10">
         <header>
             <div class="title pb-5 border border-bottom" style="height: 60px;">
-                <a href="/" class="text-decoration-none"><h2 class="font-weight-bold ms-5 logo">Luxe Scents</h2></a>
+                <a href="/" class="text-decoration-none">
+                    <h2 class="font-weight-bold ms-5 logo">Luxe Scents</h2>
+                </a>
             </div>
         </header>
         <div class="text-center pt-2">
@@ -17,7 +19,7 @@
                             <form id="otpForm" action="/verify-otp" method="post" onsubmit="return validateOTPForm()">
                                 <label for="" class="float-start fw-semibold pt-3">Enter OTP</label>
                                 <div class="form-group">
-                                    <input type="text" class="form-control mb-3" id="otp" name="otp" required
+                                    <input type="text" class="form-control mb-3" id="otp" name="otp" 
                                         maxlength="6" pattern="\d*">
                                 </div>
                                 <!-- <div class="text-danger text-center mt-2" id="msg">
@@ -25,10 +27,14 @@
                                 </div> -->
                                 <button type="submit" class="btn btn-dark rounded-pill w-100">Verify Email</button>
                                 <div class="form-group text-center mt-2">
-                                    <div class="" id="otpTimer">
-                                        <span id="timerValue">60</span>
+                                    <div class="mt-3" id="otpTimer">
+                                        <span id="timerValue">Resend OTP After 30 seconds</span>
                                     </div>
-                                    <button type="button" class="btn btn-secondary my-3" onclick="resendOTP()">Resend OTP</button>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <button type="button" class="btn btn-secondary my-3 me-2" id="resendOtpBtn"
+                                            onclick="resendOTP()" disabled>Resend OTP</button>
+                                    </div>
+                                    
                                 </div>
 
                                 <% if(locals.message && message.length>0 ) {%>
@@ -52,23 +58,33 @@
 
                 document.getElementById("otp").focus();
 
-                let timer = 60;
-                let timerInterval;
+                let timer = 30;
+                let resendTimer = 30;
+                let timerInterval;//expire otp 60--  to 0
+                let resendOtpInterval;// resend 30-- to 0
+
 
                 function startTimer() {
                     timerInterval = setInterval(() => {
                         timer--;
-                        document.getElementById('timerValue').textContent = timer;
+                        document.getElementById('timerValue').textContent = `Resend OTP After ${timer} seconds`;
                         if (timer <= 0) {
                             clearInterval(timerInterval);
                             document.getElementById('timerValue').classList.add("expired");
-                            document.getElementById('timerValue').textContent = "OTP Expired";
-                            document.getElementById("otp").disabled = true;
+                            document.getElementById('timerValue').textContent = "";
+                            document.getElementById("resendOtpBtn").classList.replace("btn-secondary", "btn-dark");
                         }
                     }, 1000)
                 }
 
-                startTimer();
+                function startresendTimer() {// resend 30-- to 0
+                    document.getElementById("resendOtpBtn").disabled = true;
+                    resendOtpInterval = setTimeout(() => {
+                        document.getElementById("resendOtpBtn").disabled = false;
+                    }, resendTimer * 1000);
+                }
+
+                // startTimer();
 
                 function validateOTPForm() {
                     const otpInput = document.getElementById("otp").value;
@@ -110,36 +126,39 @@
 
 
 
-                function resendOTP(){
+                function resendOTP() {
                     clearInterval(timerInterval);
 
-                    timer=60;
-                    document.getElementById("otp").disabled=false;
+                    timer = 30;
+                    document.getElementById("otp").disabled = false;
                     document.getElementById("timerValue").classList.remove("expired");
                     startTimer();
+                    startresendTimer();
                     $.ajax({
-                        type:"POST",
-                        url:"/resend-otp",
-                        success:function (response){
+                        type: "POST",
+                        url: "/resend-otp",
+                        success: function (response) {
                             if (response.success) {
                                 Swal.fire({
-                                    icon: "success",
+                                    icon: "info",
                                     title: "OTP Resend Successfully",
-                                    showConfirmButton: false,
-                                    timer: 1500,
+                                    showConfirmButton: true,
+                                    
                                 })
                             } else {
                                 Swal.fire({
                                     icon: "error",
                                     title: "Error",
                                     text: "An error occured while resending OTP . Please try again",
-
                                 })
                             }
                         }
                     })
                     return false;
                 }
+                startTimer();
+                startresendTimer();
+
 
                 // const url = window.location.search.substring(1)
                 // console.log(url)

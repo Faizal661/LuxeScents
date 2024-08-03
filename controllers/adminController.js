@@ -31,7 +31,7 @@ const adminLogin = async (req, res) => {
             //compare password
             const passwordMatch = await bcrypt.compare(password, admin.password)
             if (passwordMatch) {
-                console.log('pass match');
+                // console.log('pass match');
                 req.session.admin = true;
                 return res.redirect('/admin');
             } else {
