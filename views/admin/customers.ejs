@@ -6,7 +6,7 @@
     </div>
     </div>
 
-    <header class="card-header text-center mb-2 me-5 float-end">
+    <header class="card-header text-center bg-transparent mb-2 me-5 float-end">
         <form action="/admin/users/" method="get" class="d-inline">
             <div class="input-group input-group-sm border border-2 border-grey rounded-pill"
                 style="width: 500px; margin-left: 230px;">
@@ -31,7 +31,7 @@
                 <% for(let i=0;i<data.length;i++) {%>
                     <tr>
                         <td class=" border border-2 text-center">
-                            <%= data[i]._id %>
+                            <%= i+1+(limit*(currentPage-1)) %>
                         </td>
                         <td class=" border border-2 text-center">
                             <%= data[i].name %>

@@ -7,7 +7,7 @@
     </div>
     </div>
 
-    <header class="card-header text-center mb-20 me-5 float-end">
+    <header class="card-header text-center bg-transparent mb-20 me-5 float-end">
         <form action="/admin/products/" method="get" class="d-inline">
             <div class="input-group input-group-sm border border-2 border-grey rounded-pill"
                 style="width: 500px; margin-left: 230px;">
@@ -21,6 +21,7 @@
         <table class="table table-striped border border-2">
             <thead class=" border border-2">
                 <tr>
+                    <th scope="col" class=" border border-2 text-center h6"><b></b></th>
                     <th scope="col" class=" border border-2 text-center h6"><b>Product Name</b></th>
                     <th scope="col" class=" border border-2 text-center h6"><b>Price</b></th>
                     <th scope="col" class=" border border-2 text-center h6"><b>Stock </b></th>
@@ -30,6 +31,9 @@
             <tbody>
                 <% for(let i=0;i<data.length;i++) {%>
                     <tr>
+                        <td class=" border border-2 text-center">
+                            <%= (limit*(currentPage-1)+1+i) %>
+                        </td>
                         <td class=" border border-2 text-center">
                             <%= data[i].productName %>
                         </td>

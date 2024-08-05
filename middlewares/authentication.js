@@ -7,10 +7,18 @@ const userAuth = (req, res, next) => {
             .then(data => {
                 if (data && !data.isBlocked) {
                     next();
-                } else {
+                }else if(data.isBlocked){
+                    req.session.destroy((err) => {
+                        if (err) {
+                            console.log("Session destruction error", err.message)
+                            return res.redirect("/pageNotfound")
+                        }
+                        return res.redirect('/login?blocked')
+                    })
+                }else {
                     res.redirect('/login')
                 }
-            })
+            }) 
             .catch(error => {
                 console.log("Error in user auth middleware", error)
                 res.status(500).send("Internal Server error")
@@ -35,11 +43,11 @@ const adminAuth = (req, res, next) => {
                 console.log("Error in adminauth middleware", error)
                 res.status(500).send("Internal Server error")
             })
-    } else {
+    } else{
         res.redirect('/admin/login')
     }
-
-
+        
+    
 }
 
 

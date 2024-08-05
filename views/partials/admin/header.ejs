@@ -26,13 +26,11 @@
         }
 
         .navbar {
-            background-color: rgba(0, 8, 255, 0.2);
-            ;
+            background-color: #1f1f1f    ;
         }
 
         .navbar-aside {
-            background-color: rgba(255, 0, 0, .2);
-            ;
+            background-color: #ffffff;           
         }
 
         .menu-item a.menu-link {
@@ -133,10 +131,10 @@
                             aria-expanded="false"> <img class="img-xs rounded-circle"
                                 src="/admin-assets/imgs/people/avatar2.jpg" alt="User"></a> -->
                         <% if(!locals.adminName) {%>
-                            <a class="dropdown-toggle text-dark h6" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
+                            <a class="dropdown-toggle text-light h6" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
                                 aria-expanded="false">ADMIN</a>
                             <% }else{ %>
-                                <a class="dropdown-toggle text-dark h5" data-bs-toggle="dropdown" href="#"
+                                <a class="dropdown-toggle text-light h6" data-bs-toggle="dropdown" href="#"
                                     id="dropdownAccount" aria-expanded="false">
 
                                     <%= adminName %>

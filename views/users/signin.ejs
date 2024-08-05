@@ -17,6 +17,9 @@
             <h5 class="text-success text-center fw-bold" id="logout">
                 <span></span>
             </h5>
+            <h5 class="text-danger text-center fw-bold" id="blocked">
+                <span></span>
+            </h5>
             <h5 class="text-success text-center fw-bold" id="newuser">
                 <span></span>
             </h5>
@@ -80,6 +83,10 @@
             else if (url === 'newuser') {
                 const spanMsg = document.getElementById('newuser').querySelector('span');
                 spanMsg.innerText = "User registered successfully now login with your account ";
+            }
+            else if (url === 'blocked') {
+                const spanMsg = document.getElementById('blocked').querySelector('span');
+                spanMsg.innerText = "User is blocked by Admin ";
             }
 
         </script>

@@ -10,7 +10,7 @@ const customerInfo= async(req,res)=>{
         if(req.query.page){
             page=req.query.page
         }
-        const limit=4
+        const limit=8
         const userData=await User.find({
             isAdmin:false,
             $or:[
@@ -34,7 +34,8 @@ const customerInfo= async(req,res)=>{
             adminName:req.session.adminName,
             data:userData,
             totalPages:Math.ceil(count/limit),
-            currentPage:page
+            currentPage:page,
+            limit:limit
         })
 
     } catch (error) {

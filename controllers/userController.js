@@ -300,7 +300,6 @@ const userLogout = async (req, res) => {
                 console.log("Session destruction error", err.message)
                 return res.redirect("/pageNotfound")
             }
-            // res.render('signin',{logout:"logout successfully...!"}) 
             return res.redirect('/login?logout')
 
         })
@@ -320,6 +319,7 @@ const pageNotfound = async (req, res) => {
         res.render('404', { url: req.url })
     }
     catch (error) {
+        console.log(error, 'page not found error');
         res.redirect("/pageNotfound")
     }
 }

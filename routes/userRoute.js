@@ -10,8 +10,6 @@ const User = require('../models/userSchema')
 var url = require('url')
 
 
-userRouter.get("/pageNotfound",userController.pageNotfound)
-
 //------------------------------------- User Page  ------------------------- 
 userRouter.get('/',userController.loadLogin)
 
@@ -53,6 +51,10 @@ userRouter.get('/homepage',userAuth,userController.loadHomepage )
 
 //---------user logout
 userRouter.get('/logout',userAuth,userController.userLogout)
+
+
+userRouter.get("/pageNotfound",userController.pageNotfound)
+
 
 //----------------------------------------------------
  

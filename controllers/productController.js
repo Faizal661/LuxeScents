@@ -12,7 +12,7 @@ const productInfo=async(req,res)=>{
             page=req.query.page
         }
 
-        const limit=4
+        const limit=8
         const productsData=await Product.find({
             productName:{$regex:".*"+search+".*"}
         })
@@ -28,7 +28,8 @@ const productInfo=async(req,res)=>{
             adminName:req.session.adminName,
             data:productsData,
             totalPages:Math.ceil(count/limit),
-            currentPage:page
+            currentPage:page,
+            limit:limit
         })
 
     } catch (error) {
