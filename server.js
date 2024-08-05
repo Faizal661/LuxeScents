@@ -16,6 +16,7 @@ const userRouter=require('./routes/userRoute')
 const adminRouter=require('./routes/adminRoute')
 const nocache = require('nocache');
 const userController=require('./controllers/userController')
+const adminController=require('./controllers/adminController')
 const passport=require('./config/passport')
    
 
@@ -76,7 +77,9 @@ app.use(express.static(path.join(__dirname,'public')))
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
  
-// app.get('*', userController.pageNotfound)
+app.get('*', userController.pageNotfound)
+app.get('/admin/*', adminController.pageerror)
+
 
 
 

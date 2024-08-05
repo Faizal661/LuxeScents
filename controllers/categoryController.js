@@ -15,6 +15,7 @@ const categoryInfo=async(req,res)=>{
         const totalCategories = await Category.countDocuments();
         const totalPages= Math.ceil(totalCategories/limit);
         res.render("category",{
+            adminName:req.session.adminName,
             cat:categoryData,
             currentPage:page,
             totalPages:totalPages,

@@ -1,20 +1,18 @@
 <%- include("../../views/partials/admin/header") %>
     <div class="content-header row">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="content-title card-title"style=" padding: 2rem; font-family: 'Material Icons Round'; text-transform: uppercase;">
-                Customers</h2>
-
+            <h2 class="content-title card-title">Customers</h2>
         </div>
     </div>
     </div>
 
-    <header class="card-header text-center mb-20 me-5 float-end">
+    <header class="card-header text-center mb-2 me-5 float-end">
         <form action="/admin/users/" method="get" class="d-inline">
             <div class="input-group input-group-sm border border-2 border-grey rounded-pill"
                 style="width: 500px; margin-left: 230px;">
-                <input type="text" class="form-control border-0 rounded-pill " placeholder=" Search Users..."
+                <input type="text" class="form-control border-0 rounded-pill bg-transparent" placeholder=" Search Users..."
                     name="search">
-                <button class="btn border-0" type="submit">Search</button>
+                <button class="btn border border-2 border-end-0 border-top-0 border-bottom-0" type="submit">Search</button>
             </div>
         </form>
     </header>
@@ -32,19 +30,19 @@
             <tbody>
                 <% for(let i=0;i<data.length;i++) {%>
                     <tr>
-                        <td  class=" border border-2 text-center">
-                            <%= data[i]._id %> 
+                        <td class=" border border-2 text-center">
+                            <%= data[i]._id %>
                         </td>
-                        <td  class=" border border-2 text-center">
+                        <td class=" border border-2 text-center">
                             <%= data[i].name %>
                         </td>
-                        <td  class=" border border-2 text-center">
+                        <td class=" border border-2 text-center">
                             <%= data[i].email %>
-                        </td >
-                        <td  class=" border border-2 text-center">
+                        </td>
+                        <td class=" border border-2 text-center">
                             <%= data[i].phone %>
                         </td>
-                        <td  class=" border border-2 text-center ">
+                        <td class=" border border-2 text-center ">
                             <% if(data[i].isBlocked===false) {%>
                                 <button class="btn btn-danger" style="width: 80px;">
                                     <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="text-white"

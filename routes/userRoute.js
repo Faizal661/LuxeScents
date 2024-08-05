@@ -13,7 +13,7 @@ var url = require('url')
 userRouter.get("/pageNotfound",userController.pageNotfound)
 
 //------------------------------------- User Page  ------------------------- 
-userRouter.get('/',userController.loadHomepage)
+userRouter.get('/',userController.loadLogin)
 
 
 //------------ login-get route
@@ -42,20 +42,18 @@ userRouter.get('/auth/google/callback',passport.authenticate('google',{failureRe
     res.redirect('/')
 })
 
-userRouter.get('/shoppage',userController.loadShopPage )
-userRouter.get('/singleProduct',userController.loadSingleProduct )
+userRouter.get('/shoppage',userAuth,userController.loadShopPage )
+userRouter.get('/singleProduct',userAuth,userController.loadSingleProduct )
 
 
-
+ 
 
 //---------user homepage 
-userRouter.get('/homepage',userController.loadHomepage )
+userRouter.get('/homepage',userAuth,userController.loadHomepage )
 
 //---------user logout
-userRouter.get('/logout',userController.userLogout)
+userRouter.get('/logout',userAuth,userController.userLogout)
 
-
-// userRouter.get('*', userController.pageNotfound)
 //----------------------------------------------------
  
 module.exports = userRouter; 

@@ -25,6 +25,7 @@ const productInfo=async(req,res)=>{
         }).countDocuments();
 
         res.render('products',{
+            adminName:req.session.adminName,
             data:productsData,
             totalPages:Math.ceil(count/limit),
             currentPage:page
@@ -58,7 +59,7 @@ const productunBlocked=async(req,res)=>{
 
 const addProducts=async(req,res)=>{
     try {
-        res.render('addProducts')
+        res.render('addProducts',{adminName:req.session.adminName})
     } catch (error) {
         console.error(error);
         res.redirect("/pageerror")

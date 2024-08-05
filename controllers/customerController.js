@@ -31,6 +31,7 @@ const customerInfo= async(req,res)=>{
         }).countDocuments();
 
         res.render('customers',{
+            adminName:req.session.adminName,
             data:userData,
             totalPages:Math.ceil(count/limit),
             currentPage:page

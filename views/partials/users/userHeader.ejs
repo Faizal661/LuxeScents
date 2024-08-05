@@ -183,10 +183,10 @@
                 </div>
                 <div class="col-lg-4 col-md-4">
                     <div class="header__nav__option">
-                        <% if(locals.user){ %>
+                        <% if(locals.userName){ %>
                             <div class="dropdown">
                                 <a href="#" class="sign-in-link">
-                                    <%= locals.user.name %>
+                                    <%= userName %>
                                 </a>
                                 <div class="dropdown-content">
                                     <a href="/userProfile">Profile</a>

@@ -4,9 +4,6 @@ const bcrypt = require("bcrypt")
 const fs = require('fs');
 
 
-const pageerror = async (req, res) => {
-    res.render("pageerror")
-}
 
 
 
@@ -33,11 +30,11 @@ const adminLogin = async (req, res) => {
             if (passwordMatch) {
                 // console.log('pass match');
                 req.session.admin = true;
-                return res.redirect('/admin');
+                req.session.adminName=admin.email
+                return res.redirect('/admin/dashboard');
             } else {
                 console.log('pass not match',admin);
                 return res.render("admin-login", { message: "Incorrect Password" })
-                
             }
         } else {
             return res.render("admin-login", { message: "Admin not found" })
@@ -51,10 +48,10 @@ const adminLogin = async (req, res) => {
 
 
 const loadDashboard = async (req, res) => {
-
+    // console.log(req.session);
     if (req.session.admin) {
         try {
-            res.render("dashboard")
+            res.render("dashboard",{adminName:req.session.adminName})
         } catch (error) {
             res.redirect("/admin/login")
         }
@@ -69,14 +66,25 @@ const adminLogout = async (req, res) => {
                 return res.redirect("/pageerror")
             }
             res.redirect('/admin/login?logout')
+            console.log('logouted successfully')
 
-        })
+        }) 
     } catch (error) {
         console.log(error, 'Error at admin logout');
         res.redirect("/pageerror")    }
 }
 
 
+
+const pageerror = async (req, res) => {
+    try {
+        const admin = req.session.admin;
+        res.render('pageerror',{url:req.url})
+    }
+    catch (error) {
+        res.redirect("/pageerror")
+    }
+}
 
 
 
@@ -93,11 +101,6 @@ module.exports = {
     // loadChangePasswordPage,
 
 
-    // loadAddUserPage,
-    // addNewUser,
-    // loadEditUserPage,
-    // editUser,
-    // deleteUser
 }
 
 

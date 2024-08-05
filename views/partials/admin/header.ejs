@@ -26,11 +26,13 @@
         }
 
         .navbar {
-            background-color:  rgba(0, 8, 255, 0.2);;
+            background-color: rgba(0, 8, 255, 0.2);
+            ;
         }
 
         .navbar-aside {
-            background-color:  rgba(255,0,0,.2);;
+            background-color: rgba(255, 0, 0, .2);
+            ;
         }
 
         .menu-item a.menu-link {
@@ -69,7 +71,7 @@
         <nav>
             <ul class="menu-aside ">
                 <li class="menu-item ">
-                    <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
+                    <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text h6">Dashboard</span>
                     </a>
                 </li>
@@ -130,13 +132,23 @@
                         <!-- <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
                             aria-expanded="false"> <img class="img-xs rounded-circle"
                                 src="/admin-assets/imgs/people/avatar2.jpg" alt="User"></a> -->
-                        <a class="dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
-                            aria-expanded="false">ADMIN</a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                            
-                            <a class="dropdown-item " href="/admin/logoutadmin"><i
-                                    class="material-icons md-exit_to_app"></i>Logout</a>
-                        </div>
+                        <% if(!locals.adminName) {%>
+                            <a class="dropdown-toggle text-dark h6" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
+                                aria-expanded="false">ADMIN</a>
+                            <% }else{ %>
+                                <a class="dropdown-toggle text-dark h5" data-bs-toggle="dropdown" href="#"
+                                    id="dropdownAccount" aria-expanded="false">
+
+                                    <%= adminName %>
+
+
+                                </a>
+                                <% }%>
+                                    <div class="dropdown-menu dropdown-menu-end border border-1 shadow-lg" aria-labelledby="dropdownAccount">
+
+                                        <a class="dropdown-item " href="/admin/logoutadmin"><i
+                                                class="material-icons md-exit_to_app"></i>Logout</a>
+                                    </div>
                     </li>
                 </ul>
             </div>

@@ -1,7 +1,7 @@
 <%- include("../../views/partials/admin/header") %>
     <div class="content-header row">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="content-title card-title" style=" padding: 2rem; font-family: 'Material Icons Round'; text-transform: uppercase;">
+            <h2 class="content-title card-title">
                 Products</h2>
         </div>
     </div>
@@ -11,9 +11,9 @@
         <form action="/admin/products/" method="get" class="d-inline">
             <div class="input-group input-group-sm border border-2 border-grey rounded-pill"
                 style="width: 500px; margin-left: 230px;">
-                <input type="text" class="form-control border-0 rounded-pill " placeholder=" Search Users..."
+                <input type="text" class="form-control border-0 rounded-pill bg-transparent" placeholder=" Search Products..."
                     name="search">
-                <button class="btn border-0" type="submit">Search</button>
+                <button class="btn border border-2 border-end-0 border-top-0 border-bottom-0" type="submit">Search</button>
             </div>
         </form>
     </header>

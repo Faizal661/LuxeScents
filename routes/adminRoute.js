@@ -10,7 +10,7 @@ const productController=require('../controllers/productController')
 // const upload = require('../middlewares/multer')
 
 
-adminRouter.get('/pageerror',adminController.pageerror)
+adminRouter.get('/pageerror',adminAuth,adminController.pageerror)
 
 adminRouter.get('/login',adminController.loadAdminLogin)
 adminRouter.post('/admin-login',adminController.adminLogin) 
@@ -69,8 +69,6 @@ adminRouter.get('/addProducts',adminAuth,productController.addProducts)
 
 
 
-// adminRouter.get('*', (req, res) => {
-//     res.render('admin/404')
-// })
+adminRouter.get('*',adminController.pageerror)
 
 module.exports = adminRouter; 

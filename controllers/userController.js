@@ -13,7 +13,7 @@ const loadLogin = async (req, res) => {
         if (!req.session.user) {
             return res.render('signin', { title: 'Login page' })
         } else {
-            res.redirect("/")
+            res.redirect("/homepage")
         }
     } catch (error) {
         res.redirect("/pageNotfound")
@@ -44,7 +44,9 @@ const userLogin = async (req, res) => {
         }
 
         req.session.user = findUser._id;
-        res.redirect('/');
+        req.session.userName = findUser.name
+        res.redirect('/homepage');
+        // console.log(req.session)
 
 
     } catch (error) {
@@ -96,7 +98,7 @@ const loadSignup = async (req, res) => {
         if (!req.session.user) {
             return res.render('signup')
         } else {
-            res.redirect("/")
+            res.redirect("/homepage")
         }
     } catch (error) {
         console.log(error, 'Sign up page not found');
@@ -214,7 +216,7 @@ const verifyOtp = async (req, res) => {
 
             req.session.user = saveUserData._id;
 
-            res.json({ success: true, redirectUrl: "/" })
+            res.json({ success: true, redirectUrl: "/homepage" })
         } else {
             res.status(400).json({ success: false, message: "Invalid OTP ,Please try again" })
         }
@@ -252,11 +254,10 @@ const resendOtp = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
     try {
-        const user = req.session.user;
-        if (user) {
-            const userData = await User.findOne({ _id: user });
-            console.log(userData);
-            res.render('homepage', { user: userData })
+        const userName = req.session.userName
+        if (userName) {
+            // console.log(userData);
+            res.render('homepage', { userName: userName })
             // res.render('dashboard', { user: user.name, email: user.email, phone: user.phone, image: user.image })
         } else {
             return res.render('homepage')
@@ -269,23 +270,21 @@ const loadHomepage = async (req, res) => {
 }
 
 
-const loadShopPage=async(req,res)=>{
+const loadShopPage = async (req, res) => {
     try {
-        // console.log('sadfsdfas');
-            res.render('shop')
-            // res.render('dashboard', { user: user.name, email: user.email, phone: user.phone, image: user.image })
-       
+        res.render('shop', { userName: req.session.userName })
+
     } catch (error) {
         console.log(error, 'ShopPage not loading');
         res.status(500).send("server error")
     }
 }
 
-const loadSingleProduct=async(req,res)=>{
+const loadSingleProduct = async (req, res) => {
     try {
-            res.render('singleProduct')
-            // res.render('dashboard', { user: user.name, email: user.email, phone: user.phone, image: user.image })
-       
+        const userData = req.session.user
+        res.render('singleProduct', { userName: req.session.userName })
+
     } catch (error) {
         console.log(error, 'Product detailed page is not loading');
         res.status(500).send("server error")
@@ -317,7 +316,8 @@ const userLogout = async (req, res) => {
 
 const pageNotfound = async (req, res) => {
     try {
-        res.render('404')
+        const user = req.session.user;
+        res.render('404', { url: req.url })
     }
     catch (error) {
         res.redirect("/pageNotfound")
