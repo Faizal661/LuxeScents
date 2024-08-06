@@ -1,4 +1,8 @@
 const Product=require('../models/productSchema')
+const Category=require('../models/categorySchema')
+const Brand= require('../models/brandSchema')
+const upload = require('../middlewares/multer')
+const path = require('path');
 
 
 const productInfo=async(req,res)=>{
@@ -58,14 +62,54 @@ const productunBlocked=async(req,res)=>{
    }
 }
 
-const addProducts=async(req,res)=>{
+const getAddProduct=async(req,res)=>{
     try {
-        res.render('addProducts',{adminName:req.session.adminName})
+        const categories = await Category.find({});
+        const brands = await Brand.find({});
+        res.render('addProducts',{adminName:req.session.adminName,categories: categories,brands:brands})
     } catch (error) {
         console.error(error);
         res.redirect("/pageerror")
     }
 }
+
+
+const uploadImages = upload.array('productImages', 5);
+
+
+const addProduct = async (req, res) => {
+    try {
+        uploadImages(req, res, async (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(400).send('Error uploading files.');
+            }
+
+            const imagePaths = req.files.map(file => file.path);
+
+            const newProduct = new Product({
+                productName: req.body.productName,
+                description: req.body.description,
+                brand: req.body.brands,
+                category: req.body.category,
+                regularPrice: req.body.regularPrice,
+                salePrice: req.body.salePrice,
+                gender: req.body.gender,
+                size: req.body.size, 
+                quantity: req.body.quantity,
+                productImages: imagePaths,
+                status: req.body.status,
+            });
+
+            await newProduct.save();
+
+            res.redirect('/admin/products');
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).redirect('/pageerror'); 
+    }
+};
 
 
 
@@ -78,7 +122,8 @@ module.exports={
     productInfo,
     productBlocked,
     productunBlocked,
-    addProducts
+    getAddProduct,
+    addProduct
 }
 
 

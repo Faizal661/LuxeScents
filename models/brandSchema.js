@@ -5,10 +5,10 @@ const brandSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    brnadImage:{
-        type:[String],
-        required:true
-    },
+    // brnadImage:{
+    //     type:[String],
+    //     required:true
+    // },
     isBlocked:{
         type:Boolean,
         default:false

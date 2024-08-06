@@ -33,8 +33,8 @@ const productSchema = new mongoose.Schema({
         default: "Unisex"
     },
     size: {
-        type: String,
-        enum: ["25ml", "50ml", "75ml","100ml","150ml"],
+        type: [String],
+        enum: ["25ml", "50ml", "75ml", "100ml", "150ml"],
         required: true,
         default: "50ml"
     },
@@ -42,7 +42,7 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    productImage: {
+    productImages: {
         type: [String],
         required: true,
     },
@@ -55,7 +55,32 @@ const productSchema = new mongoose.Schema({
         enum: ["Available", "Out of Stock", "Discountinued"],
         required: true,
         default: "Available"
-    }
+    },
+    rating: {
+        type: Number,
+        default: 0,
+    },
+    reviews: [
+        {
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+                required: true,
+            },
+            rating: {
+                type: Number,
+                required: true,
+            },
+            comment: {
+                type: String,
+                required: true,
+            },
+            createdAt: {
+                type: Date,
+                default: Date.now,
+            },
+        },
+    ],
 }, { timestamps: true });
 
 module.exports = mongoose.model("Product", productSchema)
