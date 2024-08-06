@@ -28,6 +28,12 @@ adminRouter.get('/unblockCustomer',adminAuth,customerController.customerunBlocke
 //category
 adminRouter.get('/category',adminAuth,categoryController.categoryInfo)
 adminRouter.post('/addCategory',adminAuth,categoryController.addCategory)
+adminRouter.get('/editCategory',adminAuth,categoryController.getEditCategory)
+adminRouter.post('/editCategory/:id',adminAuth,categoryController.EditCategory)
+
+adminRouter.get('/unlistCategory',adminAuth,categoryController.unlistCategory)
+adminRouter.get('/listCategory',adminAuth,categoryController.listCategory)
+
 
 
 //product
