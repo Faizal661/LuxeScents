@@ -1,4 +1,5 @@
 const User = require('../models/userSchema')
+const Product=require('../models/productSchema')
 const nodemailer = require("nodemailer")
 const bcrypt = require('bcrypt');
 
@@ -21,7 +22,7 @@ const loadLogin = async (req, res) => {
 }
 
 //---------------------
-
+ 
 const userLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -271,7 +272,8 @@ const loadHomepage = async (req, res) => {
 
 const loadShopPage = async (req, res) => {
     try {
-        res.render('shop', { userName: req.session.userName })
+        const products = await Product.find();
+        res.render('shop', { userName: req.session.userName , products })
 
     } catch (error) {
         console.log(error, 'ShopPage not loading');
