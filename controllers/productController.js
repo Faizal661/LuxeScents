@@ -72,14 +72,14 @@ const getAddProduct=async(req,res)=>{
         res.redirect("/pageerror")
     }
 }
-
+ 
 
 const uploadImages = upload.array('productImages', 5);
 
 
 const addProduct = async (req, res) => {
     try {
-       
+        
 
         uploadImages(req, res, async (err) => {
             if (err) {
@@ -88,9 +88,7 @@ const addProduct = async (req, res) => {
             }
            
 
-            console.log('Files:', req.files);
             console.log('Body:', req.body);
-
             console.log('Uploaded files:', req.files); // Debug log
 
             if (!req.files || req.files.length === 0) {
@@ -130,7 +128,6 @@ const addProduct = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
-
 
 
 

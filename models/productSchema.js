@@ -10,7 +10,8 @@ const productSchema = new mongoose.Schema({
         required: true,
     },
     brand: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Brand",
         required: true,
     },
     category: {
@@ -52,7 +53,7 @@ const productSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["Available", "Out of Stock", "Discountinued"],
+        enum: ["Available", "Out of Stock", "Discontinued"],
         required: true,
         default: "Available"
     },
@@ -80,7 +81,7 @@ const productSchema = new mongoose.Schema({
                 default: Date.now,
             },
         },
-    ],
+    ], 
 }, { timestamps: true });
 
 module.exports = mongoose.model("Product", productSchema)

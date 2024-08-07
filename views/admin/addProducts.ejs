@@ -218,15 +218,7 @@
             function handleFormSubmit(event) {
 
                 event.preventDefault();
-                // if (!validateForm()) {
-                //     console.log("Form validation failed")
-                //     return;
-                // }
-                // const name = document.getElementsByName("productName")[0].value;
-                // const description = document.getElementById("descriptionId").value;
-                // const quantity = document.getElementById("quantityId").value;
-                // const regularPrice = document.getElementById("regularPriceId").value;
-                // const salePrice = document.getElementById("salePriceId").value;
+              
 
                 if (!validateForm()) {
                     console.log("Form validation failed");
@@ -243,18 +235,19 @@
                 formData.append('salePrice', formElements['salePrice'].value);
                 formData.append('gender', formElements['gender'].value);
                 formData.append('status', formElements['status'].value);
+                formData.append('brands', formElements['brands'].value);
+                formData.append('category', formElements['category'].value);
 
-                // Append checked sizes
+
                 const sizes = Array.from(document.querySelectorAll('input[name="size"]:checked')).map(cb => cb.value);
                 sizes.forEach(size => formData.append('size', size));
 
-                // Append files
+
                 const files = formElements['productImages'].files;
-                console.log(files);
+                // console.log(files);
                 for (let i = 0; i < files.length; i++) {
                     formData.append('productImages', files[i]);
                 }
-
 
                 fetch('/admin/addProduct', {
                     method: 'POST',
@@ -267,16 +260,35 @@
                     // })
 
                 })
+                    // .then(response => {
+                    //     if (!response.ok) {
+                    //         return response.json().then(err => {
+                    //             throw new Error(err.error);
+                    //         })
+                    //     }
+                    //     return response.json();
+                    // })
+                    // .then(data => {
+                    //     location.reload();
+                    // })
+
                     .then(response => {
-                        if (!response.ok) {
+                        if (response.ok) {
+                            return response.json().then(data => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: "Success",
+                                    text: "product added successfully",
+                                    timer:2000
+                                }).then(() => {
+                                    window.location.href = "/admin/products";
+                                });
+                            });
+                        } else {
                             return response.json().then(err => {
                                 throw new Error(err.error);
-                            })
+                            });
                         }
-                        return response.json();
-                    })
-                    .then(data => {
-                        location.reload();
                     })
                     .catch(error => {
                         Swal.fire({
