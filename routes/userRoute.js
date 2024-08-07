@@ -34,16 +34,23 @@ userRouter.post('/verify-otp',userController.verifyOtp)
 userRouter.post('/resend-otp',userController.resendOtp)
 
 
+
 //goole authenticaion routes
 userRouter.get('/auth/google/',passport.authenticate('google',{scope:['profile','email']}));
-userRouter.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
-    res.redirect('/')
-})
+function storeUserIdInSession(req, res) {
+    if (req.user) {
+        req.session.user = req.user._id;
+        req.session.userName=req.user.name;
+        res.redirect('/homepage');
+    }
+    
+}
+userRouter.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }),storeUserIdInSession);
 
 userRouter.get('/shoppage',userAuth,userController.loadShopPage )
 userRouter.get('/singleProduct',userAuth,userController.loadSingleProduct )
 
-
+ 
  
 
 //---------user homepage 
@@ -55,7 +62,7 @@ userRouter.get('/logout',userAuth,userController.userLogout)
 
 userRouter.get("/pageNotfound",userController.pageNotfound)
 
-
+ 
 //----------------------------------------------------
  
 module.exports = userRouter; 

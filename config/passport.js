@@ -25,6 +25,7 @@ passport.use(new GoogleStrategy({
                     googleId: profile.id
                 });
                 await user.save();
+                
                 done(null, user);
             }
         } catch (error) {
@@ -32,6 +33,8 @@ passport.use(new GoogleStrategy({
         }
     }
 ));
+
+
 
 passport.serializeUser((user,done)=>{
     done(null,user.id)

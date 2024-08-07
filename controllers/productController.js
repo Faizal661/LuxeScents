@@ -79,13 +79,33 @@ const uploadImages = upload.array('productImages', 5);
 
 const addProduct = async (req, res) => {
     try {
+       
+
         uploadImages(req, res, async (err) => {
             if (err) {
                 console.error(err);
-                return res.status(400).send('Error uploading files.');
+                return res.status(400).json({ error: "Error uploading files." });
             }
+           
 
+            console.log('Files:', req.files);
+            console.log('Body:', req.body);
+
+            console.log('Uploaded files:', req.files); // Debug log
+
+            if (!req.files || req.files.length === 0) {
+                return res.status(400).json({ error: "No files uploaded." });
+            }
+    
+
+
+            
             const imagePaths = req.files.map(file => file.path);
+
+            const existingProduct = await Product.findOne({ productName: req.body.productName });
+            if (existingProduct) {
+                return res.status(400).json({ error: "Product already exists" });
+            }
 
             const newProduct = new Product({
                 productName: req.body.productName,
@@ -95,7 +115,7 @@ const addProduct = async (req, res) => {
                 regularPrice: req.body.regularPrice,
                 salePrice: req.body.salePrice,
                 gender: req.body.gender,
-                size: req.body.size, 
+                size: Array.isArray(req.body.size) ? req.body.size : [req.body.size], 
                 quantity: req.body.quantity,
                 productImages: imagePaths,
                 status: req.body.status,
@@ -103,11 +123,11 @@ const addProduct = async (req, res) => {
 
             await newProduct.save();
 
-            res.redirect('/admin/products');
+            return res.json({ message: "Product added successfully" });
         });
     } catch (error) {
         console.error(error);
-        res.status(500).redirect('/pageerror'); 
+        return res.status(500).json({ error: "Internal server error" });
     }
 };
 
@@ -123,7 +143,8 @@ module.exports={
     productBlocked,
     productunBlocked,
     getAddProduct,
-    addProduct
+    addProduct,
+    uploadImages
 }
 
 

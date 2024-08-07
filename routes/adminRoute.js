@@ -1,51 +1,52 @@
 const express = require('express')
 const adminRouter = express.Router();
-const {userAuth,adminAuth} = require('../middlewares/authentication');
-const adminController=require('../controllers/adminController')
-const customerController=require('../controllers/customerController')
-const categoryController=require('../controllers/categoryController')
-const productController=require('../controllers/productController')
+const { userAuth, adminAuth } = require('../middlewares/authentication');
+const adminController = require('../controllers/adminController')
+const customerController = require('../controllers/customerController')
+const categoryController = require('../controllers/categoryController')
+const productController = require('../controllers/productController')
+const upload = require('../middlewares/multer')
 
 
 // const upload = require('../middlewares/multer')
 
 
-adminRouter.get('/pageerror',adminAuth,adminController.pageerror)
+adminRouter.get('/pageerror', adminAuth, adminController.pageerror)
 
-adminRouter.get('/login',adminController.loadAdminLogin)
-adminRouter.post('/admin-login',adminController.adminLogin) 
+adminRouter.get('/login', adminController.loadAdminLogin)
+adminRouter.post('/admin-login', adminController.adminLogin)
 
 //admin homepage  
-adminRouter.get('/dashboard', adminAuth,adminController.loadDashboard)
-adminRouter.get('/',adminAuth,adminController.loadDashboard) 
-adminRouter.get('/logoutadmin',adminAuth,adminController.adminLogout)
+adminRouter.get('/dashboard', adminAuth, adminController.loadDashboard)
+adminRouter.get('/', adminAuth, adminController.loadDashboard)
+adminRouter.get('/logoutadmin', adminAuth, adminController.adminLogout)
 
 //users
-adminRouter.get('/users',adminAuth,customerController.customerInfo)
-adminRouter.get('/blockCustomer',adminAuth,customerController.customerBlocked)
-adminRouter.get('/unblockCustomer',adminAuth,customerController.customerunBlocked)
+adminRouter.get('/users', adminAuth, customerController.customerInfo)
+adminRouter.get('/blockCustomer', adminAuth, customerController.customerBlocked)
+adminRouter.get('/unblockCustomer', adminAuth, customerController.customerunBlocked)
 
 //category
-adminRouter.get('/category',adminAuth,categoryController.categoryInfo)
-adminRouter.post('/addCategory',adminAuth,categoryController.addCategory)
-adminRouter.get('/editCategory',adminAuth,categoryController.getEditCategory)
-adminRouter.post('/editCategory/:id',adminAuth,categoryController.EditCategory)
+adminRouter.get('/category', adminAuth, categoryController.categoryInfo)
+adminRouter.post('/addCategory', adminAuth, categoryController.addCategory)
+adminRouter.get('/editCategory', adminAuth, categoryController.getEditCategory)
+adminRouter.post('/editCategory/:id', adminAuth, categoryController.EditCategory)
 
-adminRouter.get('/unlistCategory',adminAuth,categoryController.unlistCategory)
-adminRouter.get('/listCategory',adminAuth,categoryController.listCategory)
+adminRouter.get('/unlistCategory', adminAuth, categoryController.unlistCategory)
+adminRouter.get('/listCategory', adminAuth, categoryController.listCategory)
 
 
 
 //product
-adminRouter.get('/products',adminAuth,productController.productInfo)
-adminRouter.get('/blockProduct',adminAuth,productController.productBlocked)
-adminRouter.get('/unblockProduct',adminAuth,productController.productunBlocked)
+adminRouter.get('/products', adminAuth, productController.productInfo)
+adminRouter.get('/blockProduct', adminAuth, productController.productBlocked)
+adminRouter.get('/unblockProduct', adminAuth, productController.productunBlocked)
 
-adminRouter.get('/addProduct',adminAuth,productController.getAddProduct)
-adminRouter.post('/addProduct',adminAuth,productController.addProduct)
- 
-  
- 
+adminRouter.get('/addProduct', adminAuth, productController.getAddProduct)
+adminRouter.post('/addProduct', adminAuth, productController.addProduct)
+
+
+
 
 
 
@@ -76,6 +77,6 @@ adminRouter.post('/addProduct',adminAuth,productController.addProduct)
 
 
 
-adminRouter.get('*',adminController.pageerror)
+adminRouter.get('*', adminController.pageerror)
 
 module.exports = adminRouter; 

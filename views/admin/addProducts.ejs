@@ -92,14 +92,14 @@
                             <div class="col-md-6">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
-                                    <input type="text" name="productName" placeholder="Type here" class="form-control"
-                                        id="product_name" />
+                                    <input type="text" name="productName" value="product one" placeholder="Type here"
+                                        class="form-control" id="product_name" />
                                     <div id="name-error" class="error-message"></div>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
                                     <textarea placeholder="Type here" name="description" class="form-control"
-                                        id="descriptionId" rows="3"></textarea>
+                                        id="descriptionId" rows="3">product description</textarea>
                                     <div id="description-error" class="error-message"></div>
                                 </div>
                                 <div class="mb-4">
@@ -125,14 +125,14 @@
                                 <div class="mb-4">
                                     <label class="form-label">Regular Price</label>
                                     <input type="number" name="regularPrice" id="regularPriceId" placeholder="Type here"
-                                        class="form-control" />
+                                        class="form-control" value="110" />
                                     <div id="regularPrice-error" class="error-message"></div>
 
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Sale Price</label>
                                     <input type="number" name="salePrice" id="salePriceId" placeholder="Type here"
-                                        class="form-control" />
+                                        class="form-control" value="100" />
                                     <div id="salePrice-error" class="error-message"></div>
 
                                 </div>
@@ -157,7 +157,7 @@
                                         </div>
                                         <div class="form-check">
                                             <input type="checkbox" name="size" value="50ml" class="form-check-input"
-                                                id="size-50ml" />
+                                                id="size-50ml" checked />
                                             <label class="form-check-label" for="size-50ml">50ml</label>
                                         </div>
                                         <div class="form-check">
@@ -167,7 +167,7 @@
                                         </div>
                                         <div class="form-check">
                                             <input type="checkbox" name="size" value="100ml" class="form-check-input"
-                                                id="size-100ml" />
+                                                id="size-100ml" checked />
                                             <label class="form-check-label" for="size-100ml">100ml</label>
                                         </div>
                                         <div class="form-check">
@@ -180,7 +180,7 @@
                                 <div class="mb-4">
                                     <label class="form-label">Quantity</label>
                                     <input type="number" name="quantity" placeholder="Type here" id="quantityId"
-                                        class="form-control" />
+                                        value="1111" class="form-control" />
                                     <div id="quantity-error" class="error-message"></div>
 
                                 </div>
@@ -218,26 +218,53 @@
             function handleFormSubmit(event) {
 
                 event.preventDefault();
-                if (!validateForm()) {
+                // if (!validateForm()) {
+                //     console.log("Form validation failed")
+                //     return;
+                // }
+                // const name = document.getElementsByName("productName")[0].value;
+                // const description = document.getElementById("descriptionId").value;
+                // const quantity = document.getElementById("quantityId").value;
+                // const regularPrice = document.getElementById("regularPriceId").value;
+                // const salePrice = document.getElementById("salePriceId").value;
 
-                    console.log("not validate working")
+                if (!validateForm()) {
+                    console.log("Form validation failed");
                     return;
                 }
-                const name = document.getElementsByName("productName")[0].value;
-                const description = document.getElementById("descriptionId").value;
-                const quantity = document.getElementById("quantityId").value;
-                const regularPrice = document.getElementById("regularPriceId").value;
-                const salePrice = document.getElementById("salePriceId").value;
+
+                const formData = new FormData();
+                const formElements = event.target.elements;
+
+                formData.append('productName', formElements['productName'].value);
+                formData.append('description', formElements['description'].value);
+                formData.append('quantity', formElements['quantity'].value);
+                formData.append('regularPrice', formElements['regularPrice'].value);
+                formData.append('salePrice', formElements['salePrice'].value);
+                formData.append('gender', formElements['gender'].value);
+                formData.append('status', formElements['status'].value);
+
+                // Append checked sizes
+                const sizes = Array.from(document.querySelectorAll('input[name="size"]:checked')).map(cb => cb.value);
+                sizes.forEach(size => formData.append('size', size));
+
+                // Append files
+                const files = formElements['productImages'].files;
+                console.log(files);
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('productImages', files[i]);
+                }
 
 
                 fetch('/admin/addProduct', {
                     method: 'POST',
-                    headers: {
-                        'content-type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        productName, description, quantity, regularPrice, salePrice
-                    })
+                    body: formData
+                    // headers: {
+                    //     'content-type': 'application/json'
+                    // },
+                    // body: JSON.stringify({
+                    //     name, description, quantity, regularPrice, salePrice
+                    // })
 
                 })
                     .then(response => {
@@ -252,20 +279,12 @@
                         location.reload();
                     })
                     .catch(error => {
-                        if (error.message === "Product already exists") {
-                            Swal.fire({
-                                icon: 'error',
-                                title: "Oops",
-                                text: "Product already exists"
-                            })
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Oops",
-                                text: "An Error occured while adding the Product",
-                            })
-                        }
-                    })
+                        Swal.fire({
+                            icon: 'error',
+                            title: "Oops",
+                            text: error.message || "An error occurred while adding the product"
+                        });
+                    });
 
 
             }
@@ -343,12 +362,12 @@
                 const fileInput = event.target;
                 const previewContainer = document.getElementById('imagePreview');
                 previewContainer.innerHTML = ''; // Clear previous previews
-        
+
                 const files = fileInput.files;
                 for (const file of files) {
                     if (file) {
                         const reader = new FileReader();
-                        reader.onload = function(e) {
+                        reader.onload = function (e) {
                             const img = document.createElement('img');
                             img.src = e.target.result;
                             img.classList.add('img-thumbnail');

@@ -166,12 +166,13 @@ const registerNew = async (req, res) => {
         const otp = generateOtp();
         const emailSent = await sendVerificationEmail(email, otp);
 
-        if (!emailSent) {
+        if (!emailSent) { 
             return res.json("email-error")
         }
 
         req.session.userOtp = otp;
         req.session.userData = { email, username, phone, password };
+        req.session.userName= username
 
 
         //render otp entering page
@@ -254,14 +255,12 @@ const resendOtp = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
     try {
-        const userName = req.session.userName
+        const userName = req.session.userName 
         if (userName) {
             // console.log(userData);
             res.render('homepage', { userName: userName })
-            // res.render('dashboard', { user: user.name, email: user.email, phone: user.phone, image: user.image })
         } else {
             return res.render('homepage')
-            // res.render('dashboard', { msg: "Unauthorized User" })
         }
     } catch (error) {
         console.log(error, 'Homepage not loading');
@@ -277,9 +276,9 @@ const loadShopPage = async (req, res) => {
     } catch (error) {
         console.log(error, 'ShopPage not loading');
         res.status(500).send("server error")
-    }
+    } 
 }
-
+ 
 const loadSingleProduct = async (req, res) => {
     try {
         const userData = req.session.user

@@ -17,17 +17,18 @@ const userAuth = (req, res, next) => {
                     })
                 }else {
                     res.redirect('/login')
-                }
+                } 
             }) 
             .catch(error => {
                 console.log("Error in user auth middleware", error)
-                res.status(500).send("Internal Server error")
+                res.redirect("/pageNotfound")
             })
 
     } else {
         res.redirect('/login')
     }
 }
+
 
 const adminAuth = (req, res, next) => {
     if (req.session.admin) {
