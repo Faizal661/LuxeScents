@@ -92,14 +92,14 @@
                             <div class="col-md-6">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
-                                    <input type="text" name="productName" value="product one" placeholder="Type here"
+                                    <input type="text" name="productName"  placeholder="Type here"
                                         class="form-control" id="product_name" />
                                     <div id="name-error" class="error-message"></div>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
                                     <textarea placeholder="Type here" name="description" class="form-control"
-                                        id="descriptionId" rows="3">product description</textarea>
+                                        id="descriptionId" rows="3"></textarea>
                                     <div id="description-error" class="error-message"></div>
                                 </div>
                                 <div class="mb-4">
@@ -125,14 +125,14 @@
                                 <div class="mb-4">
                                     <label class="form-label">Regular Price</label>
                                     <input type="number" name="regularPrice" id="regularPriceId" placeholder="Type here"
-                                        class="form-control" value="110" />
+                                        class="form-control"  />
                                     <div id="regularPrice-error" class="error-message"></div>
 
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Sale Price</label>
                                     <input type="number" name="salePrice" id="salePriceId" placeholder="Type here"
-                                        class="form-control" value="100" />
+                                        class="form-control"  />
                                     <div id="salePrice-error" class="error-message"></div>
 
                                 </div>
@@ -180,7 +180,7 @@
                                 <div class="mb-4">
                                     <label class="form-label">Quantity</label>
                                     <input type="number" name="quantity" placeholder="Type here" id="quantityId"
-                                        value="1111" class="form-control" />
+                                         class="form-control" />
                                     <div id="quantity-error" class="error-message"></div>
 
                                 </div>
@@ -308,13 +308,13 @@
                 const quantity = document.getElementById("quantityId").value.trim()
                 const regularPrice = document.getElementById("regularPriceId").value.trim();
                 const salePrice = document.getElementById("salePriceId").value.trim();
-
+                
                 let isValid = true;
-
+                
                 if (name == "") {
                     displayErrorMessage("name-error", "Please enter a name")
                     isValid = false
-
+                    
                 } else if (!/^[a-zA-Z\s]+$/.test(name)) {
                     displayErrorMessage("name-error", "Product name should contain only aplphabetic characters")
                     isValid = false

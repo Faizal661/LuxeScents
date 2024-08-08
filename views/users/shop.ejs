@@ -1,5 +1,16 @@
 <%- include('../partials/users/userHeader') -%>
 
+<STYLE>
+
+
+ .product__item:hover {
+    cursor: pointer; 
+}
+</STYLE>
+
+
+
+
 
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-option">
@@ -41,15 +52,29 @@
                                         <div class="card-body">
                                             <div class="shop__sidebar__categories">
                                                 <ul class="nice-scroll">
-                                                    <li><a href="#">Men (20)</a></li>
-                                                    <li><a href="#">Women (20)</a></li>
-                                                    <li><a href="#">Unisex (20)</a></li>
-                                                    <li><a href="#">Floral Fragrances (20)</a></li>
-                                                    <li><a href="#">Citrus Scents (20)</a></li>
-                                                    <li><a href="#">Woody Aromas (20)</a></li>
-                                                    <li><a href="#">Gourmand Fragrances (20)</a></li>
-                                                    <li><a href="#">Fresh Scents (20)</a></li>
-                                                    <li><a href="#">Aquatic Fragrances (20)</a></li>
+                                                    <li><a href="#">Floral Fragrances</a></li>
+                                                    <li><a href="#">Citrus Scents </a></li>
+                                                    <li><a href="#">Woody Aromas </a></li>
+                                                    <li><a href="#">Gourmand Fragrances </a></li>
+                                                    <li><a href="#">Fresh Scents</a></li>
+                                                    <li><a href="#">Aquatic Fragrances </a></li>
+                                                    
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-heading">
+                                        <a data-toggle="collapse" data-target="#collapseFive">Gender</a>
+                                    </div>
+                                    <div id="collapseFive" class="collapse show" data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <div class="shop__sidebar__tags">
+                                                <ul class="nice-scroll">
+                                                    <li><a href="#">Men </a></li>
+                                                    <li><a href="#">Women </a></li>
+                                                    <li><a href="#">Unisex</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -80,11 +105,11 @@
                                         <div class="card-body">
                                             <div class="shop__sidebar__price">
                                                 <ul>
-                                                    <li><a href="#">$0.00 - $50.00</a></li>
-                                                    <li><a href="#">$50.00 - $100.00</a></li>
-                                                    <li><a href="#">$100.00 - $150.00</a></li>
-                                                    <li><a href="#">$150.00 - $200.00</a></li>
-                                                    <li><a href="#">$200.00 - $250.00</a></li>
+                                                    <li><a href="#">₹0.00 - ₹50.00</a></li>
+                                                    <li><a href="#">₹50.00 - ₹100.00</a></li>
+                                                    <li><a href="#">₹100.00 - ₹150.00</a></li>
+                                                    <li><a href="#">₹150.00 - ₹200.00</a></li>
+                                                    <li><a href="#">₹200.00 - ₹250.00</a></li>
                                                     <li><a href="#">250.00+</a></li>
                                                 </ul>
                                             </div>
@@ -213,27 +238,27 @@
 
                     <div class="row">
                         <% products.forEach(product => { %>
-                        <div class="col-lg-4 col-md-6 col-sm-6">
-                            <div class="product__item">
+                        <div class="col-lg-4 col-md-6 col-sm-6  " onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
+                            <div class="product__item border border-3 rounded rounded-3 p-2">
                                 <div class="product__item__pic set-bg" data-setbg="<%= product.productImages[0].replace(/\\/g, '/') %>">
                                     <ul class="product__hover">
                                         <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                                        <li><a href="/singleProduct/<%= product._id %>"><img src="img/icon/search.png" alt=""></a></li>
+                                        <li><a href="#"><img src="img/icon/cart.png" alt=""></a></li>
                                     </ul>
                                 </div>
                                 <div class="product__item__text">
-                                    <h6><%= product.productName %></h6>
-                                    <a href="#" class="add-cart">+ Add To Cart</a>
-                                    <div class="rating">
-                                        <% for (let i = 0; i < 5; i++) { %>
-                                            <% if (i < product.rating) { %>
-                                                <i class="fa fa-star"></i>
-                                            <% } else { %>
-                                                <i class="fa fa-star-o"></i>
-                                            <% } %>
-                                        <% } %>
+                                
+                                    <h5><%= product.productName %></h5>
+                                        <div class="d-block">
+                                            <p class="h6 fw-lighter"> Brand : <%= product.brand.brandName %></p>
+                                            <p class="h6 fw-lighter"> Note : <%= product.category.name %></p>
+
+                                        </div>
+                                    <div class="d-flex ">
+                                        <h5 >₹<%= product.salePrice %></h5>
+                                        <h5 class="pl-4 text-muted  " style="text-decoration: line-through;">₹<%= product.regularPrice %></h5>
                                     </div>
-                                    <h5>$<%= product.salePrice %></h5>
+                                  
                                     
                                 </div>
                             </div>
@@ -261,14 +286,6 @@
         </div>
     </section>
 
-    <script>
-        // If you're using a background image with set-bg
-        document.querySelectorAll('.set-bg').forEach(el => {
-            let bg = el.getAttribute('data-setbg');
-            el.style.backgroundImage = 'url(' + bg + ')';
-        });
-    </script>
-    <!-- Shop Section End -->
 
 
     <%- include('../partials/users/userFooter') -%>

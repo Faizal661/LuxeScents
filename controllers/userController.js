@@ -1,5 +1,5 @@
 const User = require('../models/userSchema')
-const Product=require('../models/productSchema')
+const Product = require('../models/productSchema')
 const nodemailer = require("nodemailer")
 const bcrypt = require('bcrypt');
 
@@ -22,7 +22,7 @@ const loadLogin = async (req, res) => {
 }
 
 //---------------------
- 
+
 const userLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -167,13 +167,13 @@ const registerNew = async (req, res) => {
         const otp = generateOtp();
         const emailSent = await sendVerificationEmail(email, otp);
 
-        if (!emailSent) { 
+        if (!emailSent) {
             return res.json("email-error")
         }
 
         req.session.userOtp = otp;
         req.session.userData = { email, username, phone, password };
-        req.session.userName= username
+        req.session.userName = username
 
 
         //render otp entering page
@@ -256,7 +256,7 @@ const resendOtp = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
     try {
-        const userName = req.session.userName 
+        const userName = req.session.userName
         if (userName) {
             // console.log(userData);
             res.render('homepage', { userName: userName })
@@ -272,19 +272,22 @@ const loadHomepage = async (req, res) => {
 
 const loadShopPage = async (req, res) => {
     try {
-        const products = await Product.find();
-        res.render('shop', { userName: req.session.userName , products })
+        const products = await Product.find().populate('brand').populate('category');
+        res.render('shop', { userName: req.session.userName, products })
 
     } catch (error) {
         console.log(error, 'ShopPage not loading');
         res.status(500).send("server error")
-    } 
+    }
 }
- 
+
 const loadSingleProduct = async (req, res) => {
     try {
-        const userData = req.session.user
-        res.render('singleProduct', { userName: req.session.userName })
+        const id = req.query.id
+        //    console.log(id);
+        const relatedProducts = await Product.find().populate('brand').populate('category');
+        const singleProduct = await Product.findOne({ _id: id }).populate('brand').populate('category').populate({ path: 'reviews.user', select: 'name' });
+        res.render('singleProduct', { userName: req.session.userName, singleProduct, relatedProducts })
 
     } catch (error) {
         console.log(error, 'Product detailed page is not loading');

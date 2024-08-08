@@ -88,8 +88,8 @@ const addProduct = async (req, res) => {
             }
            
 
-            console.log('Body:', req.body);
-            console.log('Uploaded files:', req.files); // Debug log
+            // console.log('Body:', req.body);
+            // console.log('Uploaded files:', req.files); // Debug log
 
             if (!req.files || req.files.length === 0) {
                 return res.status(400).json({ error: "No files uploaded." });
@@ -99,6 +99,8 @@ const addProduct = async (req, res) => {
 
             
             const imagePaths = req.files.map(file => file.path);
+            const imageURL = imagePaths.map(path => path.replace('public\\', ''));
+            console.log(imageURL);
 
             const existingProduct = await Product.findOne({ productName: req.body.productName });
             if (existingProduct) {
@@ -115,7 +117,7 @@ const addProduct = async (req, res) => {
                 gender: req.body.gender,
                 size: Array.isArray(req.body.size) ? req.body.size : [req.body.size], 
                 quantity: req.body.quantity,
-                productImages: imagePaths,
+                productImages: imageURL,
                 status: req.body.status,
             });
 
