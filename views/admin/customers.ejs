@@ -40,7 +40,11 @@
                             <%= data[i].email %>
                         </td>
                         <td class=" border border-2 text-center">
+                            <% if(data[i].phone==null){ %>
+                                Google user
+                            <% }else{ %>
                             <%= data[i].phone %>
+                            <% } %>
                         </td>
                         <td class=" border border-2 text-center ">
                             <% if(data[i].isBlocked===false) {%>

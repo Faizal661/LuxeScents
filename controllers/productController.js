@@ -19,7 +19,7 @@ const productInfo=async(req,res)=>{
         const limit=8
         const productsData=await Product.find({
             productName:{$regex:".*"+search+".*"}
-        })
+        }).populate('brand')
         .limit(limit*1)
         .skip((page-1)*limit)
         .exec();
@@ -28,12 +28,14 @@ const productInfo=async(req,res)=>{
             productName:{$regex:".*"+search+".*"}
         }).countDocuments();
 
+        
         res.render('products',{
             adminName:req.session.adminName,
             data:productsData,
             totalPages:Math.ceil(count/limit),
             currentPage:page,
-            limit:limit
+            limit:limit,
+            
         })
 
     } catch (error) {

@@ -1,16 +1,16 @@
 <%- include('../partials/users/userHeader') -%>
 
-<style>
-.star-large {
-    font-size: 2em;
-}
+    <style>
+        .star-large {
+            font-size: 2em;
+        }
 
-.review-count {
-    font-size: 1em;
-    margin-left: 10px;
-    color: #333; 
-}
-</style>
+        .review-count {
+            font-size: 1em;
+            margin-left: 10px;
+            color: #333;
+        }
+    </style>
     <!-- Header Section End -->
 
     <!-- Shop Details Section Begin -->
@@ -32,32 +32,37 @@
                 <div class="row">
                     <div class="col-lg-3 col-md-3">
                         <ul class="nav nav-tabs" role="tablist">
-                            <% singleProduct.productImages.forEach((image, index) => { %>
+                            <% singleProduct.productImages.forEach((image, index)=> { %>
                                 <li class="nav-item">
-                                    <a class="nav-link <%= index === 0 ? 'active' : '' %>" data-toggle="tab" href="#tabs-<%= index + 1 %>" role="tab">
-                                        <div class="product__thumb__pic set-bg" data-setbg="<%= image.replace(/\\/g, '/') %>">
+                                    <a class="nav-link <%= index === 0 ? 'active' : '' %>" data-toggle="tab"
+                                        href="#tabs-<%= index + 1 %>" role="tab">
+                                        <div class="product__thumb__pic set-bg"
+                                            data-setbg="<%= image.replace(/\\/g, '/') %>">
                                         </div>
                                     </a>
                                 </li>
-                            <% }) %>
+                                <% }) %>
                         </ul>
                     </div>
                     <div class="col-lg-6 col-md-9">
                         <div class="tab-content">
-                            <% singleProduct.productImages.forEach((image, index) => { %>
-                                <div class="tab-pane <%= index === 0 ? 'active' : '' %>" id="tabs-<%= index + 1 %>" role="tabpanel">
+                            <% singleProduct.productImages.forEach((image, index)=> { %>
+                                <div class="tab-pane <%= index === 0 ? 'active' : '' %>" id="tabs-<%= index + 1 %>"
+                                    role="tabpanel">
                                     <div class="product__details__pic__item">
-                                        <img src="<%= image.replace(/\\/g, '/') %>" alt="" style="width: 450px; height: 500px; object-fit: cover;">
+                                        <img  src="<%= image.replace(/\\/g, '/') %>" alt=""
+                                            style="width: 450px; height: 500px; object-fit: cover;">
                                     </div>
                                 </div>
-                            <% }) %>
+                                <% }) %>
                         </div>
                     </div>
                 </div>
-                
 
 
-                
+
+
+
             </div>
         </div>
         <div class="product__details__content">
@@ -65,32 +70,41 @@
                 <div class="row d-flex justify-content-center">
                     <div class="col-lg-8">
                         <div class="product__details__text">
-                            <h4><%= singleProduct.productName %></h4>
+                            <h4>
+                                <%= singleProduct.productName %>
+                            </h4>
                             <div class="rating">
-                                <% for (let i = 0; i < 5; i++) { %>
+                                <% for (let i=0; i < 5; i++) { %>
                                     <% if (i < singleProduct.rating) { %>
                                         <i class="fa fa-star"></i>
-                                    <% } else { %>
-                                        <i class="fa fa-star-o"></i>
-                                    <% } %>
-                                <% } %>
-                                <span> - <%= singleProduct.reviews.length %> Reviews</span>
+                                        <% } else { %>
+                                            <i class="fa fa-star-o"></i>
+                                            <% } %>
+                                                <% } %>
+                                                    <span> - <%= singleProduct.reviews.length %> Reviews</span>
                             </div>
-                            <h3>₹<%= singleProduct.salePrice %><span>   ₹<%= singleProduct.regularPrice %></span></h3>
-                            <p><%= singleProduct.description %></p>
-                                <p class="fw-lighter"> Brand : <%= singleProduct.brand.brandName %></p>
-                                <p class="fw-lighter"> Note : <%= singleProduct.category.name %></p>
-                            <h5 class="mb-3"><%= singleProduct.status %> (<%= singleProduct.quantity %> in Stock)</h5>
+                            <h3>₹<%= singleProduct.salePrice %><span> ₹<%= singleProduct.regularPrice %></span></h3>
+                            <p>
+                                <%= singleProduct.description %>
+                            </p>
+                            <p class="fw-lighter"> Brand : <%= singleProduct.brand.brandName %>
+                            </p>
+                            <p class="fw-lighter"> Note : <%= singleProduct.category.name %>
+                            </p>
+                            <h5 class="mb-3">
+                                <%= singleProduct.status %> (<%= singleProduct.quantity %> in Stock)
+                            </h5>
 
                             <div class="product__details__option">
                                 <div class="product__details__option__size">
                                     <span>Sizes : </span>
-                                    <% singleProduct.size.forEach((size, index) => { %>
+                                    <% singleProduct.size.forEach((size, index)=> { %>
                                         <label for="size-<%= index %>">
                                             <%= size %>
-                                            <input type="radio" id="size-<%= index %>" name="size" value="<%= size %>">
+                                                <input type="radio" id="size-<%= index %>" name="size"
+                                                    value="<%= size %>">
                                         </label>
-                                    <% }) %>
+                                        <% }) %>
                                 </div>
                             </div>
 
@@ -104,7 +118,9 @@
                             </div>
 
                             <div class="product__details__cart__option">
-                                <a href="#" class="primary-btn bg-success text-dark border border-5 fw-bolder rounded ">Buy it now</a>
+                                <a href="#"
+                                    class="primary-btn bg-success text-dark border border-5 fw-bolder rounded ">Buy it
+                                    now</a>
                             </div>
 
                             <div class="product__details__btns__option">
@@ -203,47 +219,55 @@
 
                                 <div class="tab-pane" id="tabs-7" role="tabpanel">
                                     <div class="product__details__tab__content">
-                                        
+
                                         <!-- Total Rating Display -->
                                         <div class="main-rating mb-5">
                                             <p class="note">Total Ratings</p>
                                             <div class="rating">
-                                                <% for (let i = 0; i < singleProduct.rating; i++) { %>
+                                                <% for (let i=0; i < singleProduct.rating; i++) { %>
                                                     <i class="fa fa-star star-large" style="color: yellow;"></i>
-                                                <% } %>
-                                                <% for (let i = singleProduct.rating; i < 5; i++) { %>
-                                                    <i class="fa fa-star-o star-large"></i>
-                                                <% } %>
-                                                <span class="review-count">(<%= singleProduct.reviews.length %> Reviews)</span>
+                                                    <% } %>
+                                                        <% for (let i=singleProduct.rating; i < 5; i++) { %>
+                                                            <i class="fa fa-star-o star-large"></i>
+                                                            <% } %>
+                                                                <span class="review-count">(<%=
+                                                                        singleProduct.reviews.length %> Reviews)</span>
                                             </div>
                                         </div>
-                                        
-                                
+
+
                                         <!-- Reviews Section -->
                                         <p class="note">All Reviews</p>
-                                        <% if (singleProduct.reviews.length > 0) { %>
-                                            <% singleProduct.reviews.forEach(review => { %>
-                                                <div class="product__details__tab__content__item " style="padding-left: 20px;">
+                                        <% if (singleProduct.reviews.length> 0) { %>
+                                            <% singleProduct.reviews.forEach(review=> { %>
+                                                <div class="product__details__tab__content__item "
+                                                    style="padding-left: 20px;">
                                                     <hr class="flex-grow-1">
-                                                    <h6><%= new Date(review.createdAt).toLocaleDateString() %></h6>
-                                                    <h5><%= review.user.name %></h5>
-                                                    <p><%= review.comment %></p>
+                                                    <h6>
+                                                        <%= new Date(review.createdAt).toLocaleDateString() %>
+                                                    </h6>
+                                                    <h5>
+                                                        <%= review.user.name %>
+                                                    </h5>
+                                                    <p>
+                                                        <%= review.comment %>
+                                                    </p>
                                                     <div class="rating">
-                                                        <% for (let i = 0; i < review.rating; i++) { %>
+                                                        <% for (let i=0; i < review.rating; i++) { %>
                                                             <i class="fa fa-star" style="color: yellow;"></i>
-                                                        <% } %>
-                                                        <% for (let i = review.rating; i < 5; i++) { %>
-                                                            <i class="fa fa-star-o"></i>
-                                                        <% } %>
+                                                            <% } %>
+                                                                <% for (let i=review.rating; i < 5; i++) { %>
+                                                                    <i class="fa fa-star-o"></i>
+                                                                    <% } %>
                                                     </div>
                                                 </div>
-                                            <% }) %>
-                                        <% } else { %>
-                                            <p>No reviews yet.</p>
-                                        <% } %>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <p>No reviews yet.</p>
+                                                        <% } %>
                                     </div>
                                 </div>
-                                
+
 
                             </div>
                         </div>
@@ -265,7 +289,8 @@
 
             <div class="row">
                 <%for (let i=0; i < 4 && i < relatedProducts.length; i++) { const product=relatedProducts[i]; %>
-                    <div class="col-lg-3 col-md-6 col-sm-6  " onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
+                    <div class="col-lg-3 col-md-6 col-sm-6  "
+                        onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
                         <div class="product__item border border-3 rounded rounded-3 p-2 pb-3">
                             <div class="product__item__pic set-bg"
                                 data-setbg="<%= product.productImages[0].replace(/\\/g, '/') %>">
@@ -275,15 +300,22 @@
                                 </ul>
                             </div>
                             <div class="product__item__text">
-                                <h5><%= product.productName %></h5>
+                                <h5>
+                                    <%= product.productName %>
+                                </h5>
                                 <div class="d-block">
-                                    <p class="h6 fw-lighter"> Brand : <%= product.brand.brandName %></p>
-                                    <p class="h6 fw-lighter"> Note : <%= product.category.name %></p>
+                                    <p class="h6 fw-lighter"> Brand : <%= product.brand.brandName %>
+                                    </p>
+                                    <p class="h6 fw-lighter"> Note : <%= product.category.name %>
+                                    </p>
 
                                 </div>
                                 <div class="d-flex ">
-                                    <h5 >₹<%= product.salePrice %></h5>
-                                    <h5 class="pl-4 text-muted  " style="text-decoration: line-through;">₹<%= product.regularPrice %></h5>
+                                    <h5>₹<%= product.salePrice %>
+                                    </h5>
+                                    <h5 class="pl-4 text-muted  " style="text-decoration: line-through;">₹<%=
+                                            product.regularPrice %>
+                                    </h5>
                                 </div>
 
                             </div>
@@ -297,5 +329,11 @@
         </div>
     </section>
     <!-- Related Section End -->
+
+
+    <script>
+       
+    </script>
+
 
     <%- include('../partials/users/userFooter') -%>

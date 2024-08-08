@@ -259,7 +259,9 @@ const loadHomepage = async (req, res) => {
         const userName = req.session.userName
         if (userName) {
             // console.log(userData);
-            res.render('homepage', { userName: userName })
+            const bestSellers=await Product.find().populate('brand').populate('category');
+            const newArrivals= await Product.find().populate('brand').populate('category');
+            res.render('homepage', { userName: userName,bestSellers,newArrivals })
         } else {
             return res.render('homepage')
         }

@@ -39,11 +39,12 @@
                         <td class=" border border-2 text-center">
                             <%= (limit*(currentPage-1)+1+i) %>
                         </td>
-                        <td class=" border border-2 text-center">
+                        <td class=" border border-2 text-center ">
+                            <!-- <img  src="/<%= data[i].productImages[1].replace(/\\/g, '/') %>" alt=""  width="50" class="img-thumbnail"> -->
                             <%= data[i].productName %>
                         </td>
                         <td class=" border border-2 text-center">
-                            <%= data[i].brand %>
+                            <%= data[i].brand.brandName %>
                         </td>
                         <td class=" border border-2 text-center">
                             <%= data[i].salePrice %>
