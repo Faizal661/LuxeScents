@@ -40,7 +40,6 @@
                             <%= (limit*(currentPage-1)+1+i) %>
                         </td>
                         <td class=" border border-2 text-center ">
-                            <!-- <img  src="/<%= data[i].productImages[1].replace(/\\/g, '/') %>" alt=""  width="50" class="img-thumbnail"> -->
                             <%= data[i].productName %>
                         </td>
                         <td class=" border border-2 text-center">
@@ -64,7 +63,7 @@
 
                                     <td class=" border border-2 d-flex justify-content-evenly ">
                                         <button class="btn btn-info" style="width: 80px;">
-                                            <a href="/admin/editProduct?id=<%= data[i]._id %>" class="text-white"
+                                            <a href="/admin/editProduct/<%= data[i]._id %>" class="text-white"
                                                 style="text-decoration: none;">Edit</a>
                                         </button>
                                         <% if(data[i].isBlocked===false) {%>

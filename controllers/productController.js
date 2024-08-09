@@ -135,6 +135,80 @@ const addProduct = async (req, res) => {
 
 
 
+const getEditProduct=async(req,res)=>{
+    try {
+        const id=req.params.id
+        const product=await Product.findById(id)
+        // console.log(product)
+        const categories = await Category.find({});
+        const brands = await Brand.find({});
+        res.render('editProduct',{adminName:req.session.adminName,categories: categories,brands:brands,product})
+    } catch (error) {
+        console.error(error);
+        res.redirect("/pageerror")
+    }
+}
+
+
+const editProduct = async (req, res) => {
+    try {
+        const id=req.params.id
+
+        uploadImages(req, res, async (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(400).json({ error: "Error uploading files." });
+            }
+           
+
+            // console.log('Body:', req.body);
+            // console.log('Uploaded files:', req.files); // Debug log
+
+            if (!req.files || req.files.length === 0) {
+                return res.status(400).json({ error: "No files uploaded." });
+            }
+    
+
+
+            
+            const imagePaths = req.files.map(file => file.path);
+            const imageURL = imagePaths.map(path => path.replace('public\\', ''));
+            console.log(imageURL);
+
+            const existingProduct = await Product.findOne({ productName: req.body.productName });
+            if (existingProduct && existingProduct._id.toString() !== id) {
+                return res.status(400).json({ error: "Product already exists" });
+            }
+
+            const updateProduct = await Product.findByIdAndUpdate(id,{
+                productName: req.body.productName,
+                description: req.body.description,
+                brand: req.body.brands,
+                category: req.body.category,
+                regularPrice: req.body.regularPrice,
+                salePrice: req.body.salePrice,
+                gender: req.body.gender,
+                size: Array.isArray(req.body.size) ? req.body.size : [req.body.size], 
+                quantity: req.body.quantity,
+                productImages: imageURL,
+                status: req.body.status,
+            }, { new: true })
+
+            await updateProduct.save();
+
+            if(updateProduct){
+                res.json({ message: "Product updated successfully" });
+            }else{
+                res.status(404).json({ error: "Category not found"})
+            }
+
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
 
 
 
@@ -145,7 +219,9 @@ module.exports={
     productunBlocked,
     getAddProduct,
     addProduct,
-    uploadImages
+    uploadImages,
+    getEditProduct,
+    editProduct
 }
 
 

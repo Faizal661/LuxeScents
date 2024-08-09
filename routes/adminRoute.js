@@ -44,6 +44,8 @@ adminRouter.get('/unblockProduct', adminAuth, productController.productunBlocked
 
 adminRouter.get('/addProduct', adminAuth, productController.getAddProduct)
 adminRouter.post('/addProduct', adminAuth, productController.addProduct)
+adminRouter.get('/editProduct/:id', adminAuth, productController.getEditProduct)
+adminRouter.post('/editProduct/:id', adminAuth, productController.editProduct)
 
 
 
