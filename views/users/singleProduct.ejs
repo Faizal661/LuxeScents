@@ -50,7 +50,7 @@
                                 <div class="tab-pane <%= index === 0 ? 'active' : '' %>" id="tabs-<%= index + 1 %>"
                                     role="tabpanel">
                                     <div class="product__details__pic__item">
-                                        <img  src="<%= image.replace(/\\/g, '/') %>" alt=""
+                                        <img id="zoom<%= index %>"  src="<%= image.replace(/\\/g, '/') %>" alt=""  data-zoom-image="<%= image.replace(/\\/g, '/') %>"
                                             style="width: 450px; height: 500px; object-fit: cover;">
                                     </div>
                                 </div>
@@ -330,10 +330,20 @@
     </section>
     <!-- Related Section End -->
 
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
 
     <script>
-       
+            <% singleProduct.productImages.forEach(function(image, index) { %>
+                $('#zoom<%= index %>').elevateZoom({
+                    zoomType: "lens",  // Zoom type (lens, window, inner)
+                    lensShape: "square", // Shape of the lens (round, square)
+                    lensSize: 500,      // Size of the lens
+                    scrollZoom: true    // Allow zoom using the scroll wheel
+                });
+            <% }); %>
     </script>
-
-
+    
+    
     <%- include('../partials/users/userFooter') -%>
