@@ -53,6 +53,7 @@
                                         <img id="zoom<%= index %>"  src="<%= image.replace(/\\/g, '/') %>" alt=""  data-zoom-image="<%= image.replace(/\\/g, '/') %>"
                                             style="width: 450px; height: 500px; object-fit: cover;">
                                     </div>
+                                    <div class="border border-5"></div>
                                 </div>
                                 <% }) %>
                         </div>
@@ -339,7 +340,7 @@
                 $('#zoom<%= index %>').elevateZoom({
                     zoomType: "lens",  // Zoom type (lens, window, inner)
                     lensShape: "square", // Shape of the lens (round, square)
-                    lensSize: 500,      // Size of the lens
+                    lensSize: 400,      // Size of the lens
                     scrollZoom: true    // Allow zoom using the scroll wheel
                 });
             <% }); %>

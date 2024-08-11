@@ -85,26 +85,26 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card shadow">
             <div class="card-body">
                 <form method="post" action="/admin/editProduct/<%= product._id %>" enctype="multipart/form-data"
                     onsubmit="return handleFormSubmit(event)">
-                    <div class="row">
+                    <div class="row"> 
                         <div class="col-md-6">
                             <div class="mb-4">
                                 <label for="product_name" class="form-label">Name</label>
-                                <input type="text" name="productName" placeholder="Type here" class="form-control"
+                                <input type="text" name="productName" placeholder="Type here" class="shadow form-control"
                                     id="product_name" value="<%= product.productName %>" />
                                 <div id="name-error" class="error-message"></div>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Description</label>
-                                <textarea placeholder="Type here" name="description" class="form-control" id="descriptionId" rows="3"><%= product.description %></textarea>
+                                <textarea placeholder="Type here" name="description" class="shadow form-control" id="descriptionId" rows="3"><%= product.description %></textarea>
                                 <div id="description-error" class="error-message"></div>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Brand</label>
-                                <select name="brands" class="form-select">
+                                <select name="brands" class="form-select shadow form-control">
                                     <% brands.forEach(brand => { %>
                                         <option value="<%= brand._id %>" ><%= brand.brandName %></option>
                                     <% }); %>
@@ -112,7 +112,7 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Category</label>
-                                <select name="category" class="form-select">
+                                <select name="category" class="form-select shadow form-control">
                                     <% categories.forEach(category => { %>
                                         <option value="<%= category._id %>" ><%= category.name %></option>
                                     <% }); %>
@@ -121,13 +121,13 @@
                             <div class="mb-4">
                                 <label class="form-label">Regular Price</label>
                                 <input type="number" name="regularPrice" id="regularPriceId" placeholder="Type here"
-                                    class="form-control" value="<%= product.regularPrice %>" />
+                                    class="form-control shadow" value="<%= product.regularPrice %>" />
                                 <div id="regularPrice-error" class="error-message"></div>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Sale Price</label>
                                 <input type="number" name="salePrice" id="salePriceId" placeholder="Type here"
-                                    class="form-control" value="<%= product.salePrice %>" />
+                                    class="form-control shadow" value="<%= product.salePrice %>" />
                                 <div id="salePrice-error" class="error-message"></div>
                             </div>
                         </div>
@@ -135,7 +135,7 @@
                         <div class="col-md-6">
                             <div class="mb-4">
                                 <label class="form-label">Gender</label>
-                                <select name="gender" class="form-select">
+                                <select name="gender" class="form-select shadow form-control">
                                     <option value="Men" <%= product.gender === 'Men' ? 'selected' : '' %>>Men</option>
                                     <option value="Women" <%= product.gender === 'Women' ? 'selected' : '' %>>Women</option>
                                     <option value="Unisex" <%= product.gender === 'Unisex' ? 'selected' : '' %>>Unisex</option>
@@ -143,11 +143,11 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Sizes</label>
-                                <div>
+                                <div class="d-flex">
                                     <% const sizes = ['25ml', '50ml', '75ml', '100ml', '150ml']; %>
                                     <% sizes.forEach(size => { %>
                                         <div class="form-check">
-                                            <input type="checkbox" name="size" value="<%= size %>" class="form-check-input" id="size-<%= size %>"  />
+                                            <input type="checkbox" name="size" value="<%= size %>" class="form-check-inline" id="size-<%= size %>"  />
                                             <label class="form-check-label" for="size-<%= size %>"><%= size %></label>
                                         </div>
                                     <% }); %>
@@ -156,12 +156,12 @@
                             <div class="mb-4">
                                 <label class="form-label">Quantity</label>
                                 <input type="number" name="quantity" placeholder="Type here" id="quantityId"
-                                    class="form-control" value="<%= product.quantity %>" />
+                                    class="form-control shadow" value="<%= product.quantity %>" />
                                 <div id="quantity-error" class="error-message"></div>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Product Images</label>
-                                <input type="file" name="productImages" class="form-control" id="productImages"
+                                <input type="file" name="productImages" class="form-control shadow" id="productImages"
                                     multiple onchange="previewImages(event)" />
                                 <div id="images-error" class="error-message"></div>
                                 <div id="imagePreview" class="d-flex flex-wrap mt-3">
@@ -172,7 +172,7 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Status</label>
-                                <select name="status" class="form-select">
+                                <select name="status" class="form-select shadow form-control">
                                     <option value="Available" <%= product.status === 'Available' ? 'selected' : '' %>>Available</option>
                                     <option value="Out of Stock" <%= product.status === 'Out of Stock' ? 'selected' : '' %>>Out of Stock</option>
                                     <option value="Discontinued" <%= product.status === 'Discontinued' ? 'selected' : '' %>>Discontinued</option>
@@ -283,16 +283,23 @@
                 clearErrorMessage();
                 const name = document.getElementsByName("productName")[0].value.trim();
                 const description = document.getElementById("descriptionId").value.trim();
-                const quantity = document.getElementById("quantityId").value.trim()
-                const regularPrice = document.getElementById("regularPriceId").value.trim();
-                const salePrice = document.getElementById("salePriceId").value.trim();
-                
+
+                const quantityInput = document.getElementById("quantityId").value.trim();
+                const regularPriceInput = document.getElementById("regularPriceId").value.trim();
+                const salePriceInput = document.getElementById("salePriceId").value.trim();
+
+                const quantity = quantityInput === "" ? NaN : parseFloat(quantityInput);
+                const regularPrice = regularPriceInput === "" ? NaN : parseFloat(regularPriceInput);
+                const salePrice = salePriceInput === "" ? NaN : parseFloat(salePriceInput);
+
+
+                console.log(quantity, salePrice, regularPrice)
                 let isValid = true;
-                
+
                 if (name == "") {
                     displayErrorMessage("name-error", "Please enter a name")
                     isValid = false
-                    
+
                 } else if (!/^[a-zA-Z\s]+$/.test(name)) {
                     displayErrorMessage("name-error", "Product name should contain only aplphabetic characters")
                     isValid = false
@@ -300,31 +307,36 @@
                 if (description == "") {
                     displayErrorMessage("description-error", "Please enter a description")
                     isValid = false
-
                 }
 
-                if (quantity == "") {
-                    displayErrorMessage("quantity-error", "Please enter Stock of the product")
-                    isValid = false
-
+                if (isNaN(quantity)) {
+                    displayErrorMessage("quantity-error", "Please enter Stock of the product");
+                    isValid = false;
+                } else if (quantity < 0) {
+                    displayErrorMessage("quantity-error", "Stock quantity can't be negative");
+                    isValid = false;
                 }
 
-                if (regularPrice == "") {
-                    displayErrorMessage("regularPrice-error", "Please enter Regular Price")
-                    isValid = false
 
+
+                if (isNaN(regularPrice)) {
+                    displayErrorMessage("regularPrice-error", "Please enter Regular Price");
+                    isValid = false;
+                } else if (regularPrice <= 0) {
+                    displayErrorMessage("regularPrice-error", "Regular Price need to be a positive");
+                    isValid = false;
                 }
 
-                if (salePrice == "") {
-                    displayErrorMessage("salePrice-error", "Please enter Sale Price")
-                    isValid = false
-
+                if (isNaN(salePrice)) {
+                    displayErrorMessage("salePrice-error", "Please enter Sale Price");
+                    isValid = false;
+                } else if (salePrice <= 0) {
+                    displayErrorMessage("salePrice-error", "Sale Price need to be a positive");
+                    isValid = false;
                 } else if (salePrice > regularPrice) {
-                    displayErrorMessage("salePrice-error", "Sale Price must be lower than regular price")
-                    isValid = false
-
+                    displayErrorMessage("salePrice-error", "Sale Price must be lower than regular price");
+                    isValid = false;
                 }
-
 
                 return isValid;
             }

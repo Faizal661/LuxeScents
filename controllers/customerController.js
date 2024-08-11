@@ -10,7 +10,7 @@ const customerInfo= async(req,res)=>{
         if(req.query.page){
             page=req.query.page
         }
-        const limit=8
+        const limit=5
         const userData=await User.find({
             isAdmin:false,
             $or:[
@@ -32,7 +32,7 @@ const customerInfo= async(req,res)=>{
 
         res.render('customers',{
             adminName:req.session.adminName,
-            data:userData,
+            userData:userData,
             totalPages:Math.ceil(count/limit),
             currentPage:page,
             limit:limit
@@ -44,33 +44,28 @@ const customerInfo= async(req,res)=>{
     }
 }
 
-const customerBlocked=async(req,res)=>{
+const toggleCustomerBlocking=async(req,res)=>{
     try {
-         let id= req.query.id;
-         await User.updateOne({_id:id},{$set:{isBlocked:true}})
+         const customerId= req.query.id;
+
+         const customer=await User.findById(customerId);
+         if(!customer){
+            return res.redirect("/pageerror");
+         }
+         const newStatus= !customer.isBlocked
+         await User.updateOne({_id:customerId},{$set:{isBlocked:newStatus}})
          res.redirect("/admin/users")
     } catch (error) {
+        console.error(error, "Error while block/unblock customers.");
         res.redirect("/pageerror")
     }
 }
-
-const customerunBlocked=async(req,res)=>{
-    try {
-        let id= req.query.id;
-        await User.updateOne({_id:id},{$set:{isBlocked:false}})
-        res.redirect("/admin/users")
-   } catch (error) {
-       res.redirect("/pageerror")
-   }
-}
-
 
 
 
 
 module.exports={
     customerInfo,
-    customerBlocked,
-    customerunBlocked
+    toggleCustomerBlocking
 
 }

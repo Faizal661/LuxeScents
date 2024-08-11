@@ -56,8 +56,8 @@
 
 <body>
     <div class="screen-overlay"></div>
-    <aside class="navbar-aside" id="offcanvas_aside">
-        <div class="aside-top title">
+    <aside class="navbar-aside shadow" id="offcanvas_aside">
+        <div class="aside-top title ">
             <a href="/" class="text-decoration-none">
                 <h4 class="logo fw-bold">Luxe Scents</h4>
             </a>
@@ -67,7 +67,7 @@
             </div>
         </div>
         <nav>
-            <ul class="menu-aside ">
+            <ul class="menu-aside">
                 <li class="menu-item ">
                     <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text h6">Dashboard</span>
@@ -89,17 +89,17 @@
                     <a class="menu-link" href="/admin/brands"> <i class="icon material-icons md-stars"></i>
                         <span class="text">Brands</span> </a>
                 </li> -->
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/addProduct"> <i class="icon material-icons md-add_box"></i>
-                        <span class="text h6">Add product</span>
-                    </a>
-                </li>
+                
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text h6">Products</span>
                     </a>
                 </li>
-
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/addProduct"> <i class="icon material-icons md-add_box"></i>
+                        <span class="text h6">Add product</span>
+                    </a>
+                </li>
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/coupon"> <i class="icon material-icons md-class"></i>
                         <span class="text h6">Coupon</span> </a>
@@ -119,7 +119,7 @@
         </nav>
     </aside>
     <main class="main-wrap">
-        <header class="main-header navbar">
+        <header class="main-header navbar shadow-sm">
             <div class="col-search">
             </div>
             <div class="col-nav">
@@ -127,9 +127,6 @@
                         class="material-icons md-apps"></i> </button>
                 <ul class="nav">
                     <li class="dropdown nav-item">
-                        <!-- <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
-                            aria-expanded="false"> <img class="img-xs rounded-circle"
-                                src="/admin-assets/imgs/people/avatar2.jpg" alt="User"></a> -->
                         <% if(!locals.adminName) {%>
                             <a class="dropdown-toggle text-light h6" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
                                 aria-expanded="false">ADMIN</a>

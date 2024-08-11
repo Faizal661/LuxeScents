@@ -59,6 +59,8 @@
                 color: #333;
             }
 
+
+
             .pagination a:hover {
                 background-color: #f5f5f5;
             }
@@ -67,10 +69,11 @@
                 color: red;
             }
 
+
             tr,
             td,
             th {
-                border: 1px solid #333;
+                border: 1px solid #000;
 
             }
         </style>
@@ -78,77 +81,82 @@
 
     <body>
         <section class="content-main">
-            <div class="content-header">
+            <div class="content-header shadow   ">
                 <div>
                     <h2 class="content-title card-title">
                         Category</h2>
                 </div>
+                <header class="card-header text-center bg-transparent">
+                    <form action="/admin/category/" method="get" class="col-lg-5 me-5">
+                        <div class="input-group input-group-sm  border border-1 rounded-pill shadow "
+                            style="width: 500px;margin-left: 230px">
+                            <input type="text" class="form-control border-0 bg-transparent pt-3 ps-3"
+                                placeholder="Search categories by name and description...." name="search" />
+                            <button class="btn border border-end-0 border-top-0 border-bottom-0 border-3"
+                                type="submit">Search</button>
+                        </div>
+                    </form>
+                </header>
             </div>
-            <header class="card-header text-center mb-2 bg-transparent">
-                <form action="/admin/category/" method="get" class="d-inline">
-                    <div class="input-group input-group-sm  border border-1 rounded-pill"
-                        style="width: 500px;margin-left: 230px">
-                        <input type="text" class="form-control border-0 bg-transparent pt-3 ps-3"
-                            placeholder="Search categories" name="search" />
-                        <button class="btn border border-end-0 border-top-0 border-bottom-0"
-                            type="submit">Search</button>
-                    </div>
-                </form>
-            </header>
-            <div class="card">
+
+            <div class="card shadow ">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-3 shadow">
                             <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
-                                    <input type="text" name="name" placeholder="Type here" class="form-control"
+                                    <input type="text" name="name" placeholder="Type here" class="form-control shadow"
                                         id="product_name" />
                                     <div id="name-error" class="error-message"></div>
                                 </div>
-                                <div class="mb-4">
+                                <div class="mb-2">
                                     <label class="form-label">Description</label>
-                                    <textarea placeholder="Type here" name="description" class="form-control"
+                                    <textarea placeholder="Type here" name="description" class="form-control shadow"
                                         id="descriptionId"></textarea>
                                     <div id="description-error" class="error-message"></div>
                                 </div>
                                 <div class="d-grid">
-                                    <button class="btn btn-primary" type="submit">
+                                    <button class="btn btn-primary shadow" type="submit">
                                         Create category
                                     </button>
                                 </div>
                             </form>
                         </div>
-                        <div class="col-md-8 ml-10">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th class="  text-center h6 text-uppercase  fw-normal">id</th>
-                                            <th class=" text-center h6 text-uppercase  fw-normal">Name</th>
-                                            <th class=" text-center h6 text-uppercase  fw-normal">Description</th>
-                                            <!-- <th>Offer Price</th>
+                        <div class="col-md-8 px-3 pt-3 card mt-2 ms-3 shadow">
+                            <div class="table-responsive ">
+                                <table class="table table-hover  table-striped table-light">
+                                    <% if(categoryData.length==0){ %>
+                                        <h1 class="text-center">No categories found</h1>
+                                        <% } else{%>
+                                            <thead>
+                                                <tr>
+                                                    <th class="  text-center h6 text-uppercase fw-normal ">id</th>
+                                                    <th class=" text-center h6 text-uppercase  fw-normal">Name</th>
+                                                    <th class=" text-center h6 text-uppercase  fw-normal">Description
+                                                    </th>
+                                                    <!-- <th>Offer Price</th>
                                             <th>Offer</th> -->
-                                            <th class=" text-center h6 text-uppercase fw-normal">Status</th>
-                                            <th class=" text-center h6 text-uppercase fw-normal">List/Unlist</th>
-                                            <th class=" text-center h6 text-uppercase fw-normal">Edit</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% cat.reverse().forEach((category,index)=>{ %>
-                                            <tr>
-                                                <td>
-                                                    <%= index+1+(limit*(currentPage-1)) %>
-                                                </td>
-                                                <td class="text-start">
-                                                    <%= category.name %>
-                                                </td>
-                                                <td class="text-start">
-                                                    <%= category.description %>
-                                                </td>
-                                                <!-- <td>
+                                                    <th class=" text-center h6 text-uppercase fw-normal">Status</th>
+                                                    <th class=" text-center h6 text-uppercase fw-normal">Actions</th>
+                                                    <!-- <th class=" text-center h6 text-uppercase fw-normal">Edit</th> -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% categoryData.reverse().forEach((category,index)=>{ %>
+                                                    <tr>
+                                                        <td>
+                                                            <%= index+1+(limit*(currentPage-1)) %>
+                                                        </td>
+                                                        <td class="text-start">
+                                                            <%= category.name %>
+                                                        </td>
+                                                        <td class="text-start">
+                                                            <%= category.description %>
+                                                        </td>
+                                                        <!-- <td>
                                             </td> -->
-                                                <!-- <td class="text-start">
+                                                        <!-- <td class="text-start">
                                                 <button class="btn btn-info" style="width: 100px">
                                                     <a href="#" class="text-white">Add Offer</a>
                                                 </button>
@@ -156,36 +164,38 @@
                                                     <a href="#" class="text-white">Remove</a>
                                                 </button>
                                             </td> -->
-                                                <td class="text-center">
-                                                    <% if(category.isListed===true) {%>
-                                                    <span class="badge rounded-pill alert-success"
-                                                        style="width: 60px">Listed</span>
-                                                        <% }else{ %>
-                                                    <span class="badge rounded-pill alert-danger"
-                                                        style="width: 60px">Unlisted</span>
+                                                        <td class="text-center">
+                                                            <% if(category.isListed===true) {%>
+                                                                <span class="badge rounded-pill alert-success"
+                                                                    style="width: 60px">Listed</span>
+                                                                <% }else{ %>
+                                                                    <span class="badge rounded-pill alert-danger"
+                                                                        style="width: 60px">Unlisted</span>
+                                                                    <% } %>
+                                                        </td>
+                                                        <td class="text-center ">
+                                                            <% if(category.isListed===true) {%>
+                                                                <button class="btn btn-danger" style="width: 70px;">
+                                                                    <a href="/admin/unlistCategory?id=<%= category._id %>"
+                                                                        class="text-white"
+                                                                        style="text-decoration: none;">Unlist</a>
+                                                                </button>
+                                                                <% }else{ %>
+                                                                    <button class="btn btn-success"
+                                                                        style="width: 70px;">
+                                                                        <a href="/admin/listCategory?id=<%= category._id %>"
+                                                                            class="text-white"
+                                                                            style="text-decoration: none;">List</a>
+                                                                    </button>
+                                                                    <% } %>
+
+                                                                        <a href="/admin/editCategory?id=<%=category._id%>"
+                                                                            class="btn btn-info text-white">Edit</a>
+                                                        </td>
+                                                    </tr>
+                                                    <% }) %>
                                                         <% } %>
-                                                </td>
-                                                <td class="text-center ">
-                                                    <% if(category.isListed===true) {%>
-                                                        <button class="btn btn-danger" style="width: 70px;">
-                                                            <a href="/admin/unlistCategory?id=<%= category._id %>" class="text-white"
-                                                                style="text-decoration: none;">Unlist</a>
-                                                        </button>
-                                                        <% }else{ %>
-                                                            <button class="btn btn-success" style="width: 70px;">
-                                                                <a href="/admin/listCategory?id=<%= category._id %>" class="text-white"
-                                                                    style="text-decoration: none;">List</a>
-                                                            </button>
-                                                            <% } %>
-                                                </td>
-                                
-                                                <td class="text-center">
-                                                    <a href="/admin/editCategory?id=<%=category._id%>"
-                                                        class="btn btn-info text-white">Edit</a>
-                                                </td>
-                                            </tr>
-                                            <% }) %>
-                                    </tbody>
+                                            </tbody>
                                 </table>
                             </div>
                         </div>
@@ -194,23 +204,26 @@
             </div>
 
 
-            <div class="pagination-container">
+            <div class="pagination-container ">
                 <% if (currentPage> 1) { %>
-                    <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                    <a href="?page=<%= currentPage - 1 %>" class="border border-1 rounded-pill  py-1">&laquo;
+                        Previous</a>
                     <% } %>
                         <% for (let i=1; i <=totalPages; i++) { %>
                             <% if (i===currentPage) { %>
-                                <span class="current-page">
+                                <span class="current-page border border-1 rounded-pill py-1 " style="  background-color: black;
+                                color: white;">
                                     <%= i %>
                                 </span>
                                 <% } else { %>
-                                    <a href="?page=<%= i %>">
+                                    <a href="?page=<%= i %>" class="border border-1 rounded-pill py-1">
                                         <%= i %>
                                     </a>
                                     <% } %>
                                         <% } %>
                                             <% if (currentPage < totalPages) { %>
-                                                <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                                                <a href="?page=<%= currentPage + 1 %>"
+                                                    class="border border-1 rounded-pill py-1">Next &raquo;</a>
                                                 <% } %>
             </div>
 
@@ -225,11 +238,10 @@
 
                 event.preventDefault();
                 if (!validateForm()) {
-
-                    console.log("nottvalidate working")
+                    console.error("Form validation is unsuccessful")
                     return;
                 }
-                const name = document.getElementsByName("name")[0].value;
+                const name = document.getElementsByName("name")[0].value.trim();
                 const description = document.getElementById("descriptionId").value;
 
                 fetch('/admin/addCategory', {
@@ -248,10 +260,16 @@
                                 throw new Error(err.error);
                             })
                         }
-                        return response.json();
-                    })
-                    .then(data => {
-                        location.reload();
+                        return response.json().then(data => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: "Success",
+                                text: "Category added successfully",
+                                timer: 2000
+                            }).then(data => {
+                                location.reload();
+                            })
+                        });
                     })
                     .catch(error => {
                         if (error.message === "Category already exists") {
@@ -268,8 +286,6 @@
                             })
                         }
                     })
-
-
             }
 
             function validateForm() {
@@ -283,7 +299,7 @@
                     isValid = false
 
                 } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-                    displayErrorMessage("name-error", "Category name should contain only aplphabetic characters")
+                    displayErrorMessage("name-error", "Category name should contain only alphabetic characters")
                     isValid = false
                 }
                 if (description == "") {

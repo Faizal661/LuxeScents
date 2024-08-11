@@ -16,10 +16,11 @@ const productInfo=async(req,res)=>{
             page=req.query.page
         }
 
-        const limit=8
+        const limit=5
         const productsData=await Product.find({
             productName:{$regex:".*"+search+".*"}
-        }).populate('brand')
+        })
+        .populate('brand')
         .limit(limit*1)
         .skip((page-1)*limit)
         .exec();
@@ -44,25 +45,25 @@ const productInfo=async(req,res)=>{
     }
 }
 
-const productBlocked=async(req,res)=>{
-    try {
-         let id= req.query.id;
-         await Product.updateOne({_id:id},{$set:{isBlocked:true}})
-         res.redirect("/admin/products")
-    } catch (error) {
-        res.redirect("/pageerror")
-    }
-}
 
-const productunBlocked=async(req,res)=>{
+const toggleProductListing = async (req, res) => {
     try {
-        let id= req.query.id;
-        await Product.updateOne({_id:id},{$set:{isBlocked:false}})
-        res.redirect("/admin/products")
-   } catch (error) {
-       res.redirect("/pageerror")
-   }
-}
+        const productId = req.query.id;
+        const product = await Product.findById(productId);
+        if(!product){
+            return res.redirect("/pageerror");
+         }
+        const newStatus = !product.isBlocked;
+
+        await Product.updateOne({ _id: productId }, { $set: { isBlocked: newStatus } });
+
+        res.redirect("/admin/products");
+    } catch (error) {
+        console.error(error, "Error while toggling product listing status.");
+        res.redirect("/pageerror");
+    }
+};
+
 
 const getAddProduct=async(req,res)=>{
     try {
@@ -215,8 +216,7 @@ const editProduct = async (req, res) => {
 
 module.exports={
     productInfo,
-    productBlocked,
-    productunBlocked,
+    toggleProductListing,
     getAddProduct,
     addProduct,
     uploadImages,

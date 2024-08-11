@@ -1,9 +1,5 @@
 const User = require('../models/userSchema')
-const mongoose = require("mongoose")
 const bcrypt = require("bcrypt")
-const fs = require('fs');
-
-
 
 
 
@@ -23,40 +19,39 @@ const loadAdminLogin = async (req, res) => {
 const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const admin = await User.findOne({ email:email, isAdmin: true });
+        const admin = await User.findOne({ email: email, isAdmin: true });
         if (admin) {
-            //compare password
+            //await is neccessary, if await is removed only the admin email is validating, and it doesnt wait for passwordmatch
             const passwordMatch = await bcrypt.compare(password, admin.password)
             if (passwordMatch) {
-                // console.log('pass match');
                 req.session.admin = true;
-                req.session.adminName=admin.email
+                req.session.adminName = admin.email
                 return res.redirect('/admin/dashboard');
             } else {
-                console.log('pass not match',admin);
+                console.error('password is not matching');
                 return res.render("admin-login", { message: "Incorrect Password" })
             }
         } else {
             return res.render("admin-login", { message: "Admin not found" })
-            //return res.redirect('/admin?invalid')
         }
     } catch (error) {
-        console.log(error, 'login error');
-        return res.redirect("/pageerror")
+        console.log(error, 'Admin login error');
+        res.redirect("/pageerror")
     }
 }
 
 
 const loadDashboard = async (req, res) => {
-    // console.log(req.session);
-    if (req.session.admin) {
-        try {
-            res.render("dashboard",{adminName:req.session.adminName})
-        } catch (error) {
-            res.redirect("/admin/login")
+    try {
+        if (req.session.admin) {
+            return res.render("dashboard", { adminName: req.session.adminName })
         }
+        res.render('admin-login', { message: null })
+    } catch (error) {
+        console.log(error, 'Error while loading dashboard');
+        res.redirect("/pageerror")
     }
-} 
+}
 
 const adminLogout = async (req, res) => {
     try {
@@ -66,20 +61,19 @@ const adminLogout = async (req, res) => {
                 return res.redirect("/pageerror")
             }
             res.redirect('/admin/login?logout')
-            console.log('logouted successfully')
-
-        }) 
+        })
     } catch (error) {
         console.log(error, 'Error at admin logout');
-        res.redirect("/pageerror")    }
+        res.redirect("/pageerror")
+    }
 }
 
 
 
 const pageerror = async (req, res) => {
     try {
-        const admin = req.session.admin;
-        res.render('pageerror',{url:req.url})
+        const admin = req.session.adminName;
+        res.render('pageerror', { url: req.url,admin})
     }
     catch (error) {
         res.redirect("/pageerror")
@@ -93,202 +87,5 @@ module.exports = {
     adminLogin,
     loadDashboard,
     pageerror,
-    adminLogout,
-
-
-    // loadForgotPassword,
-    // sendOtpToChangePassword,
-    // loadChangePasswordPage,
-
-
+    adminLogout
 }
-
-
-
-
-
-
-
-
-
-// const loadForgotPassword = async (req, res) => {
-//     try {
-//         res.render('forgotPassword', { title: 'forgot password' })
-//     } catch (error) {
-//         console.log(error, 'page not found');
-//         res.status(500).send("server error")
-//     }
-// }
-
-// const sendOtpToChangePassword = async (req, res) => {
-//     const email = req.body.email;
-//     try {
-//         const admin = await Admin.findOne({ email: email });
-//         if (admin) {
-//             res.redirect('/admin/loadChangePasswordPage')
-//         } else {
-//             res.redirect('/admin/forgotPassword?invalid')
-//         }
-//     } catch (error) {
-//         console.log(error, 'page not found');
-//         res.status(500).send("server error")
-//     }
-// }
-
-// const loadChangePasswordPage = async (req, res) => {
-//     try {
-//         // res.send('dsafg')
-//         res.render('changePassword', { title: 'change password' })
-//     } catch (error) {
-//         console.log(error, 'page not found');
-//         res.status(500).send("server error")
-//     }
-// }
-
-
-
-
-
-// const loadAddUserPage = async (req, res) => {
-//     try {
-//         res.render('add_users')
-//     } catch (error) {
-//         console.log(error, 'page not found');
-//         res.status(500).send("server error")
-//     }
-// }
-
-
-// const addNewUser = async (req, res) => {
-//     try {
-//         const user = new User({
-//             name: req.body.name,
-//             email: req.body.email,
-//             phone: req.body.phone,
-//             image: req.file.filename,
-//             password: req.body.password,
-//         });
-
-//         user.save()
-//             .then(() => {
-//                 req.session.message = {
-//                     type: 'success',
-//                     message: 'User added successfully!'
-//                 };
-//                 res.redirect('/admin/dashboard');
-//             })
-//             .catch((err) => {
-//                 req.session.message = {
-//                     type: 'danger',
-//                     message: err.message
-//                 };
-//                 res.redirect('/admin/dashboard');
-//             });
-//     } catch (error) {
-//         console.log(error, 'page not found');
-//         res.status(500).send("server error")
-//     }
-// }
-
-// const loadEditUserPage = async (req, res) => {
-//     try {
-//         let id = req.params.id;
-//         User.findById(id)
-//             .then(user => {
-//                 if (!user) {
-//                     res.redirect('/admin');
-//                 } else {
-//                     res.render('edit_users', {
-//                         title: 'Edit User',
-//                         user: user,
-//                     });
-//                 }
-//             })
-//             .catch(err => {
-//                 console.error(err);
-//                 res.redirect('/admin');
-//             });
-//     } catch (error) {
-//         console.log(error, 'page not found');
-//         res.status(500).send("server error")
-//     }
-// }
-
-// const editUser = async (req, res) => {
-//     try {
-//         let id = req.params.id;
-//         let new_image = '';
-//         if (req.file) {
-//             new_image = req.file.filename;
-//             try {
-//                 fs.unlinkSync('./uploads/' + req.body.old_image);
-//             } catch (err) {
-//                 console.log(err)
-//             }
-//         } else {
-//             new_image = req.body.old_image;
-//         }
-
-//         const updatedData = {
-//             name: req.body.name,
-//             email: req.body.email,
-//             phone: req.body.phone,
-//             image: new_image,
-//         };
-
-//         User.findByIdAndUpdate(id, updatedData, { new: true })
-//             .then(result => {
-//                 req.session.message = {
-//                     type: 'success',
-//                     message: 'User updated successfully'
-//                 };
-//                 res.redirect('/admin/dashboard');
-//             })
-//             .catch(err => {
-//                 res.json({ message: err.message, type: 'danger' });
-//             });
-//     } catch (error) {
-//         console.log(error, 'page not found');
-//         res.status(500).send("server error")
-//     }
-// }
-
-// const deleteUser = async (req, res) => {
-//     try {
-//         let id = req.params.id;
-//         User.findByIdAndDelete(id).exec()
-//             .then(result => {
-//                 if (result && result.image) {
-//                     return fs.promises.unlink("./uploads/" + result.image)
-//                         .catch(err => {
-//                             console.log("Failed to delete image file: ", err);
-//                         });
-//                 }
-//             })
-//             .then(() => {
-//                 req.session.message = {
-//                     type: "info",
-//                     message: "User deleted successfully!",
-//                 };
-//                 res.redirect("/admin/dashboard");
-//             })
-//             .catch(err => {
-//                 res.json({ message: err.message });
-//             });
-//     } catch (error) {
-//         console.log(error, 'page not found');
-//         res.status(500).send("server error")
-//     }
-// }
-
-
-
-
-
-
-
-
-
-
-
-

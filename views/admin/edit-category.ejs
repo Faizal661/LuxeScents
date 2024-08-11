@@ -85,7 +85,7 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-9">
@@ -99,17 +99,17 @@
                                         <div class="mb-4">
                                             <label for="product_name" class="form-label">Name</label>
                                             <input type="text" name="categoryName" placeholder="Type here"
-                                                class="form-control" id="product_name" value="<%= category.name %>" />
+                                                class="form-control shadow" id="product_name" value="<%= category.name %>" />
                                             <div id="name-error" class="error-message"></div>
                                         </div>
                                         <div class="mb-4">
                                             <label class="form-label">Description</label>
-                                            <textarea placeholder="Type here" name="description" class="form-control"
+                                            <textarea placeholder="Type here" name="description" class="form-control shadow"
                                                 id="descriptionId"><%= category.description %></textarea>
                                             <div id="description-error" class="error-message"></div>
                                         </div>
-                                        <div class="d-grid col-md-4">
-                                            <button class="btn btn-primary" type="submit">
+                                        <div class="d-grid col-md-6">
+                                            <button class="btn btn-primary shadow" type="submit">
                                                 Update Category
                                             </button>
                                         </div>
@@ -133,11 +133,10 @@
 
                 event.preventDefault();
                 if (!validateForm()) {
-
-                    console.log("not validate working")
+                    console.error("Form validation is unsuccessful")
                     return;
                 }
-                const name = document.getElementsByName("categoryName")[0].value;
+                const name = document.getElementsByName("categoryName")[0].value.trim();
                 const description = document.getElementById("descriptionId").value;
 
                 fetch('/admin/editCategory/<%=category._id %>', {
@@ -155,6 +154,7 @@
                                     icon: 'success',
                                     title: "Success",
                                     text: "Category updated successfully",
+                                    timer: 2000
                                 }).then(() => {
                                     window.location.href = "/admin/category";
                                 });
@@ -165,11 +165,10 @@
                             });
                         }
                     })
-               
                     .catch(error => {
-                        if (error.message === "Category already exists, please choose another name") {
+                        if (error.message === "Category already exists") {
                             Swal.fire({
-                                icon: 'error',
+                                icon: 'warning',
                                 title: "Oops",
                                 text: error.message
                             })
@@ -177,7 +176,7 @@
                             Swal.fire({
                                 icon: "error",
                                 title: "Oops",
-                                text: "An Error occured while adding the category",
+                                text: "An Error occured while updating the category",
                             })
                         }
                     })
@@ -196,7 +195,7 @@
                     isValid = false
 
                 } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-                    displayErrorMessage("name-error", "Category name should contain only aplphabetic characters")
+                    displayErrorMessage("name-error", "Category name should contain only alphabetic characters")
                     isValid = false
                 }
 
@@ -222,7 +221,6 @@
                     element.innerText = "";
                     element.style.display = "none"
                 })
-
             }
 
         </script>

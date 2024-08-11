@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true
- 
     },
     phone: {
         type: String,
@@ -17,11 +16,9 @@ const userSchema = new mongoose.Schema({
         unique: false,
         sparse: true,
         default: null
-
     },
     googleId: {
         type: String,
-
     },
     password: {
         type: String,
@@ -51,10 +48,6 @@ const userSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Order"
     }],
-    // createdOn: {
-    //     type: Date,
-    //     default: Date.now
-    // },
     searchHistory:[{
         category:{
             type:mongoose.Schema.Types.ObjectId,
@@ -70,18 +63,6 @@ const userSchema = new mongoose.Schema({
     }],
    
 },{timestamps:true});
-
-//hashing password
-// userSchema.pre('save', async function (next) {
-//     if (this.isModified('password')) {
-//         this.password = await bcrypt.hash(this.password, 10);
-//     }
-//     next();
-// });
-
-// userSchema.methods.isValidPassword = async function (password) {
-//     return await bcrypt.compare(password, this.password);
-// };
 
 
 module.exports = mongoose.model('User', userSchema)

@@ -1,66 +1,73 @@
 <%- include("../../views/partials/admin/header") %>
-    <div class="content-header row">
-        <div class="d-flex justify-content-between align-items-center">
+
+    <div class="content-header row shadow-sm">
+        <header class="card-header d-flex  justify-content-between">
             <h2 class="content-title card-title">Customers</h2>
-        </div>
+            <form action="/admin/users/" method="get" class="col-lg-5 me-5">
+                <div class="input-group input-group-sm border border-2 shadow rounded-pill "> <input type="text"
+                        class="form-control border-0 rounded-pill bg-transparent" placeholder=" Search Users..."
+                        name="search">
+                    <button class="btn border border-2 border-end-0 border-top-0 border-bottom-0"
+                        type="submit">Search</button>
+                </div>
+            </form>
+        </header>
     </div>
     </div>
 
-    <header class="card-header text-center bg-transparent mb-2 me-5 float-end">
-        <form action="/admin/users/" method="get" class="d-inline">
-            <div class="input-group input-group-sm border border-2 border-grey rounded-pill"
-                style="width: 500px; margin-left: 230px;">
-                <input type="text" class="form-control border-0 rounded-pill bg-transparent" placeholder=" Search Users..."
-                    name="search">
-                <button class="btn border border-2 border-end-0 border-top-0 border-bottom-0" type="submit">Search</button>
-            </div>
-        </form>
-    </header>
-    <div class="right mt-5 mx-5">
-        <table class="table table-striped border border-2">
-            <thead class=" border border-2">
-                <tr>
-                    <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> ID </th>
-                    <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Name </th>
-                    <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Email </th>
-                    <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Phone No </th>
-                    <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Action </th>
-                </tr>
+
+    <div class="right mt-5 mx-5 card p-3 shadow col-sm col-md col-lg">
+        <table class="table table-striped border border-2 table-hover table-light ">
+            <thead>
+                <% if(userData.length==0){ %>
+                    <h1 class="text-center">No users found</h1>
+                    <% } else{%>
+                        <tr>
+                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> ID </th>
+                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Name </th>
+                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Email </th>
+                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Phone No
+                            </th>
+                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Action </th>
+                        </tr>
             </thead>
             <tbody>
-                <% for(let i=0;i<data.length;i++) {%>
+
+                <% for(let i=0;i<userData.length;i++) {%>
                     <tr>
                         <td class=" border border-2 text-center">
                             <%= i+1+(limit*(currentPage-1)) %>
                         </td>
                         <td class=" border border-2 text-center">
-                            <%= data[i].name %>
+                            <%= userData[i].name %>
                         </td>
                         <td class=" border border-2 text-center">
-                            <%= data[i].email %>
+                            <%= userData[i].email %>
                         </td>
                         <td class=" border border-2 text-center">
-                            <% if(data[i].phone==null){ %>
+                            <% if(userData[i].phone==null){ %>
                                 Google user
-                            <% }else{ %>
-                            <%= data[i].phone %>
-                            <% } %>
+                                <% }else{ %>
+                                    <%= userData[i].phone %>
+                                        <% } %>
                         </td>
                         <td class=" border border-2 text-center ">
-                            <% if(data[i].isBlocked===false) {%>
+                            <% if(userData[i].isBlocked===false) {%>
                                 <button class="btn btn-danger" style="width: 80px;">
-                                    <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="text-white"
+                                    <a href="/admin/blockCustomer?id=<%= userData[i]._id %>" class="text-white"
                                         style="text-decoration: none;">Block</a>
                                 </button>
                                 <% }else{ %>
-                                    <button class="btn btn-success" style="width: 80px;">
-                                        <a href="/admin/unblockCustomer?id=<%= data[i]._id %>" class="text-white"
+                                    <button class="btn btn-success" style="width: 85px;">
+                                        <a href="/admin/unblockCustomer?id=<%= userData[i]._id %>" class="text-white"
                                             style="text-decoration: none;">Unblock</a>
                                     </button>
                                     <% } %>
                         </td>
                     </tr>
                     <% } %>
+                        <% } %>
+
             </tbody>
         </table>
     </div>
