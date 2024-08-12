@@ -138,9 +138,9 @@ const addProduct = async (req, res) => {
 
 const getEditProduct=async(req,res)=>{
     try {
-        const id=req.params.id
-        const product=await Product.findById(id)
-        // console.log(product)
+        const productId=req.params.id
+        const product=await Product.findById(productId)
+        console.log(product)
         const categories = await Category.find({});
         const brands = await Brand.find({});
         res.render('editProduct',{adminName:req.session.adminName,categories: categories,brands:brands,product})
@@ -153,7 +153,7 @@ const getEditProduct=async(req,res)=>{
 
 const editProduct = async (req, res) => {
     try {
-        const id=req.params.id
+        const productId=req.params.id
 
         uploadImages(req, res, async (err) => {
             if (err) {

@@ -73,120 +73,156 @@
                 border: 1px solid #333;
 
             }
+
+            .image-container {
+                position: relative;
+                display: inline-block;
+                margin-right: 10px;
+            }
+
+            .image-container .btn-danger {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                padding: 2px 5px;
+                font-size: 10px;
+            }
         </style>
     </head>
 
-    
-<body>
-    <section class="content-main">
-        <div class="content-header">
-            <div>
-                <h2 class="content-title card-title">Edit Product</h2>
+
+    <body>
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Edit Product</h2>
+                </div>
             </div>
-        </div>
 
-        <div class="card shadow">
-            <div class="card-body">
-                <form method="post" action="/admin/editProduct/<%= product._id %>" enctype="multipart/form-data"
-                    onsubmit="return handleFormSubmit(event)">
-                    <div class="row"> 
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <label for="product_name" class="form-label">Name</label>
-                                <input type="text" name="productName" placeholder="Type here" class="shadow form-control"
-                                    id="product_name" value="<%= product.productName %>" />
-                                <div id="name-error" class="error-message"></div>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Description</label>
-                                <textarea placeholder="Type here" name="description" class="shadow form-control" id="descriptionId" rows="3"><%= product.description %></textarea>
-                                <div id="description-error" class="error-message"></div>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Brand</label>
-                                <select name="brands" class="form-select shadow form-control">
-                                    <% brands.forEach(brand => { %>
-                                        <option value="<%= brand._id %>" ><%= brand.brandName %></option>
-                                    <% }); %>
-                                </select>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Category</label>
-                                <select name="category" class="form-select shadow form-control">
-                                    <% categories.forEach(category => { %>
-                                        <option value="<%= category._id %>" ><%= category.name %></option>
-                                    <% }); %>
-                                </select>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Regular Price</label>
-                                <input type="number" name="regularPrice" id="regularPriceId" placeholder="Type here"
-                                    class="form-control shadow" value="<%= product.regularPrice %>" />
-                                <div id="regularPrice-error" class="error-message"></div>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Sale Price</label>
-                                <input type="number" name="salePrice" id="salePriceId" placeholder="Type here"
-                                    class="form-control shadow" value="<%= product.salePrice %>" />
-                                <div id="salePrice-error" class="error-message"></div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <label class="form-label">Gender</label>
-                                <select name="gender" class="form-select shadow form-control">
-                                    <option value="Men" <%= product.gender === 'Men' ? 'selected' : '' %>>Men</option>
-                                    <option value="Women" <%= product.gender === 'Women' ? 'selected' : '' %>>Women</option>
-                                    <option value="Unisex" <%= product.gender === 'Unisex' ? 'selected' : '' %>>Unisex</option>
-                                </select>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Sizes</label>
-                                <div class="d-flex">
-                                    <% const sizes = ['25ml', '50ml', '75ml', '100ml', '150ml']; %>
-                                    <% sizes.forEach(size => { %>
-                                        <div class="form-check">
-                                            <input type="checkbox" name="size" value="<%= size %>" class="form-check-inline" id="size-<%= size %>"  />
-                                            <label class="form-check-label" for="size-<%= size %>"><%= size %></label>
-                                        </div>
-                                    <% }); %>
+            <div class="card shadow">
+                <div class="card-body">
+                    <form method="post" action="/admin/editProduct/<%= product._id %>" enctype="multipart/form-data"
+                        onsubmit="return handleFormSubmit(event)">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Name</label>
+                                    <input type="text" name="productName" placeholder="Type here"
+                                        class="shadow form-control" id="product_name"
+                                        value="<%= product.productName %>" />
+                                    <div id="name-error" class="error-message"></div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    <textarea placeholder="Type here" name="description" class="shadow form-control"
+                                        id="descriptionId" rows="3"><%= product.description %></textarea>
+                                    <div id="description-error" class="error-message"></div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Brand</label>
+                                    <select name="brands" class="form-select shadow form-control">
+                                        <% brands.forEach(brand=> { %>
+                                            <option value="<%= brand._id %>" <%=brand._id.equals(product.brand)
+                                                ? 'selected' : '' %>>
+                                                <%= brand.brandName %>
+                                            </option>
+                                            <% }); %>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Category</label>
+                                    <select name="category" class="form-select shadow form-control">
+                                        <% categories.forEach(category=> { %>
+                                            <option value="<%= category._id %>" <%=category._id.equals(product.category)
+                                                ? 'selected' : '' %>>
+                                                <%= category.name %>
+                                            </option>
+                                            <% }); %>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Regular Price</label>
+                                    <input type="number" name="regularPrice" id="regularPriceId" placeholder="Type here"
+                                        class="form-control shadow" value="<%= product.regularPrice %>" />
+                                    <div id="regularPrice-error" class="error-message"></div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Sale Price</label>
+                                    <input type="number" name="salePrice" id="salePriceId" placeholder="Type here"
+                                        class="form-control shadow" value="<%= product.salePrice %>" />
+                                    <div id="salePrice-error" class="error-message"></div>
                                 </div>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label">Quantity</label>
-                                <input type="number" name="quantity" placeholder="Type here" id="quantityId"
-                                    class="form-control shadow" value="<%= product.quantity %>" />
-                                <div id="quantity-error" class="error-message"></div>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Product Images</label>
-                                <input type="file" name="productImages" class="form-control shadow" id="productImages"
-                                    multiple onchange="previewImages(event)" />
-                                <div id="images-error" class="error-message"></div>
-                                <div id="imagePreview" class="d-flex flex-wrap mt-3">
-                                    <% product.productImages.forEach(image => { %>
-                                        <img src="<%= image %>" class="img-thumbnail" style="max-width: 100px; margin-right: 10px;" />
-                                    <% }); %>
+
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label class="form-label">Gender</label>
+                                    <select name="gender" class="form-select shadow form-control">
+                                        <option value="Men" <%=product.gender==='Men' ? 'selected' : '' %>>Men</option>
+                                        <option value="Women" <%=product.gender==='Women' ? 'selected' : '' %>>Women
+                                        </option>
+                                        <option value="Unisex" <%=product.gender==='Unisex' ? 'selected' : '' %>>Unisex
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Sizes</label>
+                                    <div class="d-flex">
+                                        <% const sizes=['25ml', '50ml' , '75ml' , '100ml' , '150ml' ]; %>
+                                            <% sizes.forEach(size=> { %>
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="size" value="<%= size %>"
+                                                        class="form-check-inline" id="size-<%= size %>"
+                                                        <%=product.size.includes(size) ? 'checked' : '' %>
+                                                    />
+                                                    <label class="form-check-label" for="size-<%= size %>">
+                                                        <%= size %>
+                                                    </label>
+                                                </div>
+                                                <% }); %>
+                                    </div>
+                                    <div id="size-error" class="error-message"></div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Quantity</label>
+                                    <input type="number" name="quantity" placeholder="Type here" id="quantityId"
+                                        class="form-control shadow" value="<%= product.quantity %>" />
+                                    <div id="quantity-error" class="error-message"></div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Product Images</label>
+                                    <input type="file" name="productImages" class="form-control shadow"
+                                        id="productImages" multiple onchange="previewImages(event)" />
+                                    <div id="images-error" class="error-message"></div>
+                                    <div id="imagePreview" class="d-flex flex-wrap mt-3">
+                                        <% product.productImages.forEach(image=> { %>
+                                            <img src="/<%=  image.replace(/\\/g, '/')  %>" class="img-thumbnail"
+                                                style="max-width: 100px; margin-right: 10px;" />
+                                            <% }); %>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Status</label>
+                                    <select name="status" class="form-select shadow form-control">
+                                        <option value="Available" <%=product.status==='Available' ? 'selected' : '' %>
+                                            >Available</option>
+                                        <option value="Out of Stock" <%=product.status==='Out of Stock' ? 'selected'
+                                            : '' %>>Out of Stock</option>
+                                        <option value="Discontinued" <%=product.status==='Discontinued' ? 'selected'
+                                            : '' %>>Discontinued</option>
+                                    </select>
                                 </div>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label">Status</label>
-                                <select name="status" class="form-select shadow form-control">
-                                    <option value="Available" <%= product.status === 'Available' ? 'selected' : '' %>>Available</option>
-                                    <option value="Out of Stock" <%= product.status === 'Out of Stock' ? 'selected' : '' %>>Out of Stock</option>
-                                    <option value="Discontinued" <%= product.status === 'Discontinued' ? 'selected' : '' %>>Discontinued</option>
-                                </select>
-                            </div>
                         </div>
-                    </div>
-                    <div class="d-grid mt-4">
-                        <button class="btn btn-primary btn-lg" type="submit">Update Product</button>
-                    </div>
-                </form>
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-primary btn-lg" type="submit">Update Product</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
 
 
@@ -196,7 +232,7 @@
             function handleFormSubmit(event) {
 
                 event.preventDefault();
-              
+
 
                 if (!validateForm()) {
                     console.log("Form validation failed");
@@ -230,26 +266,8 @@
                 fetch('/admin/editProduct/<%= product._id %>', {
                     method: 'POST',
                     body: formData
-                    // headers: {
-                    //     'content-type': 'application/json'
-                    // },
-                    // body: JSON.stringify({
-                    //     name, description, quantity, regularPrice, salePrice
-                    // })
 
                 })
-                    // .then(response => {
-                    //     if (!response.ok) {
-                    //         return response.json().then(err => {
-                    //             throw new Error(err.error);
-                    //         })
-                    //     }
-                    //     return response.json();
-                    // })
-                    // .then(data => {
-                    //     location.reload();
-                    // })
-
                     .then(response => {
                         if (response.ok) {
                             return response.json().then(data => {
@@ -257,7 +275,7 @@
                                     icon: 'success',
                                     title: "Success",
                                     text: "product Updated successfully",
-                                    timer:2000
+                                    timer: 2000
                                 }).then(() => {
                                     window.location.href = "/admin/products";
                                 });
@@ -313,7 +331,7 @@
                     displayErrorMessage("quantity-error", "Please enter Stock of the product");
                     isValid = false;
                 } else if (quantity < 0) {
-                    displayErrorMessage("quantity-error", "Stock quantity can't be negative");
+                    displayErrorMessage("quantity-error", "Stock quantity can't be a negative value");
                     isValid = false;
                 }
 
@@ -323,7 +341,7 @@
                     displayErrorMessage("regularPrice-error", "Please enter Regular Price");
                     isValid = false;
                 } else if (regularPrice <= 0) {
-                    displayErrorMessage("regularPrice-error", "Regular Price need to be a positive");
+                    displayErrorMessage("regularPrice-error", "Regular Price can't be a negative value or zero");
                     isValid = false;
                 }
 
@@ -331,10 +349,23 @@
                     displayErrorMessage("salePrice-error", "Please enter Sale Price");
                     isValid = false;
                 } else if (salePrice <= 0) {
-                    displayErrorMessage("salePrice-error", "Sale Price need to be a positive");
+                    displayErrorMessage("salePrice-error", "Sale Price can't be a negative value or zero");
                     isValid = false;
                 } else if (salePrice > regularPrice) {
                     displayErrorMessage("salePrice-error", "Sale Price must be lower than regular price");
+                    isValid = false;
+                }
+
+                if (sizes.length === 0) {
+                    displayErrorMessage("size-error", "Please select at least one size");
+                    isValid = false;
+                }
+
+                if (files.length < 4) {
+                    displayErrorMessage("images-error", "Please select at least 4 product images");
+                    isValid = false;
+                } else if (files.length > 5) {
+                    displayErrorMessage("images-error", "You can only select at most 5 product images");
                     isValid = false;
                 }
 
@@ -363,24 +394,52 @@
             function previewImages(event) {
                 const fileInput = event.target;
                 const previewContainer = document.getElementById('imagePreview');
-                previewContainer.innerHTML = ''; // Clear previous previews
+                previewContainer.innerHTML = '';
 
-                const files = fileInput.files;
-                for (const file of files) {
+                const files = Array.from(fileInput.files);
+                files.forEach((file, index) => {
                     if (file) {
                         const reader = new FileReader();
                         reader.onload = function (e) {
+                            const imgContainer = document.createElement('div');
+                            imgContainer.classList.add('image-container');
+                            imgContainer.style.position = 'relative';
+                            imgContainer.style.display = 'inline-block';
+                            imgContainer.style.marginRight = '10px';
+
                             const img = document.createElement('img');
                             img.src = e.target.result;
                             img.classList.add('img-thumbnail');
                             img.style.maxWidth = '100px';
-                            img.style.marginRight = '10px';
-                            previewContainer.appendChild(img);
-                        }
+
+                            const deleteBtn = document.createElement('button');
+                            deleteBtn.innerText = 'Remove';
+                            deleteBtn.classList.add('btn', 'btn-danger', 'btn-sm');
+                            deleteBtn.style.position = 'absolute';
+                            deleteBtn.style.top = '5px';
+                            deleteBtn.style.right = '5px';
+
+                            deleteBtn.addEventListener('click', () => {
+                                files.splice(index, 1);
+                                fileInput.files = createFileList(files);
+                                imgContainer.remove();
+                            });
+
+                            imgContainer.appendChild(img);
+                            imgContainer.appendChild(deleteBtn);
+                            previewContainer.appendChild(imgContainer);
+                        };
                         reader.readAsDataURL(file);
                     }
-                }
+                });
             }
+
+            function createFileList(files) {
+                const dataTransfer = new DataTransfer();
+                files.forEach(file => dataTransfer.items.add(file));
+                return dataTransfer.files;
+            }
+
         </script>
 
         <%- include("../../views/partials/admin/footer") %>

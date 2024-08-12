@@ -107,14 +107,6 @@ const loadSignup = async (req, res) => {
     }
 }
 
-// const loadSignUpOtpPage = async (req, res) => {
-//     try {
-//         res.render('signupOtpConfirm', { title: 'signUp page' })
-//     } catch (error) {
-//         console.log(error, 'page not found');
-//         res.status(500).send("server error")
-//     }
-// }
 
 function generateOtp() {
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -216,9 +208,10 @@ const verifyOtp = async (req, res) => {
 
             await saveUserData.save()
 
-            req.session.user = saveUserData._id;
+            // req.session.user = saveUserData._id;
+            console.log(req.session);
 
-            res.json({ success: true, redirectUrl: "/homepage" })
+            res.json({ success: true, redirectUrl: "/login?newuser" })
         } else {
             res.status(400).json({ success: false, message: "Invalid OTP ,Please try again" })
         }
@@ -258,7 +251,6 @@ const loadHomepage = async (req, res) => {
     try {
         const userName = req.session.userName
         if (userName) {
-            // console.log(userData);
             const bestSellers=await Product.find().populate('brand').populate('category');
             const newArrivals= await Product.find().populate('brand').populate('category');
             res.render('homepage', { userName: userName,bestSellers,newArrivals })

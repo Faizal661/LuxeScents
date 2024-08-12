@@ -73,6 +73,24 @@
                 border: 1px solid #333;
 
             }
+
+            .image-container {
+                position: relative;
+                display: inline-block;
+                margin-right: 10px;
+                margin-bottom: 10px;
+                border: 1px solid black;
+                border-radius: 6px; 
+
+            }
+
+            .image-container .btn-danger {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                padding: 2px 5px;
+                font-size: 10px;
+            }
         </style>
     </head>
 
@@ -176,6 +194,7 @@
                                             <label class="form-check-label" for="size-150ml">150ml</label>
                                         </div>
                                     </div>
+                                    <div id="size-error" class="error-message"></div>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label ">Quantity</label>
@@ -295,8 +314,9 @@
                 const regularPrice = regularPriceInput === "" ? NaN : parseFloat(regularPriceInput);
                 const salePrice = salePriceInput === "" ? NaN : parseFloat(salePriceInput);
 
+                const sizes = Array.from(document.querySelectorAll('input[name="size"]:checked'));
+                const files = document.getElementById('productImages').files;
 
-                console.log(quantity, salePrice, regularPrice)
                 let isValid = true;
 
                 if (name == "") {
@@ -316,7 +336,7 @@
                     displayErrorMessage("quantity-error", "Please enter Stock of the product");
                     isValid = false;
                 } else if (quantity < 0) {
-                    displayErrorMessage("quantity-error", "Stock quantity can't be negative");
+                    displayErrorMessage("quantity-error", "Stock quantity can't be a negative value");
                     isValid = false;
                 }
 
@@ -326,7 +346,7 @@
                     displayErrorMessage("regularPrice-error", "Please enter Regular Price");
                     isValid = false;
                 } else if (regularPrice <= 0) {
-                    displayErrorMessage("regularPrice-error", "Regular Price need to be a positive");
+                    displayErrorMessage("regularPrice-error", "Regular Price can't be a negative value or zero");
                     isValid = false;
                 }
 
@@ -334,10 +354,23 @@
                     displayErrorMessage("salePrice-error", "Please enter Sale Price");
                     isValid = false;
                 } else if (salePrice <= 0) {
-                    displayErrorMessage("salePrice-error", "Sale Price need to be a positive");
+                    displayErrorMessage("salePrice-error", "Sale Price can't be a negative value or zero");
                     isValid = false;
                 } else if (salePrice > regularPrice) {
                     displayErrorMessage("salePrice-error", "Sale Price must be lower than regular price");
+                    isValid = false;
+                }
+
+                if (sizes.length === 0) {
+                    displayErrorMessage("size-error", "Please select at least one size");
+                    isValid = false;
+                }
+
+                if (files.length < 4) {
+                    displayErrorMessage("images-error", "Please select at least 4 product images");
+                    isValid = false;
+                } else if (files.length > 5) {
+                    displayErrorMessage("images-error", "You can only select at most 5 product images");
                     isValid = false;
                 }
 
@@ -362,29 +395,57 @@
 
         </script>
 
-        
+
         <script>
             function previewImages(event) {
                 const fileInput = event.target;
                 const previewContainer = document.getElementById('imagePreview');
-                previewContainer.innerHTML = ''; // Clear previous previews
+                previewContainer.innerHTML = ''; 
 
-                const files = fileInput.files;
-                for (const file of files) {
+                const files = Array.from(fileInput.files);
+                files.forEach((file, index) => {
                     if (file) {
                         const reader = new FileReader();
                         reader.onload = function (e) {
+                            const imgContainer = document.createElement('div');
+                            imgContainer.classList.add('image-container');
+                            imgContainer.style.position = 'relative';
+                            imgContainer.style.display = 'inline-block';
+                            imgContainer.style.marginRight = '10px';
+
                             const img = document.createElement('img');
                             img.src = e.target.result;
                             img.classList.add('img-thumbnail');
                             img.style.maxWidth = '100px';
-                            img.style.marginRight = '10px';
-                            previewContainer.appendChild(img);
-                        }
+
+                            const deleteBtn = document.createElement('button');
+                            deleteBtn.innerText = 'Remove';
+                            deleteBtn.classList.add('btn', 'btn-danger', 'btn-sm');
+                            deleteBtn.style.position = 'absolute';
+                            deleteBtn.style.top = '5px';
+                            deleteBtn.style.right = '5px';
+
+                            deleteBtn.addEventListener('click', () => {
+                                files.splice(index, 1);
+                                fileInput.files = createFileList(files);
+                                imgContainer.remove();
+                            });
+
+                            imgContainer.appendChild(img);
+                            imgContainer.appendChild(deleteBtn);
+                            previewContainer.appendChild(imgContainer);
+                        };
                         reader.readAsDataURL(file);
                     }
-                }
+                });
             }
+
+            function createFileList(files) {
+                const dataTransfer = new DataTransfer();
+                files.forEach(file => dataTransfer.items.add(file));
+                return dataTransfer.files;
+            }
+
         </script>
 
         <%- include("../../views/partials/admin/footer") %>
