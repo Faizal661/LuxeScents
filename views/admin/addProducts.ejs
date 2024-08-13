@@ -247,7 +247,7 @@
                 const formData = new FormData();
                 const formElements = event.target.elements;
 
-                formData.append('productName', formElements['productName'].value);
+                formData.append('productName', formElements['productName'].value.trim());
                 formData.append('description', formElements['description'].value);
                 formData.append('quantity', formElements['quantity'].value);
                 formData.append('regularPrice', formElements['regularPrice'].value);
@@ -369,8 +369,8 @@
                 if (files.length < 4) {
                     displayErrorMessage("images-error", "Please select at least 4 product images");
                     isValid = false;
-                } else if (files.length > 5) {
-                    displayErrorMessage("images-error", "You can only select at most 5 product images");
+                } else if (files.length > 10) {
+                    displayErrorMessage("images-error", "You can only select at most 10 product images");
                     isValid = false;
                 }
 

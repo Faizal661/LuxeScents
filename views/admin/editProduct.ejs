@@ -191,18 +191,29 @@
                                         class="form-control shadow" value="<%= product.quantity %>" />
                                     <div id="quantity-error" class="error-message"></div>
                                 </div>
+
                                 <div class="mb-4">
                                     <label class="form-label">Product Images</label>
                                     <input type="file" name="productImages" class="form-control shadow"
                                         id="productImages" multiple onchange="previewImages(event)" />
                                     <div id="images-error" class="error-message"></div>
                                     <div id="imagePreview" class="d-flex flex-wrap mt-3">
-                                        <% product.productImages.forEach(image=> { %>
-                                            <img src="/<%=  image.replace(/\\/g, '/')  %>" class="img-thumbnail"
-                                                style="max-width: 100px; margin-right: 10px;" />
+                                        <% product.productImages.forEach((image, index)=> { %>
+                                            <div class="image-container"
+                                                style="position: relative; display: inline-block; margin-right: 10px;">
+                                                <img src="/<%= image.replace(/\\/g, '/') %>" class="img-thumbnail"
+                                                    style="max-width: 100px;" />
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                    style="position: absolute; top: 5px; right: 5px;"
+                                                    onclick="removeExistingImage('<%= image %>', '<%= index %>')">Remove</button>
+                                            </div>
                                             <% }); %>
                                     </div>
+                                
+                                    <input type="hidden" name="existingImages" id="existingImages"
+                                        value="<%= JSON.stringify(product.productImages) %>" />
                                 </div>
+
                                 <div class="mb-4">
                                     <label class="form-label">Status</label>
                                     <select name="status" class="form-select shadow form-control">
@@ -257,8 +268,12 @@
                 sizes.forEach(size => formData.append('size', size));
 
 
+                const existingImages = document.getElementsByName('existingImages');
+                for (let i = 0; i < existingImages.length; i++) {
+                    formData.append('existingImages', existingImages[i].value);
+                }
+
                 const files = formElements['productImages'].files;
-                // console.log(files);
                 for (let i = 0; i < files.length; i++) {
                     formData.append('productImages', files[i]);
                 }
@@ -299,6 +314,7 @@
 
             function validateForm() {
                 clearErrorMessage();
+
                 const name = document.getElementsByName("productName")[0].value.trim();
                 const description = document.getElementById("descriptionId").value.trim();
 
@@ -310,8 +326,12 @@
                 const regularPrice = regularPriceInput === "" ? NaN : parseFloat(regularPriceInput);
                 const salePrice = salePriceInput === "" ? NaN : parseFloat(salePriceInput);
 
+                const sizes = Array.from(document.querySelectorAll('input[name="size"]:checked'));
+                const files = document.getElementById('productImages').files;
+                console.log('existing Images', document.getElementById('existingImages').value)
+                const existingImages = JSON.parse(document.getElementById('existingImages').value);
 
-                console.log(quantity, salePrice, regularPrice)
+
                 let isValid = true;
 
                 if (name == "") {
@@ -322,6 +342,7 @@
                     displayErrorMessage("name-error", "Product name should contain only aplphabetic characters")
                     isValid = false
                 }
+
                 if (description == "") {
                     displayErrorMessage("description-error", "Please enter a description")
                     isValid = false
@@ -361,13 +382,14 @@
                     isValid = false;
                 }
 
-                if (files.length < 4) {
+                if (existingImages.length + files.length < 4) {
                     displayErrorMessage("images-error", "Please select at least 4 product images");
                     isValid = false;
-                } else if (files.length > 5) {
-                    displayErrorMessage("images-error", "You can only select at most 5 product images");
+                } else if (existingImages.length + files.length > 10) {
+                    displayErrorMessage("images-error", "You can only select at most 10 product images");
                     isValid = false;
                 }
+
 
                 return isValid;
             }
@@ -389,12 +411,65 @@
             }
 
 
+            function removeExistingImage(imagePath, index) {
+                const existingImages = JSON.parse(document.getElementById('existingImages').value);
+                existingImages.splice(index, 1);
+                document.getElementById('existingImages').value = JSON.stringify(existingImages);
+
+                // Remove the image container from the DOM
+                const imageContainers = document.querySelectorAll('#imagePreview .image-container');
+                imageContainers[index].remove();
+            }
+
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const previewContainer = document.getElementById('imagePreview');
+                const existingImages = JSON.parse(document.getElementById('existingImages').value);
+
+                existingImages.forEach((image, index) => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.classList.add('image-container', 'existing-image-container');
+                    imgContainer.style.position = 'relative';
+                    imgContainer.style.display = 'inline-block';
+                    imgContainer.style.marginRight = '10px';
+
+                    const img = document.createElement('img');
+                    img.src = `/${image.replace(/\\/g, '/')}`;
+                    img.classList.add('img-thumbnail');
+                    img.style.maxWidth = '100px';
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.innerText = 'Remove';
+                    deleteBtn.classList.add('btn', 'btn-danger', 'btn-sm');
+                    deleteBtn.style.position = 'absolute';
+                    deleteBtn.style.top = '5px';
+                    deleteBtn.style.right = '5px';
+
+                    deleteBtn.addEventListener('click', () => {
+                        existingImages.splice(index, 1);
+                        document.getElementById('existingImages').value = JSON.stringify(existingImages);
+                        imgContainer.remove();
+                    });
+
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(deleteBtn);
+                    previewContainer.appendChild(imgContainer);
+                });
+            });
+
+
+
         </script>
+
         <script>
+
             function previewImages(event) {
                 const fileInput = event.target;
                 const previewContainer = document.getElementById('imagePreview');
-                previewContainer.innerHTML = '';
+
+                // Clear only the new images from the preview, keep the existing ones
+                const newImageContainers = previewContainer.querySelectorAll('.new-image-container');
+                newImageContainers.forEach(container => container.remove());
 
                 const files = Array.from(fileInput.files);
                 files.forEach((file, index) => {
@@ -402,7 +477,7 @@
                         const reader = new FileReader();
                         reader.onload = function (e) {
                             const imgContainer = document.createElement('div');
-                            imgContainer.classList.add('image-container');
+                            imgContainer.classList.add('image-container', 'new-image-container');
                             imgContainer.style.position = 'relative';
                             imgContainer.style.display = 'inline-block';
                             imgContainer.style.marginRight = '10px';
@@ -439,6 +514,7 @@
                 files.forEach(file => dataTransfer.items.add(file));
                 return dataTransfer.files;
             }
+
 
         </script>
 

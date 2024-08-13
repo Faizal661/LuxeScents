@@ -1,5 +1,4 @@
 const User = require("../models/userSchema")
-// Middleware to protect userId routes
 
 const userAuth = (req, res, next) => {
     if (req.session.user) {

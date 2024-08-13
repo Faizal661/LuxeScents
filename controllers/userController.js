@@ -281,6 +281,8 @@ const loadSingleProduct = async (req, res) => {
         //    console.log(id);
         const relatedProducts = await Product.find().populate('brand').populate('category');
         const singleProduct = await Product.findOne({ _id: id }).populate('brand').populate('category').populate({ path: 'reviews.user', select: 'name' });
+        console.log(singleProduct)
+        console.log('product Images: ',singleProduct.productImages)
         res.render('singleProduct', { userName: req.session.userName, singleProduct, relatedProducts })
 
     } catch (error) {

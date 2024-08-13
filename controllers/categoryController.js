@@ -1,6 +1,8 @@
 const Category = require("../models/categorySchema")
 const {successResponse,errorResponse}=require('../helpers/responseHandler')
 
+const CategoryAlreadyExists= "Category already exists"
+
 const categoryInfo = async (req, res) => {
     try {
         let search= "";
@@ -42,7 +44,7 @@ const addCategory = async (req, res) => {
 
         const existingCategory = await Category.findOne({ name });
         if (existingCategory) {
-            return res.status(400).json({ error: "Category already exists" })
+            return res.status(400).json({ error: CategoryAlreadyExists })
         }
 
         const newCategory = new Category({ name, description })
@@ -73,7 +75,7 @@ const EditCategory = async (req, res) => {
 
         const existingCategory = await Category.findOne({ name: categoryName })
         if (existingCategory && existingCategory._id.toString() !== categoryId) {
-            return res.status(400).json({ error: "Category already exists" })
+            return res.status(400).json({ error: CategoryAlreadyExists })
         }
 
         const updateCategory = await Category.findByIdAndUpdate(categoryId, {
@@ -105,7 +107,7 @@ const toggleCategoryListing = async (req, res) => {
         await Category.updateOne({ _id: categoryId }, { $set: { isListed: newIsListedValue } });
         res.redirect("/admin/category");
     } catch (error) {
-        console.error(error, "Error while updating status of category.");
+        console.error(error, "Error while isListed of category.");
         res.redirect("/pageerror");
     }
 };
