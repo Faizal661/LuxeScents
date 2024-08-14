@@ -184,7 +184,6 @@
                                     </div>
                                     <div id="size-error" class="error-message"></div>
                                 </div>
-
                                 <div class="mb-4">
                                     <label class="form-label">Quantity</label>
                                     <input type="number" name="quantity" placeholder="Type here" id="quantityId"
@@ -192,27 +191,23 @@
                                     <div id="quantity-error" class="error-message"></div>
                                 </div>
 
+
+
                                 <div class="mb-4">
                                     <label class="form-label">Product Images</label>
                                     <input type="file" name="productImages" class="form-control shadow"
                                         id="productImages" multiple onchange="previewImages(event)" />
                                     <div id="images-error" class="error-message"></div>
                                     <div id="imagePreview" class="d-flex flex-wrap mt-3">
-                                        <% product.productImages.forEach((image, index)=> { %>
-                                            <div class="image-container"
-                                                style="position: relative; display: inline-block; margin-right: 10px;">
-                                                <img src="/<%= image.replace(/\\/g, '/') %>" class="img-thumbnail"
-                                                    style="max-width: 100px;" />
-                                                <button type="button" class="btn btn-danger btn-sm"
-                                                    style="position: absolute; top: 5px; right: 5px;"
-                                                    onclick="removeExistingImage('<%= image %>', '<%= index %>')">Remove</button>
-                                            </div>
-                                            <% }); %>
+
                                     </div>
-                                
+
                                     <input type="hidden" name="existingImages" id="existingImages"
                                         value="<%= JSON.stringify(product.productImages) %>" />
                                 </div>
+                                <input type="hidden" name="removedImages" id="removedImages" value="[]">
+
+
 
                                 <div class="mb-4">
                                     <label class="form-label">Status</label>
@@ -240,10 +235,11 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script>
+        let removedImages = []
             function handleFormSubmit(event) {
 
                 event.preventDefault();
-
+                
 
                 if (!validateForm()) {
                     console.log("Form validation failed");
@@ -263,6 +259,7 @@
                 formData.append('brands', formElements['brands'].value);
                 formData.append('category', formElements['category'].value);
 
+                
 
                 const sizes = Array.from(document.querySelectorAll('input[name="size"]:checked')).map(cb => cb.value);
                 sizes.forEach(size => formData.append('size', size));
@@ -273,10 +270,19 @@
                     formData.append('existingImages', existingImages[i].value);
                 }
 
+                console.log(removedImages);
+                for (let i = 0; i < removedImages.length; i++) {
+                    formData.append('removedImages', removedImages[i]);
+                }
+
                 const files = formElements['productImages'].files;
                 for (let i = 0; i < files.length; i++) {
                     formData.append('productImages', files[i]);
                 }
+
+                
+         
+
 
                 fetch('/admin/editProduct/<%= product._id %>', {
                     method: 'POST',
@@ -413,6 +419,14 @@
 
             function removeExistingImage(imagePath, index) {
                 const existingImages = JSON.parse(document.getElementById('existingImages').value);
+
+                // Add the removed image path to a hidden input
+                const removedImagesInput = document.getElementById('removedImages');
+                const removedImages = removedImagesInput.value ? JSON.parse(removedImagesInput.value) : [];
+                removedImages.push(imagePath);
+                removedImagesInput.value = JSON.stringify(removedImages);
+
+                // Update the existing images array and hidden input
                 existingImages.splice(index, 1);
                 document.getElementById('existingImages').value = JSON.stringify(existingImages);
 
@@ -422,10 +436,11 @@
             }
 
 
+
             document.addEventListener('DOMContentLoaded', () => {
                 const previewContainer = document.getElementById('imagePreview');
                 const existingImages = JSON.parse(document.getElementById('existingImages').value);
-
+               
                 existingImages.forEach((image, index) => {
                     const imgContainer = document.createElement('div');
                     imgContainer.classList.add('image-container', 'existing-image-container');
@@ -446,11 +461,16 @@
                     deleteBtn.style.right = '5px';
 
                     deleteBtn.addEventListener('click', () => {
+                        console.log(index);
+                        console.log(existingImages[index]);
+                        removedImages.push(existingImages[index]) 
                         existingImages.splice(index, 1);
                         document.getElementById('existingImages').value = JSON.stringify(existingImages);
                         imgContainer.remove();
+                        // document.getElementById('removedImages').value =JSON.stringify(removedImages); ;
                     });
-
+                    console.log('sdfsdfasdfasd');
+                   
                     imgContainer.appendChild(img);
                     imgContainer.appendChild(deleteBtn);
                     previewContainer.appendChild(imgContainer);
@@ -498,6 +518,7 @@
                                 files.splice(index, 1);
                                 fileInput.files = createFileList(files);
                                 imgContainer.remove();
+                                
                             });
 
                             imgContainer.appendChild(img);

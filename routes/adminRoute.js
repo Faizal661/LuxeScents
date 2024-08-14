@@ -18,7 +18,7 @@ adminRouter.get('/logoutadmin', adminAuth, adminController.adminLogout)
 adminRouter.get('/users', adminAuth, customerController.customerInfo)
 adminRouter.get('/blockCustomer', adminAuth, customerController.toggleCustomerBlocking)
 adminRouter.get('/unblockCustomer', adminAuth, customerController.toggleCustomerBlocking)
-
+ 
 //category
 adminRouter.get('/category', adminAuth, categoryController.categoryInfo)
 adminRouter.post('/addCategory', adminAuth, categoryController.addCategory)
@@ -26,7 +26,7 @@ adminRouter.get('/editCategory', adminAuth, categoryController.getEditCategory)
 adminRouter.post('/editCategory/:id', adminAuth, categoryController.EditCategory)
 adminRouter.get('/unlistCategory', adminAuth, categoryController.toggleCategoryListing)
 adminRouter.get('/listCategory', adminAuth, categoryController.toggleCategoryListing)
-
+ 
 
 //product
 adminRouter.get('/products', adminAuth, productController.productInfo)
@@ -41,4 +41,4 @@ adminRouter.post('/editProduct/:id', adminAuth, productController.editProduct)
 //page error
 adminRouter.get('*', adminController.pageerror)
 
-module.exports = adminRouter; 
+module.exports = adminRouter;  

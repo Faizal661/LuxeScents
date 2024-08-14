@@ -277,12 +277,9 @@ const loadShopPage = async (req, res) => {
 
 const loadSingleProduct = async (req, res) => {
     try {
-        const id = req.query.id
-        //    console.log(id);
+        const ProductId = req.query.id
         const relatedProducts = await Product.find().populate('brand').populate('category');
-        const singleProduct = await Product.findOne({ _id: id }).populate('brand').populate('category').populate({ path: 'reviews.user', select: 'name' });
-        console.log(singleProduct)
-        console.log('product Images: ',singleProduct.productImages)
+        const singleProduct = await Product.findOne({ _id: ProductId }).populate('brand').populate('category').populate({ path: 'reviews.user', select: 'name' });
         res.render('singleProduct', { userName: req.session.userName, singleProduct, relatedProducts })
 
     } catch (error) {
@@ -315,7 +312,6 @@ const userLogout = async (req, res) => {
 
 const pageNotfound = async (req, res) => {
     try {
-        const user = req.session.user;
         res.render('404', { url: req.url })
     }
     catch (error) {
