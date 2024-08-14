@@ -10,14 +10,14 @@
             margin-left: 10px;
             color: #333;
         }
-        .zoomContainer{
-            position :absolute !important;
+
+        .zoomContainer {
+            position: absolute !important;
             top: 0px !important;
             right: 0px !important;
         }
     </style>
     <!-- Header Section End -->
-
     <!-- Shop Details Section Begin -->
     <section class="shop-details">
         <div class="product__details__pic">
@@ -34,13 +34,16 @@
                     </div>
                 </div>
 
+
+
+
                 <div class="row">
                     <div class="col-lg-3 col-md-3">
                         <ul class="nav nav-tabs" role="tablist">
                             <% singleProduct.productImages.forEach((image, index)=> { %>
                                 <li class="nav-item">
                                     <a class="nav-link <%= index === 0 ? 'active' : '' %>" data-toggle="tab"
-                                        href="#tabs-<%= index + 1 %>" role="tab">
+                                        href="#tabs-<%= index+1 %>" role="tab">
                                         <div class="product__thumb__pic set-bg"
                                             data-setbg="<%= image.replace(/\\/g, '/') %>">
                                         </div>
@@ -49,18 +52,20 @@
                                 <% }) %>
                         </ul>
                     </div>
+
                     <div class="col-lg-6 col-md-9">
                         <div class="tab-content">
                             <% singleProduct.productImages.forEach((image, index)=> { %>
-                                <div class="tab-pane <%= index === 0 ? 'active' : '' %>" id="tabs-<%= index + 1 %>"
-                                    role="tabpanel">
+                                <div class="tab-pane fade  <%= index === 0 ? 'show active' : '' %>"
+                                    id="tabs-<%= index+1 %>" role="tabpanel">
                                     <div class="product__details__pic__item">
-                                        <img id="zoom<%= index %>"  src="<%= image.replace(/\\/g, '/') %>" alt=""  data-zoom-image="<%= image.replace(/\\/g, '/') %>"
-                                            style="width: 450px; height: 500px; object-fit: cover;">
+                                        <img id="zoom<%= index %>" src="<%= image.replace(/\\/g, '/') %>" alt=""
+                                            style="width: 450px; height: 550px; object-fit: cover;"
+                                            data-zoom-image="<%= image.replace(/\\/g, '/') %>">
                                     </div>
-                                    <div class="border border-5"></div>
                                 </div>
                                 <% }) %>
+
                         </div>
                     </div>
                 </div>
@@ -337,21 +342,21 @@
         </div>
     </section>
     <!-- Related Section End -->
-
-    
+   
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
 
     <script>
-            <% singleProduct.productImages.forEach(function(image, index) { %>
+            <% singleProduct.productImages.forEach(function (image, index) { %>
                 $('#zoom<%= index %>').elevateZoom({
                     zoomType: "lens",  // Zoom type (lens, window, inner)
                     lensShape: "square", // Shape of the lens (round, square)
                     lensSize: 400,      // Size of the lens
-                    scrollZoom: true    // Allow zoom using the scroll wheel
+                    scrollZoom: true  ,
+                    zoomActivation:"hover"  // Allow zoom using the scroll wheel
                 });
             <% }); %>
     </script>
-    
+
     
     <%- include('../partials/users/userFooter') -%>

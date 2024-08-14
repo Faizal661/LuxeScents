@@ -72,8 +72,7 @@ const adminLogout = async (req, res) => {
 
 const pageerror = async (req, res) => {
     try {
-        const admin = req.session.adminName;
-        res.render('pageerror', { url: req.url,admin})
+        res.render('pageerror', { url: req.url,})
     }
     catch (error) {
         res.redirect("/pageerror")

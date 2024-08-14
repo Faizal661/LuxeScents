@@ -1,7 +1,7 @@
 <%- include('../partials/admin/logoOnlyHeader') -%>
 
     <body style="background-color: rgba(38, 255, 0, 0.1); ">
-        <header>
+        <header class="shadow text-center ">
             <div class="title pb-5 border border-bottom" style="height: 60px;">
                 <a href="/" class="text-decoration-none">
                     <h2 class="font-weight-bold ms-5 logo">Luxe Scents</h2>
@@ -17,15 +17,15 @@
             <h5 class="text-success text-center fw-bold" id="logout">
                 <span></span>
             </h5>
-            <div class="container w-25  rounded py-5 border border-1">
+            <div class="container w-25  rounded py-5 border border-1 shadow card ">
                 <div class="title pb-5">
-                    <h3 class="fw-semibold">Admin Sign in</h3>
+                    <h3 class="fw-semibold ">Admin Sign in</h3>
                 </div>
 
                 <form action="/admin/admin-login" method="post">
                     <label for="" class="float-start fw-semibold pt-3">Email</label>
                     <div class="form-group">
-                        <input type="email" class="form-control mb-3 border border-1" value="admin@luxescent.com" name="email" required>
+                        <input type="email" class="form-control mb-3 border border-1 shadow" value="admin@luxescent.com" name="email" required>
                     </div>
                     <div class="pt-3">
                         <label for="" class="float-start fw-semibold ">Password</label>
@@ -33,17 +33,17 @@
                                 class="float-end text-decoration-underline text-black">Forgot password?</span></a> -->
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control border border-1" name="password" value="1234567q" required>
+                        <input type="password" class="form-control border border-1 shadow" name="password" value="1234567q" required>
                     </div>
                     <% if(locals.message && message.length>0 ) {%>
                         <div class="alert alert-danger text-center mt-2">
                             <%= message %>
                         </div>
                         <% } %>
-                    <div class="text-warning text-center mt-2" id="msg">
+                    <div class="text-warning text-center mt-2 shadow" id="msg">
                         <span></span>
                     </div>
-                    <button type="submit" class="btn btn-dark rounded-pill w-100">Sign In</button>
+                    <button type="submit" class="btn btn-dark rounded-pill w-100 shadow">Sign In</button>
                 </form>
 
 
