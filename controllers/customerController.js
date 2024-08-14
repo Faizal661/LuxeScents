@@ -8,8 +8,12 @@ const customerInfo= async(req,res)=>{
         }
         let page=1;
         if(req.query.page){
-            page=req.query.page
+            page= parseInt(req.query.page) 
         }
+
+        let sort = req.query.sort || 'name';  // Default sort by name
+        let order = req.query.order === 'desc' ? -1 : 1;  // Default order is ascending
+
         const limit=5
         const userData=await User.find({
             isAdmin:false,
@@ -18,6 +22,7 @@ const customerInfo= async(req,res)=>{
                 {email:{$regex:".*"+search+".*"}}
             ]
         })
+        .sort({ [sort]: order })
         .limit(limit*1)
         .skip((page-1)*limit)
         .exec();
@@ -35,7 +40,9 @@ const customerInfo= async(req,res)=>{
             userData:userData,
             totalPages:Math.ceil(count/limit),
             currentPage:page,
-            limit:limit
+            limit:limit,
+            sort: req.query.sort || 'name',
+            order: req.query.order || 'asc'
         })
 
     } catch (error) {

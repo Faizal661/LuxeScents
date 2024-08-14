@@ -1,36 +1,47 @@
 const Category = require("../models/categorySchema")
-const {successResponse,errorResponse}=require('../helpers/responseHandler')
+const { successResponse, errorResponse } = require('../helpers/responseHandler')
 
-const CategoryAlreadyExists= "Category already exists"
+const CategoryAlreadyExists = "Category already exists"
 
 const categoryInfo = async (req, res) => {
     try {
-        let search= "";
-        if(req.query.search){
-            search = req.query.search
-        }
+        let search = req.query.search || "";
+
         const page = parseInt(req.query.page) || 1;
         const limit = 5;
         const skip = (page - 1) * limit;
+
+        let sort = req.query.sort || 'createdAt';
+        let order = req.query.order === 'desc' ? -1 : 1;
+
         const categoryData = await Category.find({
-            $or:[
-                {name:{$regex:".*"+search+".*"}},
-                {description:{$regex:".*"+search+".*"}}
+            $or: [
+                { name: { $regex: ".*" + search + ".*", $options: "i" } },
+                { description: { $regex: ".*" + search + ".*", $options: "i" } }
             ]
         })
-            .sort({ createdAt: -1 })
+            .sort({ [sort]: order })
             .skip(skip)
             .limit(limit);
-        const totalCategories = await Category.countDocuments();
+
+        const totalCategories = await Category.countDocuments({
+            $or: [
+                { name: { $regex: ".*" + search + ".*", $options: "i" } },
+                { description: { $regex: ".*" + search + ".*", $options: "i" } }
+            ]
+        });
+
         const totalPages = Math.ceil(totalCategories / limit);
 
         res.render("category", {
             adminName: req.session.adminName,
             categoryData,
             currentPage: page,
-            totalPages: totalPages,
-            totalCategories: totalCategories,
-            limit: limit
+            totalPages,
+            totalCategories,
+            limit,
+            sort,
+            order: req.query.order || 'asc'
         })
     } catch (error) {
         console.error(error, "Error while loading category page.");

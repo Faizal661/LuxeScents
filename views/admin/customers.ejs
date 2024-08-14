@@ -23,12 +23,27 @@
                     <h1 class="text-center">No users found</h1>
                     <% } else{%>
                         <tr>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> ID </th>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Name </th>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Email </th>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Phone No
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold"> ID </th>
+        
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                <a href="?sort=name&order=<%= order === 'asc' && sort === 'name' ? 'desc' : 'asc' %>">
+                                    Name <%= order === 'asc' && sort === 'name' ? '▲' : (sort === 'name' ? '▼' : '') %>
+                                </a>
                             </th>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"> Action </th>
+        
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                <a href="?sort=email&order=<%= order === 'asc' && sort === 'email' ? 'desc' : 'asc' %>">
+                                    Email <%= order === 'asc' && sort === 'email' ? '▲' : (sort === 'email' ? '▼' : '') %>
+                                </a>
+                            </th>
+        
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                <a href="?sort=phone&order=<%= order === 'asc' && sort === 'phone' ? 'desc' : 'asc' %>">
+                                    Phone No <%= order === 'asc' && sort === 'phone' ? '▲' : (sort === 'phone' ? '▼' : '') %>
+                                </a>
+                            </th>
+        
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold"> Action </th>
                         </tr>
             </thead>
             <tbody>

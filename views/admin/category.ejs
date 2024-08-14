@@ -131,19 +131,31 @@
                                         <% } else{%>
                                             <thead>
                                                 <tr>
-                                                    <th class="  text-center h6 text-uppercase fw-normal ">id</th>
-                                                    <th class=" text-center h6 text-uppercase  fw-normal">Name</th>
-                                                    <th class=" text-center h6 text-uppercase  fw-normal">Description
+                                                    <th class="text-center h6 text-uppercase fw-normal">ID</th>
+                                    
+                                                    <th class="text-center h6 text-uppercase fw-normal">
+                                                        <a href="?sort=name&order=<%= order === 'asc' && sort === 'name' ? 'desc' : 'asc' %>">
+                                                            Name <%= order === 'asc' && sort === 'name' ? '▲' : (sort === 'name' ? '▼' : '') %>
+                                                        </a>
                                                     </th>
-                                                    <!-- <th>Offer Price</th>
-                                            <th>Offer</th> -->
-                                                    <th class=" text-center h6 text-uppercase fw-normal">Status</th>
-                                                    <th class=" text-center h6 text-uppercase fw-normal">Actions</th>
-                                                    <!-- <th class=" text-center h6 text-uppercase fw-normal">Edit</th> -->
+                                    
+                                                    <th class="text-center h6 text-uppercase fw-normal">
+                                                        <a href="?sort=description&order=<%= order === 'asc' && sort === 'description' ? 'desc' : 'asc' %>">
+                                                            Description <%= order === 'asc' && sort === 'description' ? '▲' : (sort === 'description' ? '▼' : '') %>
+                                                        </a>
+                                                    </th>
+                                    
+                                                    <th class="text-center h6 text-uppercase fw-normal">
+                                                        <a href="?sort=isListed&order=<%= order === 'asc' && sort === 'isListed' ? 'desc' : 'asc' %>">
+                                                            Status <%= order === 'asc' && sort === 'isListed' ? '▲' : (sort === 'isListed' ? '▼' : '') %>
+                                                        </a>
+                                                    </th>
+                                    
+                                                    <th class="text-center h6 text-uppercase fw-normal">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <% categoryData.reverse().forEach((category,index)=>{ %>
+                                                <% categoryData .forEach((category,index)=>{ %>
                                                     <tr>
                                                         <td>
                                                             <%= index+1+(limit*(currentPage-1)) %>

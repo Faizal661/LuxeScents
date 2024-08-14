@@ -6,45 +6,68 @@ const path = require('path');
 
 const productAlreadyExists="Product already exists"
 
-const productInfo=async(req,res)=>{
+const productInfo = async (req, res) => {
     try {
-        let search= "";
-        if(req.query.search){
-            search = req.query.search
-        }
-        let page=1;
-        if(req.query.page){
-            page=req.query.page
+        // Search functionality
+        let search = "";
+        if (req.query.search) {
+            search = req.query.search;
         }
 
-        const limit=5
-        const productsData=await Product.find({
-            productName:{$regex:".*"+search+".*"}
+        // Pagination
+        let page = 1;
+        if (req.query.page) {
+            page = parseInt(req.query.page);
+        }
+
+        const limit = 5;
+
+        // Sorting functionality
+        let sort = 'productName';  // Default sorting field
+        let order = 'asc';         // Default sorting order
+
+        if (req.query.sort) {
+            sort = req.query.sort;
+        }
+
+        if (req.query.order) {
+            order = req.query.order;
+        }
+
+        const sortOrder = order === 'asc' ? 1 : -1;
+
+        // Fetch products with sorting, search, and pagination
+        const productsData = await Product.find({
+            productName: { $regex: ".*" + search + ".*", $options: 'i' }
         })
         .populate('brand')
-        .limit(limit*1)
-        .skip((page-1)*limit)
+        .sort({ [sort]: sortOrder })
+        .limit(limit)
+        .skip((page - 1) * limit)
         .exec();
 
+        // Count total products for pagination
         const count = await Product.find({
-            productName:{$regex:".*"+search+".*"}
+            productName: { $regex: ".*" + search + ".*", $options: 'i' }
         }).countDocuments();
 
-        
-        res.render('products',{
-            adminName:req.session.adminName,
-            data:productsData,
-            totalPages:Math.ceil(count/limit),
-            currentPage:page,
-            limit:limit,
-            
-        })
+        // Render products page with the sorted and paginated data
+        res.render('products', {
+            adminName: req.session.adminName,
+            data: productsData,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            limit: limit,
+            sort: sort,
+            order: order
+        });
 
     } catch (error) {
         console.error(error);
-        res.redirect("/pageerror")
+        res.redirect("/pageerror");
     }
 }
+
 
 
 const toggleProductListing = async (req, res) => {

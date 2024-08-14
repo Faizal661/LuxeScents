@@ -19,19 +19,65 @@
     <div class="right mt-5 mx-5 card p-3 shadow col-sm col-md col-lg">
         <table class="table table-striped border border-2 table-hover table-light">
             <thead>
-                <% if(data.length==0){ %>
+                <% if(data.length==0) { %>
                     <h1 class="text-center">No Products found</h1>
-                    <% } else{%>
+                    <% } else { %>
                         <tr>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold"></th>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold">Product Name
+                            <!-- Index Column (No Sorting) -->
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                #
                             </th>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold">Brand</th>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold">Price</th>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold">Stock </th>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold">Status </th>
-                            <th scope="col" class=" border border-2 text-center h6 text-uppercase fw-bold">Actions</th>
+
+                            <!-- Product Name Column -->
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                <a
+                                    href="?sort=productName&order=<%= order === 'asc' && sort === 'productName' ? 'desc' : 'asc' %>">
+                                    Product Name <%= order==='asc' && sort==='productName' ? '▲' : (sort==='productName'
+                                        ? '▼' : '' ) %>
+                                </a>
+                            </th>
+
+                            <!-- Brand Column -->
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                <a
+                                    href="?sort=brand.brandName&order=<%= order === 'asc' && sort === 'brand.brandName' ? 'desc' : 'asc' %>">
+                                    Brand <%= order==='asc' && sort==='brand.brandName' ? '▲' :
+                                        (sort==='brand.brandName' ? '▼' : '' ) %>
+                                </a>
+                            </th>
+
+                            <!-- Price Column -->
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                <a
+                                    href="?sort=salePrice&order=<%= order === 'asc' && sort === 'salePrice' ? 'desc' : 'asc' %>">
+                                    Price <%= order==='asc' && sort==='salePrice' ? '▲' : (sort==='salePrice' ? '▼' : ''
+                                        ) %>
+                                </a>
+                            </th>
+
+                            <!-- Stock Column -->
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                <a
+                                    href="?sort=quantity&order=<%= order === 'asc' && sort === 'quantity' ? 'desc' : 'asc' %>">
+                                    Stock <%= order==='asc' && sort==='quantity' ? '▲' : (sort==='quantity' ? '▼' : '' )
+                                        %>
+                                </a>
+                            </th>
+
+                            <!-- Status Column -->
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                <a
+                                    href="?sort=status&order=<%= order === 'asc' && sort === 'status' ? 'desc' : 'asc' %>">
+                                    Status <%= order==='asc' && sort==='status' ? '▲' : (sort==='status' ? '▼' : '' ) %>
+                                </a>
+                            </th>
+
+                            <!-- Actions Column (No Sorting) -->
+                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                Actions
+                            </th>
                         </tr>
+                        <% } %>
             </thead>
             <tbody>
                 <% for(let i=0;i<data.length;i++) {%>
@@ -80,21 +126,40 @@
                                     </td>
                     </tr>
                     <% } %>
-                        <% } %>
+                    
             </tbody>
         </table>
     </div>
+
     <div class="container mt-3">
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
                 <% for(let i=1;i<=totalPages;i++){ %>
                     <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
-                        <a class="page-link" href="?page=<%= i %>">
+                        <a class="page-link" href="?page=<%= i %>&sort=<%= sort %>&order=<%= order %>">
                             <%= i %>
                         </a>
                     </li>
                     <% } %>
             </ul>
+
         </nav>
     </div>
+
+    <script>
+        document.querySelectorAll('th[data-sort]').forEach(header => {
+            header.addEventListener('click', function () {
+                const sortKey = this.getAttribute('data-sort');
+                const order = this.getAttribute('data-order');
+
+                // Redirect with query parameters for sorting
+                window.location.href = `?sort=${sortKey}&order=${order}`;
+
+                // Toggle the order
+                this.setAttribute('data-order', order === 'asc' ? 'desc' : 'asc');
+            });
+        });
+
+    </script>
+
     <%- include("../../views/partials/admin/footer") %>
