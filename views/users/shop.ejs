@@ -1,17 +1,10 @@
 <%- include('../partials/users/userHeader') -%>
 
-<STYLE>
-
-
- .product__item:hover {
-    cursor: pointer; 
-}
-</STYLE>
-
-
-
-
-
+    <style>
+        .product__item:hover {
+            cursor: pointer;
+        }
+    </style>
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-option">
         <div class="container">
@@ -58,7 +51,7 @@
                                                     <li><a href="#">Gourmand Fragrances </a></li>
                                                     <li><a href="#">Fresh Scents</a></li>
                                                     <li><a href="#">Aquatic Fragrances </a></li>
-                                                    
+
                                                 </ul>
                                             </div>
                                         </div>
@@ -237,34 +230,43 @@
 
 
                     <div class="row">
-                        <% products.forEach(product => { %>
-                        <div class="col-lg-4 col-md-6 col-sm-6  " onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
-                            <div class="product__item border border-3 rounded rounded-3 p-2">
-                                <div class="product__item__pic set-bg" data-setbg="<%= product.productImages[0].replace(/\\/g, '/') %>">
-                                    <ul class="product__hover">
-                                        <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                                        <li><a href="#"><img src="img/icon/cart.png" alt=""></a></li>
-                                    </ul>
-                                </div>
-                                <div class="product__item__text">
-                                
-                                    <h5><%= product.productName %></h5>
+                        <% products.forEach(product=> { %>
+                            <div class="col-lg-4 col-md-6 col-sm-6  "
+                                onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
+                                <div class="product__item border border-3 rounded rounded-3 p-2">
+                                    <div class="product__item__pic set-bg"
+                                        data-setbg="<%= product.productImages[0].replace(/\\/g, '/') %>">
+                                        <ul class="product__hover">
+                                            <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
+                                            <li><a href="#"><img src="img/icon/cart.png" alt=""></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="product__item__text">
+
+                                        <h5>
+                                            <%= product.productName %>
+                                        </h5>
                                         <div class="d-block">
-                                            <p class="h6 fw-lighter"> Brand : <%= product.brand.brandName %></p>
-                                            <p class="h6 fw-lighter"> Note : <%= product.category.name %></p>
+                                            <p class="h6 fw-lighter"> Brand : <%= product.brand.brandName %>
+                                            </p>
+                                            <p class="h6 fw-lighter"> Note : <%= product.category.name %>
+                                            </p>
 
                                         </div>
-                                    <div class="d-flex ">
-                                        <h5 >₹<%= product.salePrice %></h5>
-                                        <h5 class="pl-4 text-muted  " style="text-decoration: line-through;">₹<%= product.regularPrice %></h5>
-                                    </div>
-                                  
-                                    
-                                </div>
-                            </div>
+                                        <div class="d-flex ">
+                                            <h5>₹<%= product.salePrice %>
+                                            </h5>
+                                            <h5 class="pl-4 text-muted  " style="text-decoration: line-through;">₹<%=
+                                                    product.regularPrice %>
+                                            </h5>
+                                        </div>
 
-                        </div>
-                        <% }) %>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <% }) %>
 
                     </div>
 

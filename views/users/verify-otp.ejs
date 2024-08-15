@@ -19,8 +19,8 @@
                             <form id="otpForm" action="/verify-otp" method="post" onsubmit="return validateOTPForm()">
                                 <label for="" class="float-start fw-semibold pt-3">Enter OTP</label>
                                 <div class="form-group">
-                                    <input type="text" class="form-control mb-3" id="otp" name="otp" 
-                                        maxlength="6" pattern="\d*">
+                                    <input type="text" class="form-control mb-3" id="otp" name="otp" maxlength="6"
+                                        pattern="\d*">
                                 </div>
                                 <!-- <div class="text-danger text-center mt-2" id="msg">
                                     <span></span>
@@ -34,7 +34,7 @@
                                         <button type="button" class="btn btn-secondary my-3 me-2" id="resendOtpBtn"
                                             onclick="resendOTP()" disabled>Resend OTP</button>
                                     </div>
-                                    
+
                                 </div>
 
                                 <% if(locals.message && message.length>0 ) {%>
@@ -51,121 +51,11 @@
                     </div>
                 </div>
             </div>
-            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-            <script>
-
-                document.getElementById("otp").focus();
-
-                let timer = 30;
-                let resendTimer = 30;
-                let timerInterval;//expire otp 60--  to 0
-                let resendOtpInterval;// resend 30-- to 0
+        </div>
 
 
-                function startTimer() {
-                    timerInterval = setInterval(() => {
-                        timer--;
-                        document.getElementById('timerValue').textContent = `Resend OTP After ${timer} seconds`;
-                        if (timer <= 0) {
-                            clearInterval(timerInterval);
-                            document.getElementById('timerValue').classList.add("expired");
-                            document.getElementById('timerValue').textContent = "";
-                            document.getElementById("resendOtpBtn").classList.replace("btn-secondary", "btn-dark");
-                        }
-                    }, 1000)
-                }
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/user-assets/js/verifyOtp.js"></script>
 
-                function startresendTimer() {// resend 30-- to 0
-                    document.getElementById("resendOtpBtn").disabled = true;
-                    resendOtpInterval = setTimeout(() => {
-                        document.getElementById("resendOtpBtn").disabled = false;
-                    }, resendTimer * 1000);
-                }
-
-
-                function validateOTPForm() {
-                    const otpInput = document.getElementById("otp").value;
-
-
-                    $.ajax({
-                        type: "POST",
-                        url: "verify-otp",
-                        data: { otp: otpInput },
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "OTP Verified Successfully",
-                                    showConfirmButton: false,
-                                    timer: 1500,
-                                }).then(() => {
-                                    window.location.href = response.redirectUrl;
-                                })
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Error",
-                                    text: response.message,
-
-                                })
-                            }
-                        },
-                        error: function () {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Invalid OTP",
-                                text: "Please try again"
-                            })
-                        }
-                    })
-                    return false;
-                }
-
-
-
-                function resendOTP() {
-                    clearInterval(timerInterval);
-
-                    timer = 30;
-                    document.getElementById("otp").disabled = false;
-                    document.getElementById("timerValue").classList.remove("expired");
-                    startTimer();
-                    startresendTimer();
-                    $.ajax({
-                        type: "POST",
-                        url: "/resend-otp",
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    icon: "info",
-                                    title: "OTP Resend Successfully",
-                                    showConfirmButton: true,
-                                    
-                                })
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Error",
-                                    text: "An error occured while resending OTP . Please try again",
-                                })
-                            }
-                        }
-                    })
-                    return false;
-                }
-                startTimer();
-                startresendTimer();
-
-
-                // const url = window.location.search.substring(1)
-                // console.log(url)
-                // if (url === 'incorrect') {
-                //     const spanMsg = document.getElementById('msg').querySelector('span');
-                //     spanMsg.innerText = "incorrect OTP";
-                // }
-            </script>
-
-
-            <%- include('../partials/users/footer') -%>
+        <%- include('../partials/users/footer') -%>

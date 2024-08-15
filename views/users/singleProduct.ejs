@@ -10,16 +10,20 @@
             margin-left: 10px;
             color: #333;
         }
+        .lens {
+            border: 0px solid #000 !important;
+
+        }
 
         .zoomContainer {
             position: absolute !important;
-            top: 0px !important;
-            right: 0px !important;
+            top: 190px !important;
+            left: 1000px !important;
+            border-radius: 10px;
         }
     </style>
-    <!-- Header Section End -->
-    <!-- Shop Details Section Begin -->
-    <section class="shop-details">
+
+<section class="shop-details">
         <div class="product__details__pic">
             <div class="container">
 
@@ -33,9 +37,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
 
                 <div class="row">
                     <div class="col-lg-3 col-md-3">
@@ -63,6 +64,9 @@
                                             style="width: 450px; height: 550px; object-fit: cover;"
                                             data-zoom-image="<%= image.replace(/\\/g, '/') %>">
                                     </div>
+                                    <div class="zoomContainer">
+
+                                    </div>
                                 </div>
                                 <% }) %>
 
@@ -75,50 +79,56 @@
 
         <div class="product__details__content">
             <div class="container">
-
-
                 <div class="row d-flex justify-content-center">
-                    
                     <div class="col-lg-6">
                         <div class="product__details__text">
-                            <h4><%= singleProduct.productName %></h4>
+                            <h4>
+                                <%= singleProduct.productName %>
+                            </h4>
                             <div class="rating">
-                                <% for (let i = 0; i < singleProduct.rating; i++) { %>
+                                <% for (let i=0; i < singleProduct.rating; i++) { %>
                                     <i class="fa fa-star" style="color: rgb(255, 179, 0);"></i>
-                                <% } %>
-                                <% for (let i = singleProduct.rating; i < 5; i++) { %>
-                                    <i class="fa fa-star-o" style="color: rgb(0, 0, 0);"></i>
-                                <% } %>
-                                <span> - <%= singleProduct.reviews.length %> Reviews</span>
+                                    <% } %>
+                                        <% for (let i=singleProduct.rating; i < 5; i++) { %>
+                                            <i class="fa fa-star-o" style="color: rgb(0, 0, 0);"></i>
+                                            <% } %>
+                                                <span> - <%= singleProduct.reviews.length %> Reviews</span>
                             </div>
                             <h3>₹<%= singleProduct.salePrice %> <span>₹<%= singleProduct.regularPrice %></span></h3>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row d-flex justify-content-center">
                     <div class="col-lg-8">
                         <div class="product__details__description">
-                            <p><%= singleProduct.description %></p>
-                            <h5 class="mb-3"><%= singleProduct.status %> (<%= singleProduct.quantity %> in Stock)</h5>
-                            <p class="fw-lighter">Gender: <%= singleProduct.gender %></p>
-                            <p class="fw-lighter">Brand: <%= singleProduct.brand.brandName %></p>
-                            <p class="fw-lighter">Note: <%= singleProduct.category.name %></p>
+                            <p>
+                                <%= singleProduct.description %>
+                            </p>
+                            <h5 class="mb-3">
+                                <%= singleProduct.status %> (<%= singleProduct.quantity %> in Stock)
+                            </h5>
+                            <p class="fw-lighter">Gender: <%= singleProduct.gender %>
+                            </p>
+                            <p class="fw-lighter">Brand: <%= singleProduct.brand.brandName %>
+                            </p>
+                            <p class="fw-lighter">Note: <%= singleProduct.category.name %>
+                            </p>
                             <br>
                         </div>
-                
+
                         <div class="product__details__option">
                             <div class="product__details__option__size">
                                 <span>Sizes: </span>
-                                <% singleProduct.size.forEach((size, index) => { %>
+                                <% singleProduct.size.forEach((size, index)=> { %>
                                     <label for="size-<%= index %>">
                                         <%= size %>
-                                        <input type="radio" id="size-<%= index %>" name="size" value="<%= size %>">
+                                            <input type="radio" id="size-<%= index %>" name="size" value="<%= size %>">
                                     </label>
-                                <% }) %>
+                                    <% }) %>
                             </div>
                         </div>
-                
+
                         <div class="product__details__cart__option">
                             <div class="quantity">
                                 <div class="pro-qty">
@@ -127,11 +137,12 @@
                             </div>
                             <a href="#" class="primary-btn rounded">Add to Cart</a>
                         </div>
-                
+
                         <div class="product__details__cart__option">
-                            <a href="#" class="primary-btn bg-success text-dark border border-5 fw-bolder rounded">Buy it Now</a>
+                            <a href="#" class="primary-btn bg-success text-dark border border-5 fw-bolder rounded">Buy
+                                it Now</a>
                         </div>
-                
+
                         <div class="product__details__btns__option">
                             <a href="#" class="primary-btn bg-warning border border-5 fw-bolder rounded">
                                 <i class="fa fa-heart text-danger"></i> Add to Wishlist
@@ -139,9 +150,6 @@
                         </div>
                     </div>
                 </div>
-                
-
-
 
                 <div class="row">
                     <div class="col-lg-12">
@@ -149,7 +157,7 @@
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link" data-toggle="tab" href="#tabs-7" role="tab">Reviews (<%=
-                                        singleProduct.reviews.length %>)</a>
+                                            singleProduct.reviews.length %>)</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link active" data-toggle="tab" href="#tabs-5" role="tab">Shipping &
@@ -234,7 +242,8 @@
                                             <p class="note">Total Ratings</p>
                                             <div class="rating">
                                                 <% for (let i=0; i < singleProduct.rating; i++) { %>
-                                                    <i class="fa fa-star star-large" style="color: rgb(255, 179, 0);"></i>
+                                                    <i class="fa fa-star star-large"
+                                                        style="color: rgb(255, 179, 0);"></i>
                                                     <% } %>
                                                         <% for (let i=singleProduct.rating; i < 5; i++) { %>
                                                             <i class="fa fa-star-o star-large"></i>
@@ -263,7 +272,7 @@
                                                     </p>
                                                     <div class="rating">
                                                         <% for (let i=0; i < review.rating; i++) { %>
-                                                            <i class="fa fa-star"style="color: rgb(255, 179, 0);"></i>
+                                                            <i class="fa fa-star" style="color: rgb(255, 179, 0);"></i>
                                                             <% } %>
                                                                 <% for (let i=review.rating; i < 5; i++) { %>
                                                                     <i class="fa fa-star-o"></i>
@@ -332,27 +341,29 @@
 
                     </div>
                     <% } %>
-
             </div>
-
         </div>
     </section>
     <!-- Related Section End -->
-   
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
-
     <script>
-            <% singleProduct.productImages.forEach(function (image, index) { %>
-                $('#zoom<%= index %>').elevateZoom({
-                    zoomType: "lens",  // Zoom type (lens, window, inner)
-                    lensShape: "square", // Shape of the lens (round, square)
-                    lensSize: 400,      // Size of the lens
-                    scrollZoom: true  ,
-                    zoomActivation:"hover"  // Allow zoom using the scroll wheel
-                });
-            <% }); %>
+        $(document).ready(function () {
+          <% singleProduct.productImages.forEach(function (image, index) { %>
+            $('#zoom<%= index %>').elevateZoom({
+                zoomType: "lens",
+                lensShape: "square",
+                lensSize: 2000,
+                scrollZoom: true,
+                zoomActivation: "hover",
+                containLensZoom: true,
+                cursor: "crosshair",            
+                responsive: true,
+            });
+          <% }); %>
+        });
     </script>
 
-    
+
     <%- include('../partials/users/userFooter') -%>

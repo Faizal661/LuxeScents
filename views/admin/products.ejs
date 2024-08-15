@@ -151,15 +151,10 @@
             header.addEventListener('click', function () {
                 const sortKey = this.getAttribute('data-sort');
                 const order = this.getAttribute('data-order');
-
-                // Redirect with query parameters for sorting
                 window.location.href = `?sort=${sortKey}&order=${order}`;
-
-                // Toggle the order
                 this.setAttribute('data-order', order === 'asc' ? 'desc' : 'asc');
             });
         });
-
     </script>
 
     <%- include("../../views/partials/admin/footer") %>

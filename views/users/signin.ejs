@@ -9,11 +9,6 @@
             </div>
         </header>
         <div class="text-center pt-5 pb-3" id="login">
-            <!-- <% if(locals.logout){ %> -->
-            <!-- <h5 class=" text-primary text-center fw-bold"> -->
-            <!-- <%= logout %> -->
-            <!-- </h5> -->
-            <!-- <% } %> -->
             <h5 class="text-success text-center fw-bold" id="logout">
                 <span></span>
             </h5>
@@ -53,7 +48,7 @@
                                 password ?</span></a>
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control" value="1234567q" name="password" required>
+                        <input type="password" class="form-control" value="12345678q" name="password" required>
                     </div>
                     <% if(locals.message && message.length>0 ) {%>
                         <div class="alert alert-danger text-center mt-2">
@@ -70,6 +65,8 @@
                 </div>
             </div>
         </div>
+
+
         <script>
             const url = window.location.search.substring(1)
             console.log(url)
@@ -88,7 +85,6 @@
                 const spanMsg = document.getElementById('blocked').querySelector('span');
                 spanMsg.innerText = "User is blocked by Admin ";
             }
-
         </script>
 
 

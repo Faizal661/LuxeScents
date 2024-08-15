@@ -2,81 +2,7 @@
 
     <head>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css" />
-        <style>
-            .col-md-3 {
-                padding: 20px;
-                border: 1px solid #ddd;
-                border-radius: 10px;
-                margin: 10px;
-            }
-
-            .form-label {
-                margin-bottom: 8px;
-            }
-
-            .form-control {
-                width: 100%;
-                padding: 8px;
-                margin-bottom: 10px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                box-sizing: border-box;
-            }
-
-            .d-grid {
-                margin-top: 20px;
-            }
-
-            .btn-primary {
-                background-color: #007bff;
-                color: #fff;
-                border: 1px solid #007bff;
-                border-radius: 5px;
-                padding: 10px 20px;
-                cursor: pointer;
-            }
-
-            .btn-primary:hover {
-                background-color: #0056b3;
-                border-color: #0056b3;
-            }
-
-            .pagination-container {
-                text-align: center;
-            }
-
-            .pagination {
-                display: inline-block;
-            }
-
-            .pagination a,
-            .pagination .current-page {
-                display: inline-block;
-                padding: 5px 10px;
-                margin: 0 2px;
-                border: 1px solid #ddd;
-                text-decoration: none;
-                color: #333;
-            }
-
-
-
-            .pagination a:hover {
-                background-color: #f5f5f5;
-            }
-
-            .error-message {
-                color: red;
-            }
-
-
-            tr,
-            td,
-            th {
-                border: 1px solid #000;
-
-            }
-        </style>
+        <link rel="stylesheet" href="/admin-assets/css/productsCategory.css">
     </head>
 
     <body>
@@ -132,25 +58,31 @@
                                             <thead>
                                                 <tr>
                                                     <th class="text-center h6 text-uppercase fw-normal">ID</th>
-                                    
+
                                                     <th class="text-center h6 text-uppercase fw-normal">
-                                                        <a href="?sort=name&order=<%= order === 'asc' && sort === 'name' ? 'desc' : 'asc' %>">
-                                                            Name <%= order === 'asc' && sort === 'name' ? '▲' : (sort === 'name' ? '▼' : '') %>
+                                                        <a
+                                                            href="?sort=name&order=<%= order === 'asc' && sort === 'name' ? 'desc' : 'asc' %>">
+                                                            Name <%= order==='asc' && sort==='name' ? '▲' :
+                                                                (sort==='name' ? '▼' : '' ) %>
                                                         </a>
                                                     </th>
-                                    
+
                                                     <th class="text-center h6 text-uppercase fw-normal">
-                                                        <a href="?sort=description&order=<%= order === 'asc' && sort === 'description' ? 'desc' : 'asc' %>">
-                                                            Description <%= order === 'asc' && sort === 'description' ? '▲' : (sort === 'description' ? '▼' : '') %>
+                                                        <a
+                                                            href="?sort=description&order=<%= order === 'asc' && sort === 'description' ? 'desc' : 'asc' %>">
+                                                            Description <%= order==='asc' && sort==='description' ? '▲'
+                                                                : (sort==='description' ? '▼' : '' ) %>
                                                         </a>
                                                     </th>
-                                    
+
                                                     <th class="text-center h6 text-uppercase fw-normal">
-                                                        <a href="?sort=isListed&order=<%= order === 'asc' && sort === 'isListed' ? 'desc' : 'asc' %>">
-                                                            Status <%= order === 'asc' && sort === 'isListed' ? '▲' : (sort === 'isListed' ? '▼' : '') %>
+                                                        <a
+                                                            href="?sort=isListed&order=<%= order === 'asc' && sort === 'isListed' ? 'desc' : 'asc' %>">
+                                                            Status <%= order==='asc' && sort==='isListed' ? '▲' :
+                                                                (sort==='isListed' ? '▼' : '' ) %>
                                                         </a>
                                                     </th>
-                                    
+
                                                     <th class="text-center h6 text-uppercase fw-normal">Actions</th>
                                                 </tr>
                                             </thead>
@@ -184,25 +116,25 @@
                                                                     <span class="badge rounded-pill alert-danger"
                                                                         style="width: 60px">Unlisted</span>
                                                                     <% } %>
+
                                                         </td>
                                                         <td class="text-center ">
+                                                            <a href="/admin/editCategory?id=<%=category._id%>"
+                                                                class="btn btn-info text-white">Edit</a>
                                                             <% if(category.isListed===true) {%>
-                                                                <button class="btn btn-danger" style="width: 70px;">
+                                                                <button class="btn btn-danger ms-2" style="width: 70px;">
                                                                     <a href="/admin/unlistCategory?id=<%= category._id %>"
                                                                         class="text-white"
                                                                         style="text-decoration: none;">Unlist</a>
                                                                 </button>
                                                                 <% }else{ %>
-                                                                    <button class="btn btn-success"
+                                                                    <button class="btn btn-success ms-2"
                                                                         style="width: 70px;">
                                                                         <a href="/admin/listCategory?id=<%= category._id %>"
                                                                             class="text-white"
                                                                             style="text-decoration: none;">List</a>
                                                                     </button>
                                                                     <% } %>
-
-                                                                        <a href="/admin/editCategory?id=<%=category._id%>"
-                                                                            class="btn btn-info text-white">Edit</a>
                                                         </td>
                                                     </tr>
                                                     <% }) %>
@@ -218,24 +150,24 @@
 
             <div class="pagination-container ">
                 <% if (currentPage> 1) { %>
-                    <a href="?page=<%= currentPage - 1 %>" class="border border-1 rounded-pill  py-1">&laquo;
+                    <a href="?page=<%= currentPage - 1 %>" class="border border-1 rounded-pill  py-1 me-1">&laquo;
                         Previous</a>
                     <% } %>
                         <% for (let i=1; i <=totalPages; i++) { %>
                             <% if (i===currentPage) { %>
-                                <span class="current-page border border-1 rounded-pill py-1 " style="  background-color: black;
+                                <span class="current-page border border-1 rounded-pill py-1 me-1" style="  background-color: black;
                                 color: white;">
                                     <%= i %>
                                 </span>
                                 <% } else { %>
-                                    <a href="?page=<%= i %>" class="border border-1 rounded-pill py-1">
+                                    <a href="?page=<%= i %>" class="border border-1 rounded-pill py-1 me-1">
                                         <%= i %>
                                     </a>
                                     <% } %>
                                         <% } %>
                                             <% if (currentPage < totalPages) { %>
                                                 <a href="?page=<%= currentPage + 1 %>"
-                                                    class="border border-1 rounded-pill py-1">Next &raquo;</a>
+                                                    class="border border-1 rounded-pill py-1 ">Next &raquo;</a>
                                                 <% } %>
             </div>
 
@@ -245,101 +177,6 @@
         </section>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-        <script>
-            function handleFormSubmit(event) {
-
-                event.preventDefault();
-                if (!validateForm()) {
-                    console.error("Form validation is unsuccessful")
-                    return;
-                }
-                const name = document.getElementsByName("name")[0].value.trim();
-                const description = document.getElementById("descriptionId").value;
-
-                fetch('/admin/addCategory', {
-                    method: 'POST',
-                    headers: {
-                        'content-type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name, description
-                    })
-
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(err => {
-                                throw new Error(err.error);
-                            })
-                        }
-                        return response.json().then(data => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: "Success",
-                                text: "Category added successfully",
-                                timer: 2000
-                            }).then(data => {
-                                location.reload();
-                            })
-                        });
-                    })
-                    .catch(error => {
-                        if (error.message === "Category already exists") {
-                            Swal.fire({
-                                icon: 'error',
-                                title: "Oops",
-                                text: "Category already exists"
-                            })
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Oops",
-                                text: "An Error occured while adding the category",
-                            })
-                        }
-                    })
-            }
-
-            function validateForm() {
-                clearErrorMessage();
-                const name = document.getElementsByName("name")[0].value.trim();
-                const description = document.getElementById("descriptionId").value.trim();
-                let isValid = true;
-
-                if (name == "") {
-                    displayErrorMessage("name-error", "Please enter a name")
-                    isValid = false
-
-                } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-                    displayErrorMessage("name-error", "Category name should contain only alphabetic characters")
-                    isValid = false
-                }
-                if (description == "") {
-                    displayErrorMessage("description-error", "Please enter a description")
-                    isValid = false
-
-                }
-
-                return isValid;
-            }
-
-
-            function displayErrorMessage(elementId, message) {
-                var errorElement = document.getElementById(elementId)
-                errorElement.innerText = message;
-                errorElement.style.display = "block";
-            }
-
-            function clearErrorMessage() {
-                var errorElements = document.getElementsByClassName("error-message")
-                Array.from(errorElements).forEach((element) => {
-                    element.innerText = "";
-                    element.style.display = "none"
-                })
-
-            }
-
-
-        </script>
+        <script src="/admin-assets/js/category/addCategory.js"></script>
 
         <%- include("../../views/partials/admin/footer") %>
