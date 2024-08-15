@@ -2,6 +2,7 @@ const User = require('../models/userSchema')
 const Product = require('../models/productSchema')
 const nodemailer = require("nodemailer")
 const bcrypt = require('bcrypt');
+const { successResponse, errorResponse } = require('../helpers/responseHandler')
 
 
 
@@ -21,34 +22,25 @@ const loadLogin = async (req, res) => {
     }
 }
 
-//---------------------
 
 const userLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
-        //console.log(username,password);
         const findUser = await User.findOne({ isAdmin: 0, email: email });
-        // console.log(user);
-        //no user
         if (!findUser) {
             return res.render("signin", { message: "User not found" })
         }
-        //user blocked
         if (findUser.isBlocked) {
             return res.render("signin", { message: "User is blocked by admin" })
         }
 
-        //compare password
         const passwordMatch = await bcrypt.compare(password, findUser.password)
         if (!passwordMatch) {
             return res.render("signin", { message: "Incorrect Password" })
         }
-
         req.session.user = findUser._id;
         req.session.userName = findUser.name
         res.redirect('/homepage');
-        // console.log(req.session)
-
 
     } catch (error) {
         console.error('login error', error);
@@ -63,8 +55,7 @@ const loadForgotPassword = async (req, res) => {
         res.render('forgotPassword', { title: 'forgot password' })
     } catch (error) {
         console.log(error, 'page not found');
-        res.status(500).send("server error")
-    }
+        errorResponse(res, error, "Internal server error");    }
 }
 
 const sendOtpToChangePassword = async (req, res) => {
@@ -78,8 +69,7 @@ const sendOtpToChangePassword = async (req, res) => {
         }
     } catch (error) {
         console.log(error, 'page not found');
-        res.status(500).send("server error")
-    }
+        errorResponse(res, error, "Internal server error");    }
 }
 
 const loadChangePasswordPage = async (req, res) => {
@@ -88,8 +78,7 @@ const loadChangePasswordPage = async (req, res) => {
         res.render('changePassword', { title: 'change password' })
     } catch (error) {
         console.log(error, 'page not found');
-        res.status(500).send("server error")
-    }
+        errorResponse(res, error, "Internal server error");    }
 }
 
 //------------------sign Up
@@ -103,8 +92,7 @@ const loadSignup = async (req, res) => {
         }
     } catch (error) {
         console.log(error, 'Sign up page not found');
-        res.status(500).send("server error")
-    }
+        errorResponse(res, error, "Internal server error");    }
 }
 
 
@@ -185,7 +173,7 @@ const securePassword = async (password) => {
         return passwordHash;
     } catch (error) {
         console.log('password hashing error', error);
-        res.status(500).json({ success: false, message: "An error occured " })
+        errorResponse(res, error.message, "Password hashing failed");
     }
 }
 
@@ -228,10 +216,8 @@ const resendOtp = async (req, res) => {
         if (!email) {
             return res.status(400).json({ success: false, message: "Email not found in session" })
         }
-
         const otp = generateOtp();
         req.session.userOtp = otp;
-
         const emailSent = await sendVerificationEmail(email, otp);
 
         if (emailSent) {
@@ -250,30 +236,32 @@ const resendOtp = async (req, res) => {
 const loadHomepage = async (req, res) => {
     try {
         const userName = req.session.userName
+        //best seller filter need to change based on the higher ordered products .so it is pending now.
+        const bestSellers = await Product.find({ isBlocked: false }).populate({ path: 'category', match: { isListed: true } }).populate('brand');
+        const filteredBestSellers = bestSellers.filter(product => product.category);
+        const newArrivals = await Product.find({ isBlocked: false }).sort({ createdAt: -1 }).populate({ path: 'category', match: { isListed: true } }).populate('brand');
+        const filteredNewArrivals = newArrivals.filter(product => product.category);
         if (userName) {
-            const bestSellers=await Product.find().populate('brand').populate('category');
-            const newArrivals= await Product.find().populate('brand').populate('category');
-            res.render('homepage', { userName: userName,bestSellers,newArrivals })
+            res.render('homepage', { userName: userName, bestSellers: filteredBestSellers, newArrivals: filteredNewArrivals })
         } else {
-            return res.render('homepage')
+            return res.render('homepage',{bestSellers: filteredBestSellers, newArrivals: filteredNewArrivals})
         }
     } catch (error) {
         console.log(error, 'Homepage not loading');
-        res.status(500).send("server error")
-    }
+        errorResponse(res, error, "Internal server error");    }
 }
 
 
 const loadShopPage = async (req, res) => {
     try {
-        const products = await Product.find().populate('brand').populate('category');
-        res.render('shop', { userName: req.session.userName, products })
-
+        const products = await Product.find({ isBlocked: false }).populate({ path: 'category', match: { isListed: true } }).populate('brand');
+        const filteredProducts = products.filter(product => product.category);
+        res.render('shop', { userName: req.session.userName, products: filteredProducts })
     } catch (error) {
         console.log(error, 'ShopPage not loading');
-        res.status(500).send("server error")
-    }
+        errorResponse(res, error, "Internal server error");    }
 }
+
 
 const loadSingleProduct = async (req, res) => {
     try {
@@ -281,11 +269,9 @@ const loadSingleProduct = async (req, res) => {
         const relatedProducts = await Product.find().populate('brand').populate('category');
         const singleProduct = await Product.findOne({ _id: ProductId }).populate('brand').populate('category').populate({ path: 'reviews.user', select: 'name' });
         res.render('singleProduct', { userName: req.session.userName, singleProduct, relatedProducts })
-
     } catch (error) {
         console.log(error, 'Product detailed page is not loading');
-        res.status(500).send("server error")
-    }
+        errorResponse(res, error, "Internal server error");    }
 }
 
 

@@ -1,5 +1,6 @@
 const User = require('../models/userSchema')
 const bcrypt = require("bcrypt")
+const { successResponse, errorResponse } = require('../helpers/responseHandler')
 
 
 
@@ -11,7 +12,7 @@ const loadAdminLogin = async (req, res) => {
         res.render('admin-login', { message: null })
     } catch (error) {
         console.log(error, 'page not found');
-        res.status(500).send("server error")
+        errorResponse(res, error, "Internal server error");
     }
 }
 

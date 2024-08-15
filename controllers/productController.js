@@ -2,20 +2,18 @@ const Product = require('../models/productSchema')
 const Category = require('../models/categorySchema')
 const Brand = require('../models/brandSchema')
 const upload = require('../middlewares/multer')
-const path = require('path');
-const fs=require('fs')
+const { successResponse, errorResponse } = require('../helpers/responseHandler')
+
 
 const productAlreadyExists = "Product already exists"
 
 const productInfo = async (req, res) => {
     try {
-        // Search functionality
         let search = "";
         if (req.query.search) {
             search = req.query.search;
         }
 
-        // Pagination
         let page = 1;
         if (req.query.page) {
             page = parseInt(req.query.page);
@@ -23,10 +21,8 @@ const productInfo = async (req, res) => {
 
         const limit = 5;
 
-        // Sorting functionality
-        let sort = 'productName';  // Default sorting field
-        let order = 'asc';         // Default sorting order
-
+        let sort = 'productName'; 
+        let order = 'asc';         
         if (req.query.sort) {
             sort = req.query.sort;
         }
@@ -37,7 +33,6 @@ const productInfo = async (req, res) => {
 
         const sortOrder = order === 'asc' ? 1 : -1;
 
-        // Fetch products with sorting, search, and pagination
         const productsData = await Product.find({
             productName: { $regex: ".*" + search + ".*", $options: 'i' }
         })
@@ -47,12 +42,10 @@ const productInfo = async (req, res) => {
             .skip((page - 1) * limit)
             .exec();
 
-        // Count total products for pagination
         const count = await Product.find({
             productName: { $regex: ".*" + search + ".*", $options: 'i' }
         }).countDocuments();
 
-        // Render products page with the sorted and paginated data
         res.render('products', {
             adminName: req.session.adminName,
             data: productsData,
@@ -112,8 +105,6 @@ const addProduct = async (req, res) => {
                 console.error(err);
                 return res.status(400).json({ error: "Error uploading files." });
             }
-            // console.log('Body:', req.body);
-            // console.log('Uploaded files:', req.files); // Debug log
 
             if (!req.files || req.files.length === 0) {
                 return res.status(400).json({ error: "No files uploaded." });
@@ -148,7 +139,7 @@ const addProduct = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: "Internal server error" });
+        errorResponse(res, error, "Internal server error");
     }
 };
 
@@ -178,47 +169,30 @@ const editProduct = async (req, res) => {
                 return res.status(400).json({ error: "Error uploading files." });
             }
 
-            // Fetch the existing product to get current images
             const existingProduct = await Product.findById(productId);
             if (!existingProduct) {
                 return res.status(404).json({ error: "Product not found" });
             }
 
-            // Start with existing images
             let imageURL = [...existingProduct.productImages];
 
 
-            // let removedImages = req.body.removedImages;
-            // if (typeof removedImages === 'string') {
-            //     removedImages = JSON.parse(removedImages);
-            // } else if (!Array.isArray(removedImages)) {
-            //     removedImages = [removedImages];
-            // }
+     
 
-
-            // Handle removed images (if any)
             if (req.body.removedImages && req.body.removedImages.length > 0) {
                 const removedImages = Array.isArray(req.body.removedImages)
                     ? req.body.removedImages
                     : [req.body.removedImages];
 
-                imageURL = imageURL.filter(img => !removedImages.includes(img));
-
-                console.log('tryui',removedImages)
-                // removedImages.forEach(imagePath => {
-                //     console.log(imagePath);
-                //     fs.unlinkSync(path.join(__dirname, 'public', imagePath));
-                // });
+                imageURL = imageURL.filter(img => !removedImages.includes(img));         
             }
 
-            // Add newly uploaded images to the list
             if (req.files && req.files.length > 0) {
                 const imagePaths = req.files.map(file => file.path);
                 const newImageURLs = imagePaths.map(path => path.replace('public\\', ''));
                 imageURL = imageURL.concat(newImageURLs);
             }
 
-            // Ensure imageURL remains an array of strings
             imageURL = Array.isArray(imageURL) ? imageURL.flat() : [imageURL];
 
             const updateProduct = await Product.findByIdAndUpdate(productId, {
@@ -231,7 +205,7 @@ const editProduct = async (req, res) => {
                 gender: req.body.gender,
                 size: Array.isArray(req.body.size) ? req.body.size : [req.body.size],
                 quantity: req.body.quantity,
-                productImages: imageURL,  // Save image URLs
+                productImages: imageURL, 
                 status: req.body.status,
             }, { new: true });
 
@@ -247,7 +221,6 @@ const editProduct = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
-
 
 
 

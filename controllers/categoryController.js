@@ -64,7 +64,7 @@ const addCategory = async (req, res) => {
         res.json({ message: "Category added successfully" })
     } catch (error) {
         console.error(error, "Error while adding category.");
-        res.status(500).json({ error: "Internal server error" })
+        errorResponse(res, error, "Internal server error");
     }
 }
 
@@ -101,7 +101,7 @@ const EditCategory = async (req, res) => {
         }
     } catch (error) {
         console.error(error, "Error while updating category.");
-        return res.status(500).json({ error: "Internal server error" })
+        errorResponse(res, error, "Internal server error");
     }
 }
 
