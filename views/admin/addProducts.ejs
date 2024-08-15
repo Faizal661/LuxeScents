@@ -1,6 +1,8 @@
 <%- include("../../views/partials/admin/header") %>
 
     <head>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css" />
         <style>
             .col-md-3 {
@@ -80,7 +82,7 @@
                 margin-right: 10px;
                 margin-bottom: 10px;
                 border: 1px solid black;
-                border-radius: 6px; 
+                border-radius: 6px;
 
             }
 
@@ -203,13 +205,20 @@
                                     <div id="quantity-error" class="error-message"></div>
 
                                 </div>
-                                <div class="mb-4">
+
+
+                                <div class="mb-4 ">
                                     <label class="form-label">Product Images</label>
+
                                     <input type="file" name="productImages" class="form-control shadow"
                                         id="productImages" multiple onchange="previewImages(event)" />
+
                                     <div id="images-error" class="error-message"></div>
+
                                 </div>
                                 <div id="imagePreview" class="d-flex flex-wrap mt-3"></div>
+
+
 
                                 <div class="mb-4">
                                     <label class="form-label">Status</label>
@@ -400,7 +409,7 @@
             function previewImages(event) {
                 const fileInput = event.target;
                 const previewContainer = document.getElementById('imagePreview');
-                previewContainer.innerHTML = ''; 
+                previewContainer.innerHTML = '';
 
                 const files = Array.from(fileInput.files);
                 files.forEach((file, index) => {
@@ -447,5 +456,62 @@
             }
 
         </script>
+
+        //croppie.js
+        <script>
+            // DECLARE VARIABLES
+            const upload = document.querySelector("#upload");//productImages
+            const imgContainer = document.querySelector('#croppieContainer');
+            const croppedImage = document.querySelector('#croppedImage');//imagePreview
+            const cropButton = document.querySelector('#btnCrop');
+            const btnRefresh = document.querySelector('#btnRefresh');
+
+
+            // INITIALIZE CROPPIE
+            var croppieInstance = new Croppie(imgContainer, {
+                viewport: { width: 200, height: 200, type: 'square' },
+                boundary: { width: 400, height: 400 },
+                enableResize: true
+            });
+
+            // HANDLE FILE UPLOAD
+            upload.addEventListener('change', function (e) {
+                var file = e.target.files[0];
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    croppieInstance.bind({
+                        url: event.target.result
+                    });
+                };
+                reader.readAsDataURL(file);
+
+                // SHOW PREVIEW AND CROP BUTTON
+                imgContainer.style.display = 'block';
+                cropButton.style.display = 'block';
+            });
+
+            // HANDLE CROP BUTTON CLICK
+            cropButton.addEventListener('click', function () {
+                croppieInstance.result('canvas').then(function (result) {
+                    // SHOW CROPPED IMAGE
+                    croppedImage.src = result;
+                    croppedImage.style.display = 'block';
+
+                    // SHOW REFRESH BUTTON
+                    btnRefresh.style.display = 'block';
+
+                    //HIDE INPUT ELEMENT AND CROPPIE CONTAINER
+                    imgContainer.style.display = 'none';
+                    upload.style.display = 'none'
+                    cropButton.style.display = 'none';
+                });
+            });
+
+            // HANDLE REFRESH BUTTON CLICK
+            btnRefresh.addEventListener('click', function () {
+                location.reload();
+            });
+        </script>
+
 
         <%- include("../../views/partials/admin/footer") %>
