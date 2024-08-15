@@ -93,6 +93,53 @@
                 padding: 2px 5px;
                 font-size: 10px;
             }
+
+
+
+
+            #btnCrop,
+            #CroppieContainer,
+            #croppedImage {
+                display: none;
+            }
+
+            #btnCrop,
+            #croppedImage {
+                margin: auto;
+            }
+
+            input[type="file"]::file-selector-button {
+                border-radius: 4px;
+                padding: 0 16px;
+                height: 42px;
+                cursor: pointer;
+                background-color: white;
+                transition: background-color 200ms;
+            }
+
+            input[type="file"]::file-selector-button:hover {
+                background-color: #f3f4f6;
+            }
+
+            input[type="file"]::file-selector-button:active {
+                background-color: #e5e7eb;
+            }
+
+            button {
+                background-color: #2ecc71;
+                color: #444444;
+                font-weight: bold;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                display: inline-block;
+            }
+
+            button:hover {
+                background-color: #27ae60;
+            }
         </style>
     </head>
 
@@ -109,6 +156,7 @@
                     <form method="post" action="/admin/addProduct" enctype="multipart/form-data"
                         onsubmit="return handleFormSubmit(event)">
                         <div class="row">
+                           
                             <div class="col-md-6">
                                 <div class="mb-4 ">
                                     <label for="product_name" class="form-label">Name</label>
@@ -142,23 +190,37 @@
                                             <% }); %>
                                     </select>
                                 </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Regular Price</label>
-                                    <input type="number" name="regularPrice" id="regularPriceId" placeholder="Type here"
-                                        class="form-control shadow" />
-                                    <div id="regularPrice-error" class="error-message"></div>
-
+                                <div class="mb-4 d-flex justify-content-start">
+                                    <div class="col-md-5">
+                                        <label class="form-label">Regular Price</label>
+                                        <input type="number" name="regularPrice" id="regularPriceId" placeholder="Type here"
+                                            class="form-control shadow" />
+                                        <div id="regularPrice-error" class="error-message"></div>
+    
+                                    </div>
+                                    <div class="col-md-5 ms-3">
+                                        <label class="form-label">Sale Price</label>
+                                        <input type="number" name="salePrice" id="salePriceId" placeholder="Type here"
+                                            class="form-control shadow" />
+                                        <div id="salePrice-error" class="error-message"></div>
+    
+                                    </div>
                                 </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Sale Price</label>
-                                    <input type="number" name="salePrice" id="salePriceId" placeholder="Type here"
-                                        class="form-control shadow" />
-                                    <div id="salePrice-error" class="error-message"></div>
-
-                                </div>
+                               
                             </div>
 
                             <div class="col-md-6">
+                                <div class="mb-4 ">
+                                    <label class="form-label">Product Images</label>
+                                    <input type="file" name="productImages" class="form-control shadow"
+                                        id="productImages" multiple />
+                                    <div id="images-error" class="error-message"></div>
+                                    <div id="imagePreview" class="d-flex flex-wrap mt-3"></div>
+                                    <div id="CroppieContainer"></div>
+                                    <br>
+                                    <button id="btnCrop" type="button" class="btn btn-primary mt-2">Crop Image</button>
+                                </div>
+
                                 <div class="mb-4">
                                     <label class="form-label">Gender</label>
                                     <select name="gender" class="form-select form-control shadow">
@@ -205,21 +267,6 @@
                                     <div id="quantity-error" class="error-message"></div>
 
                                 </div>
-
-
-                                <div class="mb-4 ">
-                                    <label class="form-label">Product Images</label>
-
-                                    <input type="file" name="productImages" class="form-control shadow"
-                                        id="productImages" multiple onchange="previewImages(event)" />
-
-                                    <div id="images-error" class="error-message"></div>
-
-                                </div>
-                                <div id="imagePreview" class="d-flex flex-wrap mt-3"></div>
-
-
-
                                 <div class="mb-4">
                                     <label class="form-label">Status</label>
                                     <select name="status" class="form-select shadow form-control">
@@ -229,6 +276,7 @@
                                     </select>
                                 </div>
                             </div>
+
                         </div>
                         <div class="d-grid mt-4">
                             <button class="btn btn-primary btn-lg" type="submit">Add Product</button>
@@ -242,6 +290,7 @@
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
         <script>
             function handleFormSubmit(event) {
 
@@ -270,12 +319,11 @@
                 const sizes = Array.from(document.querySelectorAll('input[name="size"]:checked')).map(cb => cb.value);
                 sizes.forEach(size => formData.append('size', size));
 
+                croppedImagesArray.forEach((image, index) => {
+                    const blob = dataURItoBlob(image);
+                    formData.append('productImages', blob, `croppedImage${index}.png`);
+                });
 
-                const files = formElements['productImages'].files;
-                // console.log(files);
-                for (let i = 0; i < files.length; i++) {
-                    formData.append('productImages', files[i]);
-                }
 
                 fetch('/admin/addProduct', {
                     method: 'POST',
@@ -308,6 +356,17 @@
                     });
 
 
+            }
+
+            function dataURItoBlob(dataURI) {
+                const byteString = atob(dataURI.split(',')[1]);
+                const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                return new Blob([ab], { type: mimeString });
             }
 
             function validateForm() {
@@ -375,13 +434,12 @@
                     isValid = false;
                 }
 
-                if (files.length < 4) {
-                    displayErrorMessage("images-error", "Please select at least 4 product images");
-                    isValid = false;
-                } else if (files.length > 10) {
-                    displayErrorMessage("images-error", "You can only select at most 10 product images");
+
+                if (croppedImagesArray.length < 4) {
+                    displayErrorMessage("images-error", "Please select at least four images");
                     isValid = false;
                 }
+           
 
                 return isValid;
             }
@@ -406,12 +464,14 @@
 
 
         <script>
+
+            let croppedImagesArray = [];
+
+
             function previewImages(event) {
                 const fileInput = event.target;
-                const previewContainer = document.getElementById('imagePreview');
-                previewContainer.innerHTML = '';
-
                 const files = Array.from(fileInput.files);
+
                 files.forEach((file, index) => {
                     if (file) {
                         const reader = new FileReader();
@@ -435,82 +495,89 @@
                             deleteBtn.style.right = '5px';
 
                             deleteBtn.addEventListener('click', () => {
-                                files.splice(index, 1);
-                                fileInput.files = createFileList(files);
+                                croppedImagesArray.splice(index, 1);
                                 imgContainer.remove();
                             });
 
                             imgContainer.appendChild(img);
                             imgContainer.appendChild(deleteBtn);
-                            previewContainer.appendChild(imgContainer);
+                            document.getElementById('imagePreview').appendChild(imgContainer);
                         };
                         reader.readAsDataURL(file);
                     }
                 });
             }
 
-            function createFileList(files) {
-                const dataTransfer = new DataTransfer();
-                files.forEach(file => dataTransfer.items.add(file));
-                return dataTransfer.files;
-            }
-
-        </script>
-
-        //croppie.js
-        <script>
-            // DECLARE VARIABLES
-            const upload = document.querySelector("#upload");//productImages
-            const imgContainer = document.querySelector('#croppieContainer');
-            const croppedImage = document.querySelector('#croppedImage');//imagePreview
+            const upload = document.querySelector("#productImages");
             const cropButton = document.querySelector('#btnCrop');
-            const btnRefresh = document.querySelector('#btnRefresh');
+            const croppieContainer = document.querySelector('#CroppieContainer');
+            const imagePreview = document.querySelector('#imagePreview');
+            var CroppieContainer = document.getElementById("CroppieContainer")
+            let currentFile = null;
 
-
-            // INITIALIZE CROPPIE
-            var croppieInstance = new Croppie(imgContainer, {
-                viewport: { width: 200, height: 200, type: 'square' },
-                boundary: { width: 400, height: 400 },
+            let croppieInstance = new Croppie(document.createElement('div'), {
+                viewport: { width: 150, height: 150, type: 'square' },
+                boundary: { width: 250, height: 250 },
                 enableResize: true
             });
+            croppieContainer.appendChild(croppieInstance.element);
 
-            // HANDLE FILE UPLOAD
+
             upload.addEventListener('change', function (e) {
-                var file = e.target.files[0];
-                var reader = new FileReader();
+                currentFile = e.target.files[0];
+                const reader = new FileReader();
                 reader.onload = function (event) {
                     croppieInstance.bind({
                         url: event.target.result
                     });
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(currentFile);
 
-                // SHOW PREVIEW AND CROP BUTTON
-                imgContainer.style.display = 'block';
                 cropButton.style.display = 'block';
+                CroppieContainer.style.display = 'block';
             });
 
-            // HANDLE CROP BUTTON CLICK
             cropButton.addEventListener('click', function () {
-                croppieInstance.result('canvas').then(function (result) {
-                    // SHOW CROPPED IMAGE
-                    croppedImage.src = result;
-                    croppedImage.style.display = 'block';
+                croppieInstance.result('canvas').then(function (croppedImage) {
+                    croppedImagesArray.push(croppedImage);  // Add cropped image to array
 
-                    // SHOW REFRESH BUTTON
-                    btnRefresh.style.display = 'block';
+                    const imgContainer = document.createElement('div');
+                    imgContainer.classList.add('image-container');
+                    imgContainer.style.position = 'relative';
+                    imgContainer.style.display = 'inline-block';
+                    imgContainer.style.marginRight = '10px';
 
-                    //HIDE INPUT ELEMENT AND CROPPIE CONTAINER
-                    imgContainer.style.display = 'none';
-                    upload.style.display = 'none'
+                    const img = document.createElement('img');
+                    img.src = croppedImage;
+                    img.classList.add('img-thumbnail');
+                    img.style.maxWidth = '100px';
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.innerText = 'Remove';
+                    deleteBtn.classList.add('btn', 'btn-danger', 'btn-sm');
+                    deleteBtn.style.position = 'absolute';
+                    deleteBtn.style.top = '5px';
+                    deleteBtn.style.right = '5px';
+
+                    deleteBtn.addEventListener('click', () => {
+                        const index = croppedImagesArray.indexOf(croppedImage);
+                        if (index > -1) {
+                            croppedImagesArray.splice(index, 1);
+                        }
+                        imgContainer.remove();
+                    });
+
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(deleteBtn);
+                    imagePreview.appendChild(imgContainer);
+
+                    upload.value = '';
                     cropButton.style.display = 'none';
+                    CroppieContainer.style.display = 'none';
+
                 });
             });
 
-            // HANDLE REFRESH BUTTON CLICK
-            btnRefresh.addEventListener('click', function () {
-                location.reload();
-            });
         </script>
 
 
