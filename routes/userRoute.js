@@ -1,7 +1,8 @@
 var express = require('express')
 var userRouter = express.Router();
-const userController=require('../controllers/userController')
-
+const userController=require('../controllers/user/userController')
+const cartController=require('../controllers/user/cartController')
+const checkoutController=require('../controllers/user/checkoutController')
 
 const { userAuth } = require('../middlewares/authentication');
 const upload=require('../middlewares/multer')
@@ -10,7 +11,7 @@ const User = require('../models/userSchema')
 var url = require('url')
 
 
-userRouter.get('/',userController.loadLogin)
+userRouter.get('/',userController.loadLogin) 
 
 
 userRouter.get('/login',userController.loadLogin)
@@ -39,18 +40,27 @@ function storeUserIdInSession(req, res) {
     }}
 userRouter.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }),storeUserIdInSession);
 
+userRouter.get('/homepage',userController.loadHomepage )
+userRouter.get('/shoppage',userController.loadShopPage )
+userRouter.get('/singleProduct',userController.loadSingleProduct )
 
 
-userRouter.get('/shoppage',userAuth,userController.loadShopPage )
-userRouter.get('/singleProduct',userAuth,userController.loadSingleProduct )
+
 
  
- 
+//cart
+userRouter.get('/cartPage',userAuth,cartController.loadCartPage )
 
-userRouter.get('/homepage',userAuth,userController.loadHomepage )
+
+
+//checkout
+userRouter.get('/checkoutPage',userAuth,checkoutController.loadCheckoutPage)
+
+
+
+
 
 userRouter.get('/logout',userAuth,userController.userLogout)
-
 userRouter.get("/pageNotfound",userController.pageNotfound)
 
  

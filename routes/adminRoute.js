@@ -1,10 +1,10 @@
 const express = require('express')
 const adminRouter = express.Router();
 const { adminAuth } = require('../middlewares/authentication');
-const adminController = require('../controllers/adminController')
-const customerController = require('../controllers/customerController')
-const categoryController = require('../controllers/categoryController')
-const productController = require('../controllers/productController')
+const adminController = require('../controllers/admin/adminController')
+const customerController = require('../controllers/admin/customerController')
+const categoryController = require('../controllers/admin/categoryController')
+const productController = require('../controllers/admin/productController')
 
 adminRouter.get('/pageerror', adminAuth, adminController.pageerror)
 

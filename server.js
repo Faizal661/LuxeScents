@@ -15,8 +15,8 @@ const {v4:uuidv4}=require('uuid')
 const userRouter=require('./routes/userRoute')
 const adminRouter=require('./routes/adminRoute')
 const nocache = require('nocache');
-const userController=require('./controllers/userController')
-const adminController=require('./controllers/adminController')
+const userController=require('./controllers/user/userController')
+const adminController=require('./controllers/admin/adminController')
 const passport=require('./config/passport')
    
 
@@ -69,7 +69,6 @@ app.set('views',[ path.join(__dirname, 'views/users'), path.join(__dirname, 'vie
 
 
 app.use(express.static(path.join(__dirname,'public')))
-// app.use('/assets',express.static(path.join(__dirname,'public/assets')))
 
 
 

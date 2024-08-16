@@ -29,12 +29,14 @@
             <div class="row">
                 <div class="col-lg-3">
                     <div class="shop__sidebar">
+
                         <div class="shop__sidebar__search">
-                            <form action="#">
-                                <input type="text" placeholder="Search...">
+                            <form action="/shoppage" method="GET">
+                                <input type="text" name="search" placeholder="Search..." value="<%= searchQuery %>">
                                 <button type="submit"><span class="icon_search"></span></button>
                             </form>
                         </div>
+
                         <div class="shop__sidebar__accordion">
                             <div class="accordion" id="accordionExample">
                                 <div class="card">
@@ -98,12 +100,12 @@
                                         <div class="card-body">
                                             <div class="shop__sidebar__price">
                                                 <ul>
-                                                    <li><a href="#">₹0.00 - ₹50.00</a></li>
-                                                    <li><a href="#">₹50.00 - ₹100.00</a></li>
-                                                    <li><a href="#">₹100.00 - ₹150.00</a></li>
-                                                    <li><a href="#">₹150.00 - ₹200.00</a></li>
-                                                    <li><a href="#">₹200.00 - ₹250.00</a></li>
-                                                    <li><a href="#">250.00+</a></li>
+                                                    <li><a href="#">₹0.00 - ₹200.00</a></li>
+                                                    <li><a href="#">₹200.00 - ₹700.00</a></li>
+                                                    <li><a href="#">₹700.00 - ₹1000.00</a></li>
+                                                    <li><a href="#">₹1000.00 - ₹1500.00</a></li>
+                                                    <li><a href="#">₹1500.00 - ₹2000.00</a></li>
+                                                    <li><a href="#">2000.00+</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -204,19 +206,22 @@
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="shop__product__option__left">
-                                    <p>Showing 1–12 of 126 results</p>
+                                    <p>Showing <%= startProduct %>–<%= endProduct %> of <%= totalProductsCount %>
+                                                    results</p>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="shop__product__option__right">
                                     <p>Sort by :</p>
                                     <select>
-                                        <option value="">Low To High</option>
-                                        <option value="">High to Low</option>
                                         <option value="">Popularity</option>
+                                        <option value="">Price: low to high</option>
+                                        <option value="">Price: high to low</option>
+                                        <option value="">Average ratings</option>
+                                        <option value="">Featured</option>
                                         <option value="">New Arrivals</option>
-                                        <option value="">A-Z</option>
-                                        <option value="">Z-A</option>
+                                        <option value="">aA - zZ</option>
+                                        <option value="">zZ - aA</option>
 
                                     </select>
                                 </div>
@@ -224,15 +229,36 @@
                         </div>
                     </div>
 
+                    <style>
+                        .product__item__pic {
+                            overflow: hidden;
+                            /* Ensures the image doesn't overflow the container */
+                            position: relative;
+                        }
 
+                        .product__item__pic img {
+                            transition: transform 0.4s ease;
+                            /* Smooth zoom transition */
+                            width: 100%;
+                            /* Ensures the image takes up the full container width */
+                            height: auto;
+                            /* Maintains the aspect ratio */
+                        }
+
+                        .product__item__pic:hover img {
+                            transform: scale(1.07);
+                            /* Zoom the image on hover */
+                        }
+                    </style>
 
                     <div class="row">
                         <% products.forEach(product=> { %>
                             <div class="col-lg-4 col-md-6 col-sm-6  "
                                 onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
                                 <div class="product__item border border-3 rounded rounded-3 p-2">
-                                    <div class="product__item__pic set-bg"
-                                        data-setbg="<%= product.productImages[0].replace(/\\/g, '/') %>">
+                                    <div class="product__item__pic">
+                                        <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
+                                            alt="<%= product.productName %>">
                                         <ul class="product__hover">
                                             <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
                                             <li><a href="#"><img src="img/icon/cart.png" alt=""></a></li>
@@ -268,18 +294,32 @@
                     </div>
 
 
-
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="product__pagination">
-                                <a class="active" href="#">1</a>
-                                <a href="#">2</a>
-                                <a href="#">3</a>
-                                <span>...</span>
-                                <a href="#"></a>
-                            </div>
-                        </div>
+                    <div class="pagination-container d-flex justify-content-center">
+                        <% if (currentPage> 1) { %>
+                            <a href="?page=<%= currentPage - 1 %>" class="border border-1 rounded-pill  p-2 m-1">&laquo;
+                                Previous</a>
+                            <% } %>
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <% if (i===currentPage) { %>
+                                        <span class="current-page border border-1 rounded-pill p-2 m-1" style="  background-color: black;
+                                        color: white;">
+                                            <%= i %>
+                                        </span>
+                                        <% } else { %>
+                                            <a href="?page=<%= i %>" class="border border-1 rounded-pill p-2 m-1">
+                                                <%= i %>
+                                            </a>
+                                            <% } %>
+                                                <% } %>
+                                                    <% if (currentPage < totalPages) { %>
+                                                        <a href="?page=<%= currentPage + 1 %>"
+                                                            class="border border-1 rounded-pill p-2 m-1">Next
+                                                            &raquo;</a>
+                                                        <% } %>
                     </div>
+
+
+
                 </div>
             </div>
         </div>

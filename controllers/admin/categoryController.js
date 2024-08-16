@@ -1,5 +1,5 @@
-const Category = require("../models/categorySchema")
-const { successResponse, errorResponse } = require('../helpers/responseHandler')
+const Category = require("../../models/categorySchema")
+const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
 const CategoryAlreadyExists = "Category already exists"
 

@@ -1,9 +1,8 @@
-const Product = require('../models/productSchema')
-const Category = require('../models/categorySchema')
-const Brand = require('../models/brandSchema')
-const upload = require('../middlewares/multer')
-const { successResponse, errorResponse } = require('../helpers/responseHandler')
-
+const Product = require('../../models/productSchema')
+const Category = require('../../models/categorySchema')
+const Brand = require('../../models/brandSchema')
+const upload = require('../../middlewares/multer')
+const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
 const productAlreadyExists = "Product already exists"
 

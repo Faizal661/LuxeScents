@@ -1,8 +1,8 @@
-const User = require('../models/userSchema')
-const Product = require('../models/productSchema')
+const User = require('../../models/userSchema')
+const Product = require('../../models/productSchema')
 const nodemailer = require("nodemailer")
 const bcrypt = require('bcrypt');
-const { successResponse, errorResponse } = require('../helpers/responseHandler')
+const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
 
 
@@ -55,7 +55,8 @@ const loadForgotPassword = async (req, res) => {
         res.render('forgotPassword', { title: 'forgot password' })
     } catch (error) {
         console.log(error, 'page not found');
-        errorResponse(res, error, "Internal server error");    }
+        errorResponse(res, error, "Internal server error");
+    }
 }
 
 const sendOtpToChangePassword = async (req, res) => {
@@ -69,7 +70,8 @@ const sendOtpToChangePassword = async (req, res) => {
         }
     } catch (error) {
         console.log(error, 'page not found');
-        errorResponse(res, error, "Internal server error");    }
+        errorResponse(res, error, "Internal server error");
+    }
 }
 
 const loadChangePasswordPage = async (req, res) => {
@@ -78,7 +80,8 @@ const loadChangePasswordPage = async (req, res) => {
         res.render('changePassword', { title: 'change password' })
     } catch (error) {
         console.log(error, 'page not found');
-        errorResponse(res, error, "Internal server error");    }
+        errorResponse(res, error, "Internal server error");
+    }
 }
 
 //------------------sign Up
@@ -92,7 +95,8 @@ const loadSignup = async (req, res) => {
         }
     } catch (error) {
         console.log(error, 'Sign up page not found');
-        errorResponse(res, error, "Internal server error");    }
+        errorResponse(res, error, "Internal server error");
+    }
 }
 
 
@@ -244,23 +248,63 @@ const loadHomepage = async (req, res) => {
         if (userName) {
             res.render('homepage', { userName: userName, bestSellers: filteredBestSellers, newArrivals: filteredNewArrivals })
         } else {
-            return res.render('homepage',{bestSellers: filteredBestSellers, newArrivals: filteredNewArrivals})
+            return res.render('homepage', { bestSellers: filteredBestSellers, newArrivals: filteredNewArrivals })
         }
     } catch (error) {
         console.log(error, 'Homepage not loading');
-        errorResponse(res, error, "Internal server error");    }
+        errorResponse(res, error, "Internal server error");
+    }
 }
+
+
+
 
 
 const loadShopPage = async (req, res) => {
     try {
-        const products = await Product.find({ isBlocked: false }).populate({ path: 'category', match: { isListed: true } }).populate('brand');
+        const page = parseInt(req.query.page) || 1;
+        const limit = 2;
+        const skip = (page - 1) * limit;
+        let sort = req.query.sort || 'createdAt';
+        let order = req.query.order === 'desc' ? -1 : 1;
+
+        const searchQuery = req.query.search || '';
+
+        let query = { isBlocked: false };
+        if (searchQuery) {
+            query.name = { $regex: searchQuery, $options: 'i' }; 
+        }
+
+        const products = await Product.find({ isBlocked: false }).populate({ path: 'category', match: { isListed: true } }).populate('brand').sort({ [sort]: order })
+
         const filteredProducts = products.filter(product => product.category);
-        res.render('shop', { userName: req.session.userName, products: filteredProducts })
+        const totalProductsCount = filteredProducts.length
+        const totalPages = Math.ceil(totalProductsCount / limit);
+        const paginatedProducts = filteredProducts.slice(skip, skip + limit);
+
+        const startProduct = skip + 1;
+        const endProduct = Math.min(skip + paginatedProducts.length, totalProductsCount);
+
+        res.render('shop', {
+            userName: req.session.userName,
+            products: paginatedProducts,
+            currentPage: page,
+            totalPages, 
+            totalProductsCount,
+            limit,
+            sort,
+            order: req.query.order || 'asc',
+            startProduct,   // Pass start product index to the template
+            endProduct ,
+            searchQuery
+        })
     } catch (error) {
         console.log(error, 'ShopPage not loading');
-        errorResponse(res, error, "Internal server error");    }
+        errorResponse(res, error, "Internal server error");
+    }
 }
+
+
 
 
 const loadSingleProduct = async (req, res) => {
@@ -271,7 +315,8 @@ const loadSingleProduct = async (req, res) => {
         res.render('singleProduct', { userName: req.session.userName, singleProduct, relatedProducts })
     } catch (error) {
         console.log(error, 'Product detailed page is not loading');
-        errorResponse(res, error, "Internal server error");    }
+        errorResponse(res, error, "Internal server error");
+    }
 }
 
 

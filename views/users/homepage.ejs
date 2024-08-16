@@ -229,14 +229,18 @@
     <!-- Categories Section End -->
 
     <!-- Instagram Section Begin -->
+
     <section class="instagram spad mb-5">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
                     <div class="instagram__pic">
-                        <% newArrivals.slice(0, 6).forEach(element => { %>
-                            <div class="instagram__pic__item set-bg" data-setbg="<%= element.productImages[1].replace(/\\/g, '/') %>"></div>
-                        <% }); %>
+                        <div class="instagram__pic__item set-bg" data-setbg="img/instagram-images/instagram1.jpg"></div>
+                        <div class="instagram__pic__item set-bg" data-setbg="img/instagram-images/instagram2.jpg"></div>
+                        <div class="instagram__pic__item set-bg" data-setbg="img/instagram-images/instagram3.jpg"></div>
+                        <div class="instagram__pic__item set-bg" data-setbg="img/instagram-images/instagram4.jpg"></div>
+                        <div class="instagram__pic__item set-bg" data-setbg="img/instagram-images/instagram5.jpg"></div>
+                        <div class="instagram__pic__item set-bg" data-setbg="img/instagram-images/instagram6.jpg"></div>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -248,5 +252,6 @@
             </div>
         </div>
     </section>
+    
 
     <%-include('../partials/users/userFooter') -%>
