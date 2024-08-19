@@ -3,6 +3,7 @@ var userRouter = express.Router();
 const userController=require('../controllers/user/userController')
 const cartController=require('../controllers/user/cartController')
 const checkoutController=require('../controllers/user/checkoutController')
+const userProfileController=require('../controllers/user/userProfileController')
 
 const { userAuth } = require('../middlewares/authentication');
 const upload=require('../middlewares/multer')
@@ -28,7 +29,7 @@ userRouter.post('/register_new', userController.registerNew);
 userRouter.post('/verify-otp',userController.verifyOtp)
 userRouter.post('/resend-otp',userController.resendOtp)
 
-
+ 
 
 //goole authenticaion routes
 userRouter.get('/auth/google/',passport.authenticate('google',{scope:['profile','email']}));
@@ -37,7 +38,7 @@ function storeUserIdInSession(req, res) {
         req.session.user = req.user._id;
         req.session.userName=req.user.name;
         res.redirect('/homepage');
-    }}
+    }} 
 userRouter.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }),storeUserIdInSession);
 
 userRouter.get('/homepage',userController.loadHomepage )
@@ -45,9 +46,15 @@ userRouter.get('/shoppage',userController.loadShopPage )
 userRouter.get('/singleProduct',userController.loadSingleProduct )
 
 
+//userProfile
+userRouter.get('/userProfile',userAuth,userProfileController.loadUserProfilePage)
+userRouter.get('/loadEditUserProfilePage',userAuth,userProfileController.loadEditUserProfilePage)
+userRouter.post('/editUserProfile/:id',userAuth,userProfileController.editUserProfile)
+
+userRouter.get('/loadAddAddressPage',userAuth,userProfileController.loadAddAddressPage)
+userRouter.post('/addAddress/:id',userAuth,userProfileController.addAddress)
 
 
- 
 //cart
 userRouter.get('/cartPage',userAuth,cartController.loadCartPage )
 

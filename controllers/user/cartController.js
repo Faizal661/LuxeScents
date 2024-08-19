@@ -6,7 +6,9 @@ const { successResponse, errorResponse } = require('../../helpers/responseHandle
 const loadCartPage= async (req, res) => {
     try {
         if (req.session.user) {
-            return res.render('cart')
+            const userName = req.session.userName
+
+            return res.render('cart',{userName})
         } else {
             res.redirect("/login")
         }

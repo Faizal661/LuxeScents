@@ -100,12 +100,12 @@
                                         <div class="card-body">
                                             <div class="shop__sidebar__price">
                                                 <ul>
-                                                    <li><a href="#">₹0.00 - ₹200.00</a></li>
-                                                    <li><a href="#">₹200.00 - ₹700.00</a></li>
-                                                    <li><a href="#">₹700.00 - ₹1000.00</a></li>
-                                                    <li><a href="#">₹1000.00 - ₹1500.00</a></li>
-                                                    <li><a href="#">₹1500.00 - ₹2000.00</a></li>
-                                                    <li><a href="#">2000.00+</a></li>
+                                                    <li><a href="#">₹0.00 - ₹400.00</a></li>
+                                                    <li><a href="#">₹400.00 - ₹800.00</a></li>
+                                                    <li><a href="#">₹8000.00 - ₹1200.00</a></li>
+                                                    <li><a href="#">₹1200.00 - ₹1800.00</a></li>
+                                                    <li><a href="#">₹1800.00 - ₹2300.00</a></li>
+                                                    <li><a href="#">2300.00+</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -232,22 +232,15 @@
                     <style>
                         .product__item__pic {
                             overflow: hidden;
-                            /* Ensures the image doesn't overflow the container */
                             position: relative;
                         }
-
                         .product__item__pic img {
                             transition: transform 0.4s ease;
-                            /* Smooth zoom transition */
                             width: 100%;
-                            /* Ensures the image takes up the full container width */
                             height: auto;
-                            /* Maintains the aspect ratio */
                         }
-
                         .product__item__pic:hover img {
                             transform: scale(1.07);
-                            /* Zoom the image on hover */
                         }
                     </style>
 
@@ -256,12 +249,12 @@
                             <div class="col-lg-4 col-md-6 col-sm-6  "
                                 onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
                                 <div class="product__item border border-3 rounded rounded-3 p-2">
-                                    <div class="product__item__pic">
+                                    <div class="product__item__pic ">
                                         <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
                                             alt="<%= product.productName %>">
                                         <ul class="product__hover">
-                                            <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                                            <li><a href="#"><img src="img/icon/cart.png" alt=""></a></li>
+                                            <li><a href="#"><img src="img/icon/heart.png" class="rounded rounded-5" alt=""></a></li>
+                                            <li><a href="#"><img src="img/icon/cart.png" class="rounded rounded-5" alt=""></a></li>
                                         </ul>
                                     </div>
                                     <div class="product__item__text">
@@ -272,7 +265,7 @@
                                         <div class="d-block">
                                             <p class="h6 fw-lighter"> Brand : <%= product.brand.brandName %>
                                             </p>
-                                            <p class="h6 fw-lighter"> Note : <%= product.category.name %>
+                                            <p class="h6 fw-lighter"> Scent : <%= product.category.name %>
                                             </p>
 
                                         </div>

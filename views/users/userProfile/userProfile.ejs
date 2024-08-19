@@ -1,0 +1,77 @@
+
+
+<%- include('../partials/users/userHeader') %>
+
+
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>User Profile</h4>
+                        <div class="breadcrumb__links">
+                            <a href="/">Home</a>
+                            <span>User Profile</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <section class=" spad">
+        <div class="container">
+            <!-- User Details Section -->
+            <div class="row mb-5 ">
+                <div class="col-lg-12 ">
+                    <h4 class="pb-4">User Details</h4>
+                    <div class=" row border border-dark p-4 rounded m-0">
+                        <div class="col-lg-6">
+                            <p><strong>Username:</strong> <%= user.name %></p>
+                            <p><strong>Email:</strong> <%= user.email %></p>
+                            <p><strong>Phone:</strong> <%= user.phone %> </p>
+                        </div>
+                        <div class="col-lg-6">
+                            <button class="btn btn-primary" onclick="window.location.href='/loadEditUserProfilePage'">Edit Details</button>
+                            <button class="btn btn-link text-danger" onclick="window.location.href='/forgotPassword'">Forgot Password?</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+    
+            <!-- Address Management Section -->
+
+            <div class="row ">
+                <div class="col-lg-12">
+                    <h4 class="pb-4">Address Management</h4>
+                    <div class="border border-dark p-4 rounded">
+                        <% if (addresses.length ===0 ) { %> 
+                            <p>No addresses found. Please add one to place an order.</p>
+                            <button class="btn btn-success" onclick="window.location.href='/loadAddAddressPage'">Add Address</button>
+                        <% } else { %>
+                            <% addresses.forEach((address, index) => { %>
+                                <div class="address__item  border  mb-3 p-3 rounded rounded-5 <%= address.isActive ? 'border-success shadow-lg ' : 'border-dark' %>">
+                                    <pre class="<%= address.isActive ? 'text-success' : '' %>"><%= address.addressType %><%= address.isActive ? '  (Primary Address)' : '' %></pre>
+                                    <p><strong>Name:</strong> <%= address.name %> &nbsp; <strong>Phone:</strong> <%= address.phone %></p>
+                                    <p><%= address.locality %> ,<%= address.city %> , <%= address.landMark %> , <%= address.state %> , <%= address.pincode %></p>
+                                    <div class="address__actions d-flex justify-content-end">
+                                        <button class="btn btn-secondary mx-2" onclick="window.location.href='/editAddress/<%= address._id %>'">Edit</button>
+                                        <button class="btn btn-danger" onclick="window.location.href='/deleteAddress/<%= address._id %>'">Delete</button>
+                                    </div>
+                                </div>
+                            <% }); %>
+                            <button class="btn btn-success shadow" onclick="window.location.href='/loadAddAddressPage'">Add Another Address</button>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    
+
+   
+<%- include('../partials/users/userFooter') %>

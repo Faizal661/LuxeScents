@@ -20,8 +20,8 @@ const productInfo = async (req, res) => {
 
         const limit = 5;
 
-        let sort = 'productName'; 
-        let order = 'asc';         
+        let sort = 'createdAt'; 
+        let order = 'desc';         
         if (req.query.sort) {
             sort = req.query.sort;
         }

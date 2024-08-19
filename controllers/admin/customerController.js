@@ -12,9 +12,8 @@ const customerInfo= async(req,res)=>{
             page= parseInt(req.query.page) 
         }
 
-        let sort = req.query.sort || 'name';  // Default sort by name
-        let order = req.query.order === 'desc' ? -1 : 1;  // Default order is ascending
-
+        let sort = req.query.sort || 'createdAt';  
+        let order = req.query.order === 'desc' ? 1 : -1; 
         const limit=5
         const userData=await User.find({
             isAdmin:false,
