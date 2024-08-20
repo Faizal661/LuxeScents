@@ -52,7 +52,7 @@ const userLogin = async (req, res) => {
 
 const loadForgotPassword = async (req, res) => {
     try {
-        res.render('forgotPassword', { title: 'forgot password' })
+        res.render('userProfile/forgotPassword', { title: 'forgot password' })
     } catch (error) {
         console.log(error, 'page not found');
         errorResponse(res, error, "Internal server error");

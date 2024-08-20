@@ -53,6 +53,14 @@ userRouter.post('/editUserProfile/:id',userAuth,userProfileController.editUserPr
 
 userRouter.get('/loadAddAddressPage',userAuth,userProfileController.loadAddAddressPage)
 userRouter.post('/addAddress/:id',userAuth,userProfileController.addAddress)
+userRouter.get('/loadEditAddressPage',userAuth,userProfileController.loadEditAddressPage)
+userRouter.post('/editAddress/:id',userAuth,userProfileController.editAddress)
+userRouter.delete('/deleteAddress/:id',userAuth,userProfileController.deleteAddress)
+
+userRouter.get('/loadResetPassword',userAuth,userProfileController.loadResetPassword)
+userRouter.get('/loadOtpVerify',userAuth,userProfileController.loadOtpVerify)
+userRouter.get('/loadNewPassword',userAuth,userProfileController.loadNewPassword)
+
 
 
 //cart

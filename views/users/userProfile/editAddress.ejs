@@ -1,0 +1,90 @@
+<%- include('../partials/users/userHeader') %>
+
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Edit Address</h4>
+                    <div class="breadcrumb__links">
+                        <a href="/">Home</a>
+                        <a href="/userProfile">User Profile</a>
+                        <span>Edit Address</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<div class="container my-5 border  p-5 rounded rounded-5 spad shadow-lg">
+    <h2 class="pb-3">Edit Address</h2>
+    <form action="/editAddress/<%= address._id %>" method="POST">
+        <div class="row  col-lg-12">
+            <div class="column col-lg-6">
+                <div class="form-group ">
+                    <label for="addressType">Address Label</label>
+                    <select name="addressType" id="addressType" class="form-control  shadow " required>
+                        <option value="Home" <%= address.addressType === "Home" ? "selected" : "" %>>Home</option>
+                        <option value="Work" <%= address.addressType === "Work" ? "selected" : "" %>>Work</option>
+                    </select>
+                </div>
+                <div class="form-group ">
+                    <label for="phone">Phone *</label>
+                    <input type="text" name="phone" id="phone" class="form-control  shadow " value="<%= address.phone %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="city">Locality *</label>
+                    <input type="text" name="locality" id="locality" class="form-control  shadow " value="<%= address.locality %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="landMark">Landmark *</label>
+                    <input type="text" name="landMark" id="landMark" class="form-control  shadow " value="<%= address.landMark %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="pincode">Pincode *</label>
+                    <input type="number" name="pincode" id="pincode" class="form-control  shadow " value="<%= address.pincode %>" required>
+                </div>
+            </div>
+            <div class="column col-lg-6">
+                <div class="form-group">
+                    <label for="name">Name *</label>
+                    <input type="text" name="name" id="name" class="form-control shadow " value="<%= address.name %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="altPhone">Alternate Phone</label>
+                    <input type="text" name="altPhone" id="altPhone" class="form-control shadow " value="<%= address.altPhone %>" >
+                </div>
+
+                <div class="form-group">
+                    <label for="city">City *</label>
+                    <input type="text" name="city" id="city" class="form-control shadow " value="<%= address.city %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="state">State *</label>
+                    <input type="text" name="state" id="state" class="form-control shadow " value="<%= address.state %>" required>
+                </div>
+                <div class="form-group mt-5">
+                    <div class="form-check ">
+                        <input class="form-check-inline " type="checkbox" name="isActive" id="isActive" value="true"
+                            style="width: 17px;height: 17px;" <%= address.isActive ? "checked" : "" %>>
+                        <label class="form-check-label" for="isActive">
+                            Set as Primary Address
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center col-lg-12">
+            <button type="submit" class="btn btn-primary mt-3  col-lg-6 shadow">Update Address</button>
+        </div>
+    </form>
+</div>
+<div class="m-5">
+    <br>
+</div>
+
+<%- include('../partials/users/footer') %>

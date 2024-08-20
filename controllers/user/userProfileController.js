@@ -37,29 +37,21 @@ const editUserProfile = async (req, res) => {
     try {
         const userId = req.params.id;
         const { name, phone } = req.body;
-        console.log(name, phone);
 
         const existingUser = await User.findOne({ name: name, _id: { $ne: userId } });
-        console.log(req.session)
         if (existingUser) {
-
-            return res.render('userProfile/editDetails', {
-                userName: req.session.userName,
-                errorMessage: 'Username is already taken.',
-                user: await User.findById(userId)
-            });
+            return res.status(400).json({ error: 'Username is already taken.' });
         }
 
         await User.findByIdAndUpdate(userId, { name: name, phone: phone });
-        req.session.userName=name;
-        console.log(req.session)
-        res.redirect('/userProfile');
-
+        req.session.userName = name;
+        res.status(200).json({ message: 'Profile updated successfully.' });
     } catch (error) {
         console.error('Error updating user profile:', error);
-        res.status(500).send('Server Error');
+        res.status(500).json({ error: 'Server Error' });
     }
 };
+
 
 
 
@@ -110,11 +102,132 @@ const addAddress = async (req, res) => {
     }
 };
 
+const loadEditAddressPage = async (req, res) => {
+    try {
+        const userName = req.session.userName;
+        const addressId = req.query.id;
+        const address = await addressSchema.findById(addressId);
+
+        if (!address) {
+            return res.status(404).send('Address not found');
+        }
+
+        res.render('userProfile/editAddress', { userName, address });
+    } catch (error) {
+        console.error("Error loading edit address page:", error);
+        res.status(500).send('Server Error');
+    }
+};
+
+const editAddress = async (req, res) => {
+    try {
+        const addressId = req.params.id;
+        const userId = req.session.user;
+        const { addressType, name, city, landMark, locality, state, pincode, phone, altPhone, isActive } = req.body;
+
+        const updatedData = {
+            addressType,
+            name,
+            city,
+            landMark,
+            locality,
+            state,
+            pincode,
+            phone,
+            altPhone,
+            isActive: isActive === 'true'
+        };
+
+        if (updatedData.isActive) {
+            await addressSchema.updateMany({ userId: userId, _id: { $ne: addressId } }, { isActive: false });
+        }
+
+        const updatedAddress = await addressSchema.findByIdAndUpdate(addressId, updatedData, { new: true });
+
+        if (!updatedAddress) {
+            return res.status(404).send('Address not found');
+        }
+
+        res.redirect('/userProfile');
+    } catch (error) {
+        console.error("Error updating address:", error);
+        res.status(500).send('Server Error');
+    }
+};
+
+
+const deleteAddress = async (req, res) => {
+    try {
+        const addressId = req.params.id;
+        const userId = req.session.user;
+
+        const deletedAddress = await addressSchema.findOneAndDelete({ _id: addressId, userId: userId });
+
+        if (!deletedAddress) {
+            return res.status(404).json({ error: 'Address not found or you do not have permission to delete this address' });
+        }
+        res.status(200).json({ message: 'Address deleted successfully' });
+    } catch (error) {
+        console.error("Error deleting address:", error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+}
+
+
+const loadResetPassword = async (req, res) => {
+    try {
+        res.render('userProfile/resetPassword',{ userName: req.session.userName})
+    } catch (error) {
+        console.log(error, 'page not found');
+        errorResponse(res, error, "Internal server error");
+    }
+}
+
+// const loadForgotPassword = async (req, res) => {
+//     try {
+//         res.render('userProfile/forgotPassword', { title: 'forgot password' })
+//     } catch (error) {
+//         console.log(error, 'page not found');
+//         errorResponse(res, error, "Internal server error");
+//     } 
+// }
+
+const loadOtpVerify = async (req, res) => {
+    try {
+        res.render('userProfile/verify-otp',{ userName: req.session.userName})
+    } catch (error) {
+        console.log(error, 'page not found');
+        errorResponse(res, error, "Internal server error");
+    }
+}
+
+const loadNewPassword = async (req, res) => {
+    try {
+        res.render('userProfile/newPassword',{ userName: req.session.userName})
+    } catch (error) {
+        console.log(error, 'page not found');
+        errorResponse(res, error, "Internal server error");
+    }
+}
+
+
+
+ 
+
 module.exports = {
     loadUserProfilePage,
     loadEditUserProfilePage,
     editUserProfile,
+
     loadAddAddressPage,
-    addAddress
+    addAddress,
+    loadEditAddressPage,
+    editAddress,
+    deleteAddress,
+
+    loadResetPassword,
+    // loadForgotPassword,
+    loadOtpVerify,
+    loadNewPassword
 
 }

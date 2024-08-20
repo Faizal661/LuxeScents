@@ -1,5 +1,3 @@
-
-
 <%- include('../partials/users/userHeader') %>
 
 
@@ -29,49 +27,112 @@
                     <h4 class="pb-4">User Details</h4>
                     <div class=" row border border-dark p-4 rounded m-0">
                         <div class="col-lg-6">
-                            <p><strong>Username:</strong> <%= user.name %></p>
-                            <p><strong>Email:</strong> <%= user.email %></p>
-                            <p><strong>Phone:</strong> <%= user.phone %> </p>
+                            <p><strong>Username:</strong>
+                                <%= user.name %>
+                            </p>
+                            <p><strong>Email:</strong>
+                                <%= user.email %>
+                            </p>
+                            <p><strong>Phone:</strong>
+                                <%= user.phone %>
+                            </p>
                         </div>
-                        <div class="col-lg-6">
-                            <button class="btn btn-primary" onclick="window.location.href='/loadEditUserProfilePage'">Edit Details</button>
-                            <button class="btn btn-link text-danger" onclick="window.location.href='/forgotPassword'">Forgot Password?</button>
+                        <div class="col-lg-6  ">
+                            <button class="btn btn-primary "
+                                onclick="window.location.href='/loadEditUserProfilePage'">Edit Details</button>
+                            <button class="btn  btn-warning"
+                                onclick="window.location.href='/loadResetPassword'">Reset Password</button>
                         </div>
                     </div>
                 </div>
             </div>
             <hr>
-    
+
             <!-- Address Management Section -->
 
             <div class="row ">
                 <div class="col-lg-12">
                     <h4 class="pb-4">Address Management</h4>
                     <div class="border border-dark p-4 rounded">
-                        <% if (addresses.length ===0 ) { %> 
+                        <% if (addresses.length===0 ) { %>
                             <p>No addresses found. Please add one to place an order.</p>
-                            <button class="btn btn-success" onclick="window.location.href='/loadAddAddressPage'">Add Address</button>
-                        <% } else { %>
-                            <% addresses.forEach((address, index) => { %>
-                                <div class="address__item  border  mb-3 p-3 rounded rounded-5 <%= address.isActive ? 'border-success shadow-lg ' : 'border-dark' %>">
-                                    <pre class="<%= address.isActive ? 'text-success' : '' %>"><%= address.addressType %><%= address.isActive ? '  (Primary Address)' : '' %></pre>
-                                    <p><strong>Name:</strong> <%= address.name %> &nbsp; <strong>Phone:</strong> <%= address.phone %></p>
-                                    <p><%= address.locality %> ,<%= address.city %> , <%= address.landMark %> , <%= address.state %> , <%= address.pincode %></p>
-                                    <div class="address__actions d-flex justify-content-end">
-                                        <button class="btn btn-secondary mx-2" onclick="window.location.href='/editAddress/<%= address._id %>'">Edit</button>
-                                        <button class="btn btn-danger" onclick="window.location.href='/deleteAddress/<%= address._id %>'">Delete</button>
+                            <button class="btn btn-success" onclick="window.location.href='/loadAddAddressPage'">Add
+                                Address</button>
+                            <% } else { %>
+                                <% addresses.forEach((address, index)=> { %>
+                                    <div
+                                        class="address_item  border  mb-3 p-3 rounded rounded-5 <%= address.isActive ? 'border-success shadow-lg ' : 'border-dark' %>">
+                                        <pre
+                                            class="<%= address.isActive ? 'text-success h6 ' : '' %>"><%= address.addressType %><%= address.isActive ? '  (Primary Address)' : '' %></pre>
+                                        <p><strong>Name:</strong>
+                                            <%= address.name %> &nbsp; <strong>, Phone: </strong>
+                                                <%= address.phone %> , <%= address.altPhone %>
+                                        </p>
+                                        <p>
+                                            <%= address.locality %> , <%= address.city %> , <%= address.landMark %> ,
+                                                        <%= address.state %> , <%= address.pincode %>
+                                        </p>
+                                        <div class="address__actions d-flex justify-content-end">
+                                            <button class="btn btn-secondary mx-2"
+                                                onclick="window.location.href='/loadEditAddressPage?id=<%= address._id %>'">Edit</button>
+                                            <button class="btn btn-danger" id="delete-btn"
+                                                data-id="<%= address._id %>">Delete</button>
+                                        </div>
                                     </div>
-                                </div>
-                            <% }); %>
-                            <button class="btn btn-success shadow" onclick="window.location.href='/loadAddAddressPage'">Add Another Address</button>
-                        <% } %>
+                                    <% }); %>
+                                        <button class=" btn btn-success shadow"
+                                            onclick="window.location.href='/loadAddAddressPage'">Add Another
+                                            Address</button>
+                                        <% } %>
                     </div>
                 </div>
             </div>
 
         </div>
     </section>
-    
 
-   
-<%- include('../partials/users/userFooter') %>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.querySelectorAll('#delete-btn').forEach(button => {
+            button.addEventListener('click', async function () {
+                const addressId = this.getAttribute('data-id');
+                const userConfirmed = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'Do you really want to delete this address?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel!'
+                });
+                if (userConfirmed.isConfirmed) {
+                    try {
+                        const response = await axios.delete(`/deleteAddress/${addressId}`);
+                        if (response.status === 200) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: response.data.message,
+                                confirmButtonText: 'OK',
+                                timer:1000
+
+                            }).then(() => {
+                                this.closest('.address_item').remove();
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: error.response?.data?.error || 'Failed to delete the address. Please try again.',
+                            icon: 'error',
+                            timer:1000,
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+
+
+    <%- include('../partials/users/userFooter') %>

@@ -1,60 +1,112 @@
 <%- include('../partials/users/userHeader') %>
 
-<!-- Breadcrumb Section Begin -->
-<section class="breadcrumb-option">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="breadcrumb__text">
-                    <h4>Edit Profile</h4>
-                    <div class="breadcrumb__links">
-                        <a href="/">Home</a>
-                        <a href="/userProfile">User Profile</a>
-                        <span>Edit Details</span>
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Edit Profile</h4>
+                        <div class="breadcrumb__links">
+                            <a href="/">Home</a>
+                            <a href="/userProfile">User Profile</a>
+                            <span>Edit Details</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <div class="container my-5 border p-5 rounded rounded-5 spad shadow-lg">
+        <h2 class="pb-3">Edit Details</h2>
+        <!-- <form action="/editUserProfile/<%= user._id %>" method="POST"> -->
+        <form id="editProfileForm">
+            <div class="row col-lg-12">
+                <div class="column col-lg-6">
+                    <div class="form-group">
+                        <label for="name">Username</label>
+                        <input type="text" name="name" id="name" class="form-control shadow" value="<%= user.name %>"
+                            required>
+                        <div class="text-danger mb-1" id="errorName">
+                            <span></span>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="text" name="phone" id="phone" class="form-control shadow" value="<%= user.phone %>"
+                            required>
+                    </div>
+                </div>
+                <div class="column col-lg-6">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email" class="form-control shadow"
+                            style="cursor: not-allowed;" value="<%= user.email %>" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center col-lg-12">
+                <button type="submit" class="btn btn-primary mt-3 col-lg-6 shadow">Update Profile</button>
+            </div>
+        </form>
     </div>
-</section>
-<!-- Breadcrumb Section End -->
+    <div class="m-5">
+        <br>
+    </div>
 
-<div class="container my-5 border p-5 rounded rounded-5 spad shadow-lg">
-    <h2 class="pb-3">Edit Details</h2>
 
-    <!-- Display error message if any -->
-    <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
-        <div class="alert alert-danger">
-            <%= errorMessage %>
-        </div>
-    <% } %>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <form action="/editUserProfile/<%= user._id %>" method="POST">
-        <div class="row col-lg-12">
-            <div class="column col-lg-6">
-                <div class="form-group">
-                    <label for="name">Username</label>
-                    <input type="text" name="name" id="name" class="form-control shadow" value="<%= user.name %>" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone</label>
-                    <input type="text" name="phone" id="phone" class="form-control shadow" value="<%= user.phone %>" required>
-                </div>
-            </div>
-            <div class="column col-lg-6">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" name="email" id="email" class="form-control shadow" style="cursor: not-allowed;" value="<%= user.email %>" disabled>
-                </div>
-            </div>
-        </div>
-        <div class="text-center col-lg-12">
-            <button type="submit" class="btn btn-primary mt-3 col-lg-6 shadow">Update Profile</button>
-        </div>
-    </form>
-</div>
-<div class="m-5">
-    <br>
-</div>
 
-<%- include('../partials/users/userFooter') %>
+    <script>
+        document.getElementById('editProfileForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const userId = "<%= user._id %>";
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+            };
+
+            try {
+                const response = await axios.post(`/editUserProfile/${userId}`, formData);
+
+                if (response.status === 200) {
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'Profile updated successfully!',
+                        icon: 'success',
+                        timer:1000,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/userProfile';
+                    });
+                }
+            } catch (error) {
+                if (error.response && error.response.data.error) {
+                    Swal.fire({
+                        timer:1500,
+                        title: 'Error!',
+                        text: error.response.data.error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An unexpected error occurred. Please try again later.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            }
+        });
+    </script>
+
+
+    <%- include('../partials/users/footer') %>
