@@ -230,31 +230,24 @@
                     </div>
 
                     <style>
-                        .product__item__pic {
-                            overflow: hidden;
-                            position: relative;
-                        }
-                        .product__item__pic img {
-                            transition: transform 0.4s ease;
-                            width: 100%;
-                            height: auto;
-                        }
-                        .product__item__pic:hover img {
-                            transform: scale(1.07);
-                        }
+
                     </style>
 
                     <div class="row">
                         <% products.forEach(product=> { %>
-                            <div class="col-lg-4 col-md-6 col-sm-6  "
-                                onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
+                            <div class="col-lg-4 col-md-6 col-sm-6  ">
                                 <div class="product__item border border-3 rounded rounded-3 p-2">
                                     <div class="product__item__pic ">
                                         <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
-                                            alt="<%= product.productName %>">
+                                            alt="<%= product.productName %> "
+                                            onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
                                         <ul class="product__hover">
-                                            <li><a href="#"><img src="img/icon/heart.png" class="rounded rounded-5" alt=""></a></li>
-                                            <li><a href="#"><img src="img/icon/cart.png" class="rounded rounded-5" alt=""></a></li>
+                                            <li><a href="#" onclick="addToWishlist('<%= product._id %>')">
+                                                    <img src="img/icon/heart.png" class="rounded rounded-5" alt="">
+                                                </a></li>
+                                            <li><a href="#" onclick="addToCart('<%= product._id %>')">
+                                                    <img src="img/icon/cart.png" class="rounded rounded-5" alt=""></a>
+                                            </li>
                                         </ul>
                                     </div>
                                     <div class="product__item__text">
@@ -317,6 +310,90 @@
             </div>
         </div>
     </section>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function addToWishlist(productId) {
+            event.preventDefault()
+            axios.post('/addProductToWishlist', { productId })
+                .then(response => {
+                    if (response.data.success) {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: 'Added!',
+                            text: response.data.message,
+                            icon: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: 'Failed!',
+                            text: 'Failed to add product to wishlist',
+                            icon: 'error',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'
+                            }
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.error('There was an error adding the product to the wishlist:', error);
+                });
+        }
+
+        function addToCart(productId) {
+            event.preventDefault()
+            axios.post('/addProductToCart', { productId })
+                .then(response => {
+                    if (response.data.success) {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: 'Added!',
+                            text: response.data.message,
+                            icon: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'  
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: 'Failed!',
+                            text: 'Failed to add product to cart',
+                            icon: 'error',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'  
+                            }
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.error('There was an error adding the product to the cart:', error);
+                });
+        }
+    </script>
+
+
 
 
 

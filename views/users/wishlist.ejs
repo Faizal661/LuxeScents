@@ -1,0 +1,159 @@
+<%- include('../partials/users/userHeader') -%>
+
+    <style>
+        
+
+        
+    </style>
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Wishlist</h4>
+                        <div class="breadcrumb__links">
+                            <a href="/">Home</a>
+                            <span>Wishlist</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- wishlist Section Begin -->
+    <section class=" spad">
+        <div class="container">
+            <div class="row">
+                <% if (products.length> 0) { %>
+
+                    <% products.forEach(product=> { %>
+                        <div id="wishlist-item-<%= product._id %>"
+                            class="wishlist__item d-flex align-items-center border-bottom pb-3 mb-3">
+                            <!-- Thumbnail -->
+                            <div class="wishlist__item__thumbnail col-lg-2">
+                                <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
+                                    alt="<%= product.productName %>" class="img-fluid rounded">
+                            </div>
+                            <!-- Product Details -->
+                            <div class="wishlist__item__details col-lg-4 ">
+                                <h5 class="fw-bold">
+                                    <%= product.productName %>
+                                </h5>
+                                <p class="mb-1"><strong>Brand:</strong>
+                                    <%= product.brand.brandName %>
+                                </p>
+                                <p class="mb-1"><strong>Scent:</strong>
+                                    <%= product.category.name %>
+                                </p>
+                                <p class="mb-1 text-primary"><strong>Price:</strong> ₹<%= product.salePrice %>
+                                </p>
+                            </div>
+                            <!-- Stock and Status -->
+                            <div class="wishlist__item__status col-lg-3  text-center">
+                                <p class="mb-1"><strong>Stock:</strong>
+                                    <%= product.quantity %>
+                                </p>
+                                <p class="mb-1"><strong>Status:</strong>
+                                    <%= product.status %>
+                                </p>
+                            </div>
+                            <!-- Remove Button -->
+                            <div class="wishlist__item__remove col-lg-3 text-end">
+                                <button onclick="removeFromWishlist('<%= product._id %>')"
+                                    class="btn btn-danger btn-sm">
+                                    Remove From WishList
+                                </button>
+                            </div>
+                        </div>
+                        <% }) %>
+
+                            <div class="pagination-container d-flex justify-content-between my-4">
+                                <% if (currentPage> 1) { %>
+                                    <a href="?page=<%= currentPage - 1 %>"
+                                        class="btn btn-outline-dark rounded-pill my-2 px-3">&laquo; Previous</a>
+                                    <% } %>
+                                        <% for (let i=1; i <=totalPages; i++) { %>
+                                            <% if (i===currentPage) { %>
+                                                <span class="btn btn-dark rounded-pill my-2 px-3">
+                                                    <%= i %>
+                                                </span>
+                                                <% } else { %>
+                                                    <a href="?page=<%= i %>"
+                                                        class="btn btn-outline-dark rounded-pill my-2 px-3">
+                                                        <%= i %>
+                                                    </a>
+                                                    <% } %>
+                                                        <% } %>
+                                                            <% if (currentPage < totalPages) { %>
+                                                                <a href="?page=<%= currentPage + 1 %>"
+                                                                    class="btn btn-outline-dark rounded-pill my-2 px-3">Next
+                                                                    &raquo;</a>
+                                                                <% } %>
+                            </div>
+
+                            <% } else { %>
+                                <div class="container text-center">
+                                    <div class="alert alert-info h4 text-center" role="alert">
+                                        Your wishlist is empty! Start adding products you love.
+                                    </div>
+                                </div>
+                                <% } %>
+
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+    <script>
+        function removeFromWishlist(productId) {
+            event.preventDefault()
+            axios.post('/removeFromWishlist', { productId })
+                .then(response => {
+                    if (response.data.success) {
+                        const wishlistItem = document.getElementById(`wishlist-item-${productId}`);
+                        if (wishlistItem) {
+                            wishlistItem.remove();
+                        }
+                        Swal.fire({
+                            toast: true,
+                            timer: 1000,
+                            timerProgressBar: true,
+                            title: 'Removed!',
+                            text: response.data.message,
+                            icon: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'  // Apply custom class for additional styling
+                            }
+                        })
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        toast: true,
+                        timer: 1000,
+                        timerProgressBar: true,
+                        title: 'Error!',
+                        text: 'Failed to remove product from wishlist.',
+                        icon: 'error',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        customClass: {
+                                popup: 'custom-toast'  // Apply custom class for additional styling
+                            }
+                    });
+                    console.error(error);
+                });
+        }
+    </script>
+
+
+
+    <%- include('../partials/users/userFooter') -%>

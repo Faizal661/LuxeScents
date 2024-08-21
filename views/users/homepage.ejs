@@ -107,8 +107,9 @@
                 <%for (let i=0; i < 8 && i < bestSellers.length; i++) { const product=bestSellers[i]; %>
                     <div class="col-lg-3 col-md-6 col-sm-6  " onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
                         <div class="product__item border border-3 rounded rounded-3 p-2 pb-3">
-                            <div class="product__item__pic set-bg"
-                                data-setbg="<%= product.productImages[0].replace(/\\/g, '/') %>">
+                            <div class="product__item__pic set-bg ">
+                                <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
+                                alt="<%= product.productName %> ">
                                 <ul class="product__hover">
                                     <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
                                     <li><a href="#"><img src="img/icon/cart.png" alt=""></a></li>
@@ -147,8 +148,9 @@
                 <%for (let i=0; i < 8 && i < newArrivals.length; i++) { const product=newArrivals[i]; %>
                     <div class="col-lg-3 col-md-6 col-sm-6  " onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
                         <div class="product__item border border-3 rounded rounded-3 p-2 pb-3">
-                            <div class="product__item__pic set-bg"
-                                data-setbg="<%= product.productImages[0].replace(/\\/g, '/') %>">
+                            <div class="product__item__pic set-bg">
+                                <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
+                                alt="<%= product.productName %> ">
                                 <ul class="product__hover">
                                     <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
                                     <li><a href="#"><img src="img/icon/cart.png" alt=""></a></li>

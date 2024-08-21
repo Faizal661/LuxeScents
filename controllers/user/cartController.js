@@ -1,24 +1,112 @@
-const User = require('../../models/userSchema')
+const Cart = require('../../models/cartSchema')
 const Product = require('../../models/productSchema')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
 
-const loadCartPage= async (req, res) => {
+const loadCartPage = async (req, res) => {
     try {
-        if (req.session.user) {
-            const userName = req.session.userName
+        const userName = req.session.userName
+        const userId = req.session.user;
 
-            return res.render('cart',{userName})
-        } else {
-            res.redirect("/login")
-        }
+        const cart = await Cart.findOne({ userId })
+            .populate({
+                path: 'products.productId',
+                populate: { path: 'brand category' }
+            });
+ 
+        if (!cart) {
+            return res.render('cart', { userName, products: []});
+        }  
+
+        const products = cart.products.map(item => {
+            const product = item.productId;
+            return {
+                _id: item._id,
+                productName: product.productName,
+                salePrice: product.salePrice,
+                quantity: item.quantity,
+                totalPrice: item.totalPrice,
+                productImages: product.productImages, 
+            };
+        });3
+     
+
+        res.render('cart', {
+            userName,
+            products,
+            cart
+        });
+    
+
     } catch (error) {
+        console.error('Error while loading cart page:', error);
         res.redirect("/pageNotfound")
     }
 }
 
+const addProductToCart = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const { productId, quantity = 1 } = req.body;
 
-module.exports={
+        const product = await Product.findById(productId).select('salePrice')
+        if (!product) {
+            return errorResponse(res, {}, 'Product not found', 404);
+        }
+
+        const price = product.salePrice
+        const totalPrice = quantity * price
+
+
+        let cart = await Cart.findOne({ userId });
+
+        if (!cart) {
+            cart = new Cart({ userId, products: [{ productId, quantity, price, totalPrice }] });
+        } else {
+            const productIndex = cart.products.findIndex(p => p.productId.equals(productId));
+            if (productIndex === -1) {
+                cart.products.push({
+                    productId,
+                    quantity,
+                    price,
+                    totalPrice
+                });
+            } else {
+                cart.products[productIndex].quantity += quantity;
+                cart.products[productIndex].totalPrice = cart.products[productIndex].price * cart.products[productIndex].quantity;
+            }
+        }
+
+        await cart.save();
+        successResponse(res, {}, 'Product added to cart');
+    } catch (error) {
+        console.error(error);
+        errorResponse(res, error, 'Server error');
+    }
+}
+
+
+const removeFromCart = async (req, res) => {
+    try {
+        const { productId } = req.body;
+        const userId = req.session.user;
+
+        await Cart.updateOne(
+            { userId },
+            { $pull: { products: { productId } } }
+        );
+
+        res.status(200).json({ success: true, message: "Product removed from cart." });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Failed to remove product from cart." });
+    }
+};
+
+
+module.exports = {
     loadCartPage,
+    addProductToCart,
+    removeFromCart
+
 
 }

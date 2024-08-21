@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="css/nice-select.css" type="text/css">
     <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
-    
+
     <link rel="stylesheet" href="css/style.css" type="text/css">
 
     <!-- sweet alert links -->
@@ -38,7 +38,7 @@
 
     <!-- image zoom links -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    
+
     <style>
         .header__nav__option .sign-in-link {
             font-size: 16px;
@@ -87,6 +87,29 @@
             position: relative;
             z-index: 500;
         }
+
+        .custom-toast {
+            margin-top: 80px !important;
+        }
+
+        .product__item:hover {
+            cursor: pointer;
+        }
+
+        .product__item__pic {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product__item__pic img {
+            transition: transform 0.4s ease;
+            width: 100%;
+            height: auto;
+        }
+
+        .product__item__pic:hover img {
+            transform: scale(1.07);
+        }
     </style>
 
 
@@ -94,7 +117,7 @@
 
 <body>
     <!-- Page Preloder -->
-    
+
     <!-- <div id="preloder">
         <div class="loader"></div>
     </div> -->
@@ -148,7 +171,7 @@
                             <li><a href="/shoppage">Shop</a></li>
                             <li><a href="#">Pages</a>
                                 <ul class="dropdown">
-                                    <li><a href="#">Shopping Cart</a></li>
+                                    <li><a href="/loadCartPage"">Shopping Cart</a></li>
                                     <li><a href="#">Check Out</a></li>
                                     <li><a href="#">About Us</a></li>
                                     <li><a href="#">Shop Details</a></li>
@@ -179,8 +202,8 @@
                                 <% } %>
 
                                     <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
-                                    <a href="#"><img src="img/icon/heart.png" alt=""></a>
-                                    <a href="/cartPage"><img src="img/icon/cart.png"  alt=""> <span>0</span></a>
+                                    <a href="/loadWishlistPage"><img src="img/icon/heart.png" alt=""></a>
+                                    <a href="/loadCartPage"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
 
                     </div>
                 </div>

@@ -9,8 +9,7 @@
                         <h4>Shopping Cart</h4>
                         <div class="breadcrumb__links">
                             <a href="/">Home</a>
-                            <a href="/shopPage">Shop</a>
-                            <span>Shopping Cart</span>
+                            <span>Cart Page</span>
                         </div>
                     </div>
                 </div>
@@ -34,87 +33,38 @@
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="img/shopping-cart/cart-1.jpg" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h6>T-shirt Contrast Pocket</h6>
-                                            <h5>$98.49</h5>
-                                        </div>
-                                    </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="1">
+                            <tbody> 
+                                <% products.forEach(product=> { %>
+                                    <tr>
+                                        <td class="product__cart__item">
+                                            <div class="product__cart__item__pic col-lg-4">
+                                                <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
+                                                    alt="<%= product.productName %>" class="img-fluid rounded">
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">$ 30.00</td>
-                                    <td class="cart__close"><i class="fa fa-close"></i></td>
-                                </tr>
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="img/shopping-cart/cart-2.jpg" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h6>Diagonal Textured Cap</h6>
-                                            <h5>$98.49</h5>
-                                        </div>
-                                    </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="1">
+                                            <div class="product__cart__item__text">
+                                                <h6>
+                                                    <%= product.productName %>
+                                                </h6>
+                                                <h5>₹<%= product.salePrice %>
+                                                </h5>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">$ 32.50</td>
-                                    <td class="cart__close"><i class="fa fa-close"></i></td>
-                                </tr>
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="img/shopping-cart/cart-3.jpg" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h6>Basic Flowing Scarf</h6>
-                                            <h5>$98.49</h5>
-                                        </div>
-                                    </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="1">
+                                        </td>
+                                        <td class="quantity__item">
+                                            <div class="quantity">
+                                                <div class="pro-qty-2">
+                                                    <input type="text" value="<%= product.quantity %>">
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">$ 47.00</td>
-                                    <td class="cart__close"><i class="fa fa-close"></i></td>
-                                </tr>
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="img/shopping-cart/cart-4.jpg" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h6>Basic Flowing Scarf</h6>
-                                            <h5>$98.49</h5>
-                                        </div>
-                                    </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="1">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">$ 30.00</td>
-                                    <td class="cart__close"><i class="fa fa-close"></i></td>
-                                </tr>
+                                        </td>
+                                        <td class="cart__price">₹<%= product.totalPrice %>
+                                        </td>
+                                        <td class="cart__close">
+                                            <a href="#" class="remove-from-cart" data-product-id="<%= product._id %>">
+                                                <i class="fa fa-close"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
                             </tbody>
                         </table>
                     </div>
@@ -124,26 +74,34 @@
                                 <a href="#">Continue Shopping</a>
                             </div>
                         </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="continue__btn update__btn">
-                                <a href="#"><i class="fa fa-spinner"></i> Update cart</a>
-                            </div>
+                        <!-- <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="continue__btn update__btn">
+                            <a href="#"><i class="fa fa-spinner"></i> Update cart</a>
                         </div>
+                    </div> -->
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="cart__discount">
-                        <h6>Discount codes</h6>
-                        <form action="#">
-                            <input type="text" placeholder="Coupon code">
-                            <button type="submit">Apply</button>
-                        </form>
-                    </div>
+                    <!-- <div class="cart__discount">
+                    <h6>Discount codes</h6>
+                    <form action="#">
+                        <input type="text" placeholder="Coupon code">
+                        <button type="submit">Apply</button>
+                    </form>
+                </div> --> 
                     <div class="cart__total">
-                        <h6>Cart total</h6>
+                        <h6>Cart total</h6><hr>
                         <ul>
-                            <li>Subtotal <span>$ 169.50</span></li>
-                            <li>Total <span>$ 169.50</span></li>
+                            <% products.forEach((product,id)=> { %>
+                                <li><%= id+1  %> . <%= product.productName %>*<%= product.quantity %> <span>₹<%= product.totalPrice  %></span></li>
+                                <% }); %>
+
+                            <hr>
+                            <li>Subtotal <span>₹<%= (products.reduce((total, product) => total + product.totalPrice, 0)).toFixed(2) %></span></li>
+                            <li>Coupon Applied <span>- ₹ 0</span></li>
+                            <li>Delivery Charges <span>₹ 0</span></li><hr>
+                            <li>Total <span>₹<%= (products.reduce((total, product) => total + product.totalPrice, 0)).toFixed(2) %></span></li>
+                           
                         </ul>
                         <a href="/checkoutPage" class="primary-btn">Proceed to checkout</a>
                     </div>
@@ -153,4 +111,5 @@
     </section>
     <!-- Shopping Cart Section End -->
 
-  <%- include('../partials/users/userFooter') %>
+
+    <%- include('../partials/users/userFooter') %>

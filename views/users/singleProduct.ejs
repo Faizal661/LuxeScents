@@ -13,7 +13,7 @@
        
         .zoomContainer {
             position: absolute !important;
-            top: 190px !important;
+            top: 180px !important;
             left: 1000px !important; 
             border-radius: 10px;
         }
@@ -131,7 +131,9 @@
                                     <input type="text" value="1">
                                 </div>
                             </div>
-                            <a href="#" class="primary-btn rounded">Add to Cart</a>
+                            <button type="button" class="primary-btn rounded" onclick="addToCart('<%= singleProduct._id %>')">
+                                Add to Cart
+                            </button>
                         </div>
 
                         <div class="product__details__cart__option">
@@ -140,9 +142,9 @@
                         </div>
 
                         <div class="product__details__btns__option">
-                            <a href="#" class="primary-btn bg-warning border border-5 fw-bolder rounded">
+                            <button type="button" class="primary-btn text-dark bg-warning border border-5 fw-bolder rounded"  onclick="addToWishlist('<%= singleProduct._id %>')">
                                 <i class="fa fa-heart text-danger"></i> Add to Wishlist
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -334,13 +336,94 @@
 
                             </div>
                         </div>
-
                     </div>
                     <% } %>
             </div>
         </div>
     </section>
-    <!-- Related Section End -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        function addToWishlist(productId) {
+            event.preventDefault()
+            axios.post('/addProductToWishlist', { productId })
+                .then(response => {
+                    if (response.data.success) {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: 'Added!',
+                            text: response.data.message,
+                            icon: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'  
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: 'Failed!',
+                            text: 'Failed to add product to wishlist',
+                            icon: 'error',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'  
+                            }
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.error('There was an error adding the product to the wishlist:', error);
+                });
+        }
+
+        function addToCart(productId) {
+            event.preventDefault()
+            axios.post('/addProductToCart', { productId })
+                .then(response => {
+                    if (response.data.success) {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: 'Added!',
+                            text: response.data.message,
+                            icon: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'  
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: 'Failed!',
+                            text: 'Failed to add product to cart ',
+                            icon: 'error',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'  
+                            }
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.error('There was an error adding the product to the cart:', error);
+                });
+        }
+    </script>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>

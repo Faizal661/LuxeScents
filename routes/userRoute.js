@@ -4,6 +4,7 @@ const userController=require('../controllers/user/userController')
 const cartController=require('../controllers/user/cartController')
 const checkoutController=require('../controllers/user/checkoutController')
 const userProfileController=require('../controllers/user/userProfileController')
+const wishlistController=require('../controllers/user/wishlistController')
 
 const { userAuth } = require('../middlewares/authentication');
 const upload=require('../middlewares/multer')
@@ -61,10 +62,15 @@ userRouter.get('/loadResetPassword',userAuth,userProfileController.loadResetPass
 userRouter.get('/loadOtpVerify',userAuth,userProfileController.loadOtpVerify)
 userRouter.get('/loadNewPassword',userAuth,userProfileController.loadNewPassword)
 
+//wishlist
+userRouter.get('/loadWishlistPage',userAuth,wishlistController.loadWishlist)
+userRouter.post('/addProductToWishlist',userAuth,wishlistController.addProductToWishlist)
+userRouter.post('/removeFromWishlist',userAuth,wishlistController.removeFromWishlist)
 
-
-//cart
-userRouter.get('/cartPage',userAuth,cartController.loadCartPage )
+//cart 
+userRouter.get('/loadCartPage',userAuth,cartController.loadCartPage )
+userRouter.post('/addProductToCart',userAuth,cartController.addProductToCart)
+userRouter.post('/removeFromCart',userAuth,cartController.removeFromCart)
 
 
 

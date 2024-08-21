@@ -39,23 +39,15 @@ const orderSchema= new mongoose.Schema({
         ref:"User",
         required:true
     },
-    invoiceDate:{
-        type:Date
-    },
     status:{
         type:String,
         required:true,
-        enum:['Pending','Processing','Shipped','Delivered','Cancelled','Return Request','Returned']
-    },
-    createdOn:{
-        type:Date,
-        default:Date.now,
-        required:true
+        enum:['Processing','Shipped','Delivered','Cancelled','Return Request','Returned']
     },
     couponApplied:{
         type:Boolean,
         default:false
     }
-})
+},{timestamps:true})
 
 module.exports= mongoose.model("Order",orderSchema)

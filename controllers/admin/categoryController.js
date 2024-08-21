@@ -12,6 +12,7 @@ const categoryInfo = async (req, res) => {
         const skip = (page - 1) * limit;
 
         let sort = req.query.sort || 'createdAt';
+        
         let order = req.query.order === 'desc' ? 1 : -1;
 
         const categoryData = await Category.find({
