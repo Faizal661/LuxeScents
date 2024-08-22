@@ -45,13 +45,15 @@ userRouter.get('/auth/google/callback', passport.authenticate('google', { failur
 userRouter.get('/homepage',userController.loadHomepage )
 userRouter.get('/shoppage',userController.loadShopPage )
 userRouter.get('/singleProduct',userController.loadSingleProduct )
-
+ 
 
 //userProfile
 userRouter.get('/userProfile',userAuth,userProfileController.loadUserProfilePage)
 userRouter.get('/loadEditUserProfilePage',userAuth,userProfileController.loadEditUserProfilePage)
 userRouter.post('/editUserProfile/:id',userAuth,userProfileController.editUserProfile)
 
+
+//address management
 userRouter.get('/loadAddAddressPage',userAuth,userProfileController.loadAddAddressPage)
 userRouter.post('/addAddress/:id',userAuth,userProfileController.addAddress)
 userRouter.get('/loadEditAddressPage',userAuth,userProfileController.loadEditAddressPage)
@@ -64,7 +66,7 @@ userRouter.get('/loadNewPassword',userAuth,userProfileController.loadNewPassword
 
 //wishlist
 userRouter.get('/loadWishlistPage',userAuth,wishlistController.loadWishlist)
-userRouter.post('/addProductToWishlist',userAuth,wishlistController.addProductToWishlist)
+userRouter.post('/toggleWishlist',userAuth,wishlistController.toggleWishlist)
 userRouter.post('/removeFromWishlist',userAuth,wishlistController.removeFromWishlist)
 
 //cart 
@@ -76,6 +78,8 @@ userRouter.post('/removeFromCart',userAuth,cartController.removeFromCart)
 
 //checkout
 userRouter.get('/checkoutPage',userAuth,checkoutController.loadCheckoutPage)
+
+userRouter.get('/orderSuccess',userAuth,checkoutController.orderSuccess)
 
 
 

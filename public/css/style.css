@@ -1794,7 +1794,7 @@ ol {
 .product__details__cart__option .quantity .pro-qty {
 	width: 100px;
 	height: 40px;
-	border: 1px solid #e5e5e5;
+	/* border: 1px solid #e5e5e5; */
 	position: relative;
 }
 
@@ -1805,7 +1805,6 @@ ol {
 	width: 70px;
 	height: 100%;
 	text-align: center;
-	border: none;
 }
 
 .product__details__cart__option .quantity .pro-qty .qtybtn {
@@ -2396,13 +2395,13 @@ ol {
 
 .shopping__cart__table table tbody tr td.quantity__item .quantity .pro-qty-2 input {
 	width: 50px;
-	border: none;
 	text-align: center;
 	color: #111111;
 	font-size: 16px;
 }
 
 .shopping__cart__table table tbody tr td.quantity__item .quantity .pro-qty-2 .qtybtn {
+	border:1px solid black;
 	font-size: 16px;
 	color: #888888;
 	width: 10px;

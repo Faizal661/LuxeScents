@@ -1,5 +1,7 @@
 const User = require('../../models/userSchema')
 const Product = require('../../models/productSchema')
+const Wishlist = require('../../models/wishlistSchema')
+const Cart=require('../../models/cartSchema')
 const nodemailer = require("nodemailer")
 const bcrypt = require('bcrypt');
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
@@ -262,6 +264,7 @@ const loadHomepage = async (req, res) => {
 
 const loadShopPage = async (req, res) => {
     try {
+        const userId = req.session.user;
         const page = parseInt(req.query.page) || 1;
         const limit = 6;
         const skip = (page - 1) * limit;
@@ -272,7 +275,7 @@ const loadShopPage = async (req, res) => {
 
         let query = { isBlocked: false };
         if (searchQuery) {
-            query.name = { $regex: searchQuery, $options: 'i' }; 
+            query.name = { $regex: searchQuery, $options: 'i' };
         }
 
         const products = await Product.find({ isBlocked: false }).populate({ path: 'category', match: { isListed: true } }).populate('brand').sort({ [sort]: order })
@@ -285,18 +288,29 @@ const loadShopPage = async (req, res) => {
         const startProduct = skip + 1;
         const endProduct = Math.min(skip + paginatedProducts.length, totalProductsCount);
 
+
+        const wishlist = await Wishlist.findOne({ userId })
+        const wishlistProductIds = wishlist ? wishlist.products.map(item => item.productId.toString()) : []
+
+        const cart = await Cart.findOne({ userId });
+        const cartProductIds = cart ? cart.products.map(item => item.productId.toString()) : [];
+
+
+
         res.render('shop', {
             userName: req.session.userName,
             products: paginatedProducts,
             currentPage: page,
-            totalPages, 
+            totalPages,
             totalProductsCount,
             limit,
             sort,
             order: req.query.order || 'asc',
             startProduct,   // Pass start product index to the template
-            endProduct ,
-            searchQuery
+            endProduct,
+            searchQuery,
+            wishlistProductIds,
+            cartProductIds
         })
     } catch (error) {
         console.log(error, 'ShopPage not loading');
@@ -309,10 +323,15 @@ const loadShopPage = async (req, res) => {
 
 const loadSingleProduct = async (req, res) => {
     try {
+        const userId=req.session.user
         const ProductId = req.query.id
         const relatedProducts = await Product.find().populate('brand').populate('category');
         const singleProduct = await Product.findOne({ _id: ProductId }).populate('brand').populate('category').populate({ path: 'reviews.user', select: 'name' });
-        res.render('singleProduct', { userName: req.session.userName, singleProduct, relatedProducts })
+
+        const wishlist = await Wishlist.findOne({ userId })
+        const wishlistProductIds = wishlist ? wishlist.products.map(item => item.productId.toString()) : []
+
+        res.render('singleProduct', { userName: req.session.userName, singleProduct, relatedProducts ,wishlistProductIds})
     } catch (error) {
         console.log(error, 'Product detailed page is not loading');
         errorResponse(res, error, "Internal server error");

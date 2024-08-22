@@ -10,16 +10,16 @@
             margin-left: 10px;
             color: #333;
         }
-       
+
         .zoomContainer {
             position: absolute !important;
             top: 180px !important;
-            left: 1000px !important; 
+            left: 1000px !important;
             border-radius: 10px;
         }
     </style>
 
-<section class="shop-details">
+    <section class="shop-details">
         <div class="product__details__pic">
             <div class="container">
 
@@ -125,10 +125,11 @@
                             </div>
                         </div>
 
+
                         <div class="product__details__cart__option">
                             <div class="quantity">
                                 <div class="pro-qty">
-                                    <input type="text" value="1">
+                                    <input id="quantity-<%= singleProduct._id %>" type="number" value="1" min="1" max="10">
                                 </div>
                             </div>
                             <button type="button" class="primary-btn rounded" onclick="addToCart('<%= singleProduct._id %>')">
@@ -137,13 +138,19 @@
                         </div>
 
                         <div class="product__details__cart__option">
-                            <a href="#" class="primary-btn bg-success text-dark border border-5 fw-bolder rounded">Buy
+                            <a href="/loadCartPage" class="primary-btn bg-success text-dark border border-5 fw-bolder rounded">Buy
                                 it Now</a>
                         </div>
 
                         <div class="product__details__btns__option">
-                            <button type="button" class="primary-btn text-dark bg-warning border border-5 fw-bolder rounded"  onclick="addToWishlist('<%= singleProduct._id %>')">
-                                <i class="fa fa-heart text-danger"></i> Add to Wishlist
+                            <button type="button"
+                                class="primary-btn text-dark bg-warning border border-5 fw-bolder rounded"
+                                onclick="addToWishlist('<%= singleProduct._id %>')">
+                                <i class="fa fa-heart text-danger"></i>wishlist
+                                <!-- <%= wishlistProductIds.includes(singleProduct._id.toString()) ? 'Add to wishlist'
+                                    : 'Remove From wishlist' %> -->
+                            <!-- the problem is everything is working properly but the text is not changing when togggling -->
+
                             </button>
                         </div>
                     </div>
@@ -348,20 +355,20 @@
     <script>
         function addToWishlist(productId) {
             event.preventDefault()
-            axios.post('/addProductToWishlist', { productId })
+            axios.post('/toggleWishlist', { productId })
                 .then(response => {
                     if (response.data.success) {
                         Swal.fire({
                             toast: true,
                             timer: 800,
                             timerProgressBar: true,
-                            title: 'Added!',
+                            title: response.data.data.inWishlist ? 'Added' : 'Removed',
                             text: response.data.message,
-                            icon: 'success',
+                            icon: response.data.data.inWishlist ? 'success' : 'error',
                             position: 'top-end',
                             showConfirmButton: false,
                             customClass: {
-                                popup: 'custom-toast'  
+                                popup: 'custom-toast'
                             }
                         })
                     } else {
@@ -375,7 +382,7 @@
                             position: 'top-end',
                             showConfirmButton: false,
                             customClass: {
-                                popup: 'custom-toast'  
+                                popup: 'custom-toast'
                             }
                         })
                     }
@@ -387,7 +394,10 @@
 
         function addToCart(productId) {
             event.preventDefault()
-            axios.post('/addProductToCart', { productId })
+
+            const quantity = document.getElementById(`quantity-${productId}`).value;
+
+            axios.post('/addProductToCart', { productId,quantity })
                 .then(response => {
                     if (response.data.success) {
                         Swal.fire({
@@ -400,7 +410,7 @@
                             position: 'top-end',
                             showConfirmButton: false,
                             customClass: {
-                                popup: 'custom-toast'  
+                                popup: 'custom-toast'
                             }
                         })
                     } else {
@@ -414,7 +424,7 @@
                             position: 'top-end',
                             showConfirmButton: false,
                             customClass: {
-                                popup: 'custom-toast'  
+                                popup: 'custom-toast'
                             }
                         })
                     }
@@ -437,7 +447,7 @@
                 scrollZoom: true,
                 zoomActivation: "hover",
                 containLensZoom: true,
-                cursor: "crosshair",            
+                cursor: "crosshair",
                 responsive: true,
             });
           <% }); %>

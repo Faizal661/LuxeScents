@@ -40,31 +40,31 @@ const loadWishlist = async (req, res) => {
 }
 
 
-const addProductToWishlist = async (req, res) => {
-    try {
-        const userId = req.session.user;  
+// const addProductToWishlist = async (req, res) => {
+//     try {
+//         const userId = req.session.user;  
 
-        const { productId } = req.body;
+//         const { productId } = req.body;
 
-        let wishlist = await Wishlist.findOne({ userId });
+//         let wishlist = await Wishlist.findOne({ userId });
 
-        if (!wishlist) {
-            wishlist = new Wishlist({ userId, products: [{ productId }] });
-        } else {
-            const productExists = wishlist.products.some(p => p.productId.equals(productId));
-            if (!productExists) {
-                wishlist.products.push({ productId });
-            }
-        }
+//         if (!wishlist) {
+//             wishlist = new Wishlist({ userId, products: [{ productId }] });
+//         } else {
+//             const productExists = wishlist.products.some(p => p.productId.equals(productId));
+//             if (!productExists) {
+//                 wishlist.products.push({ productId });
+//             }
+//         }
 
-        await wishlist.save();
-        res.json({ success: true, message: 'Product added to wishlist' });
+//         await wishlist.save();
+//         res.json({ success: true, message: 'Product added to wishlist' });
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-};
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ success: false, message: 'Server error' });
+//     }
+// };
 
 
 const removeFromWishlist = async (req, res) => {
@@ -83,8 +83,41 @@ const removeFromWishlist = async (req, res) => {
     }
 };
 
+const toggleWishlist = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const { productId } = req.body;
+
+        let wishlist = await Wishlist.findOne({ userId });
+
+        if (!wishlist) { 
+            wishlist = new Wishlist({ userId, products: [{ productId }] });
+            await wishlist.save();
+            return successResponse(res, { inWishlist: true }, "Product added to wishlist");
+        }
+
+        const productIndex = wishlist.products.findIndex(item => item.productId.toString() === productId);
+
+        if (productIndex >= 0) {
+            wishlist.products.splice(productIndex, 1);
+            await wishlist.save();
+            return successResponse(res, { inWishlist: false }, "Product removed from wishlist");
+        } else {
+            wishlist.products.push({ productId });  
+            await wishlist.save();
+            return successResponse(res, { inWishlist: true }, "Product added to wishlist");
+        }
+
+    } catch (error) {
+        console.error('Error toggling wishlist:', error);
+        return errorResponse(res, error, "Failed to update wishlist.");
+    }
+}
+
+
 module.exports = {
+    toggleWishlist,
     loadWishlist,
-    addProductToWishlist,
+    // addProductToWishlist,
     removeFromWishlist
 }

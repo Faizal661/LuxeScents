@@ -33,9 +33,9 @@
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody> 
+                            <tbody>
                                 <% products.forEach(product=> { %>
-                                    <tr>
+                                    <tr id="cart-item-<%= product._id %>">
                                         <td class="product__cart__item">
                                             <div class="product__cart__item__pic col-lg-4">
                                                 <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
@@ -52,14 +52,16 @@
                                         <td class="quantity__item">
                                             <div class="quantity">
                                                 <div class="pro-qty-2">
-                                                    <input type="text" value="<%= product.quantity %>">
+                                                    <input type="number" value="<%= product.quantity %>" min="1"
+                                                        max="10">
                                                 </div>
                                             </div>
                                         </td>
+
                                         <td class="cart__price">₹<%= product.totalPrice %>
                                         </td>
                                         <td class="cart__close">
-                                            <a href="#" class="remove-from-cart" data-product-id="<%= product._id %>">
+                                            <a href="javascript:removeFromCart('<%= product._id %>')">
                                                 <i class="fa fa-close"></i>
                                             </a>
                                         </td>
@@ -71,14 +73,14 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-sm-6">
                             <div class="continue__btn">
-                                <a href="#">Continue Shopping</a>
+                                <a href="/shoppage">Continue Shopping</a>
                             </div>
                         </div>
-                        <!-- <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="continue__btn update__btn">
-                            <a href="#"><i class="fa fa-spinner"></i> Update cart</a>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="continue__btn update__btn">
+                                <a href="/loadCartPage"><i class="fa fa-spinner"></i> Update cart</a>
+                            </div>
                         </div>
-                    </div> -->
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -88,20 +90,27 @@
                         <input type="text" placeholder="Coupon code">
                         <button type="submit">Apply</button>
                     </form>
-                </div> --> 
+                </div> -->
                     <div class="cart__total">
-                        <h6>Cart total</h6><hr>
+                        <h6>Cart total</h6>
+                        <hr>
                         <ul>
                             <% products.forEach((product,id)=> { %>
-                                <li><%= id+1  %> . <%= product.productName %>*<%= product.quantity %> <span>₹<%= product.totalPrice  %></span></li>
+                                <li>
+                                    <%= id+1 %> . <%= product.productName %>*<%= product.quantity %> <span>₹<%=
+                                                        product.totalPrice %></span>
+                                </li>
                                 <% }); %>
 
-                            <hr>
-                            <li>Subtotal <span>₹<%= (products.reduce((total, product) => total + product.totalPrice, 0)).toFixed(2) %></span></li>
-                            <li>Coupon Applied <span>- ₹ 0</span></li>
-                            <li>Delivery Charges <span>₹ 0</span></li><hr>
-                            <li>Total <span>₹<%= (products.reduce((total, product) => total + product.totalPrice, 0)).toFixed(2) %></span></li>
-                           
+                                    <hr>
+                                    <li>Subtotal <span>₹<%= (products.reduce((total, product)=> total +
+                                                product.totalPrice, 0)).toFixed(2) %></span></li>
+                                    <li>Coupon Applied <span>- ₹ 0</span></li>
+                                    <li>Delivery Charges <span>₹ 0</span></li>
+                                    <hr>
+                                    <li>Total <span>₹<%= (products.reduce((total, product)=> total + product.totalPrice,
+                                                0)).toFixed(2) %></span></li>
+
                         </ul>
                         <a href="/checkoutPage" class="primary-btn">Proceed to checkout</a>
                     </div>
@@ -111,5 +120,64 @@
     </section>
     <!-- Shopping Cart Section End -->
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+    <script>
+        function removeFromCart(itemId) {
+            axios.post('/removeFromCart', { itemId })
+                .then(response => {
+                    if (response.data.success) {
+                        const cartItem = document.getElementById(`cart-item-${itemId}`);
+                        if (cartItem) {
+                            cartItem.remove();
+                        }
+                        Swal.fire({
+                            toast: true,
+                            timer: 1000,
+                            timerProgressBar: true,
+                            title: 'Removed!',
+                            text: response.data.message,
+                            icon: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'
+                            }
+                        })
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        toast: true,
+                        timer: 1000,
+                        timerProgressBar: true,
+                        title: 'Error!',
+                        text: 'Failed to remove product from cart.',
+                        icon: 'error',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'custom-toast'
+                        }
+                    });
+                    console.error(error);
+                });
+        }
+
+
+        document.querySelectorAll('.pro-qty-2 input').forEach(input => {
+            input.addEventListener('change', function () {
+                let value = parseInt(this.value);
+                if (value < 1) {
+                    this.value = 1;
+                } else if (value > 10) {
+                    this.value = 10;
+                }
+            });
+        });
+
+    </script>
 
     <%- include('../partials/users/userFooter') %>

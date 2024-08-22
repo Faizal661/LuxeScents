@@ -92,7 +92,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card">
+                                <!-- <div class="card">
                                     <div class="card-heading">
                                         <a data-toggle="collapse" data-target="#collapseThree">Filter Price</a>
                                     </div>
@@ -110,8 +110,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="card">
+                                </div> -->
+                                <!-- <div class="card">
                                     <div class="card-heading">
                                         <a data-toggle="collapse" data-target="#collapseFour">Size</a>
                                     </div>
@@ -137,7 +137,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <!-- <div class="card">
                                     <div class="card-heading">
                                         <a data-toggle="collapse" data-target="#collapseFive">Colors</a>
@@ -242,11 +242,28 @@
                                             alt="<%= product.productName %> "
                                             onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
                                         <ul class="product__hover">
-                                            <li><a href="#" onclick="addToWishlist('<%= product._id %>')">
-                                                    <img src="img/icon/heart.png" class="rounded rounded-5" alt="">
-                                                </a></li>
-                                            <li><a href="#" onclick="addToCart('<%= product._id %>')">
-                                                    <img src="img/icon/cart.png" class="rounded rounded-5" alt=""></a>
+                                            <li>
+                                                <a href="#" onclick="toggleWishlist('<%= product._id %>')">
+                                                    <img src="img/icon/<%= wishlistProductIds.includes(product._id.toString()) ? 'heartFill.png' : 'heart.png' %>"
+                                                        class="rounded rounded-5 " data-product-id="<%= product._id %>"
+                                                        alt="wishlist">
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <% if (cartProductIds.includes(product._id.toString())) { %>
+                                                    <a href="/loadCartPage" >
+                                                        <img src="img/icon/inCart.png" class="rounded rounded-5"
+                                                            alt="Go to Cart" title="Go to Cart">
+                                                    </a>
+                                                    <%}else { %>
+                                                        <a href="#" onclick="addToCart('<%= product._id %>')" >
+                                                            <img src="img/icon/cart.png" class="rounded rounded-5 "
+                                                                alt="cart" title="Add to Cart">
+                                                        </a>
+                                                        <% } %>
+
+
+
                                             </li>
                                         </ul>
                                     </div>
@@ -314,31 +331,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        function addToWishlist(productId) {
+        function toggleWishlist(productId) {
             event.preventDefault()
-            axios.post('/addProductToWishlist', { productId })
+            axios.post('/toggleWishlist', { productId })
                 .then(response => {
                     if (response.data.success) {
-                        Swal.fire({
-                            toast: true,
-                            timer: 800,
-                            timerProgressBar: true,
-                            title: 'Added!',
-                            text: response.data.message,
-                            icon: 'success',
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            customClass: {
-                                popup: 'custom-toast'
-                            }
-                        })
+                        const icon = document.querySelector(`img[data-product-id="${productId}"]`);
+                        if (icon) {
+                            icon.src = `img/icon/${response.data.data.inWishlist ? 'heartFill.png' : 'heart.png'}`;
+                        }
                     } else {
                         Swal.fire({
                             toast: true,
                             timer: 800,
                             timerProgressBar: true,
                             title: 'Failed!',
-                            text: 'Failed to add product to wishlist',
+                            text: 'Could not update wishlist.',
                             icon: 'error',
                             position: 'top-end',
                             showConfirmButton: false,
@@ -368,21 +376,30 @@
                             position: 'top-end',
                             showConfirmButton: false,
                             customClass: {
-                                popup: 'custom-toast'  
+                                popup: 'custom-toast'
                             }
                         })
+                        const cartButton = document.querySelector(`a[onclick="addToCart('${productId}')"]`);
+                        if (cartButton) {
+                            cartButton.href = '/loadCartPage';
+                            const img = cartButton.querySelector('img');
+                            img.src = 'img/icon/inCart.png';
+                            img.alt = 'Go to Cart';
+                            img.title = 'Go to Cart';
+                            cartButton.setAttribute('onclick', ''); 
+                        }
                     } else {
                         Swal.fire({
                             toast: true,
                             timer: 800,
                             timerProgressBar: true,
                             title: 'Failed!',
-                            text: 'Failed to add product to cart',
+                            text: 'Failed to add product to cart', 
                             icon: 'error',
                             position: 'top-end',
                             showConfirmButton: false,
                             customClass: {
-                                popup: 'custom-toast'  
+                                popup: 'custom-toast'
                             }
                         })
                     }

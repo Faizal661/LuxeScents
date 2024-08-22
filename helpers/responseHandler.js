@@ -5,7 +5,7 @@ const successResponse = (res, data = {}, message = "Operation completed successf
         message: message,
         data: data,
         error: null
-    });
+    }); 
 };
 
 const errorResponse = (res, error = {}, message = "An error occurred.", statusCode = 500) => {
