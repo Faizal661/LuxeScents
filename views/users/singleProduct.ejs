@@ -13,8 +13,8 @@
 
         .zoomContainer {
             position: absolute !important;
-            top: 180px !important;
-            left: 1000px !important;
+            top: 177px !important;
+            left: 830px !important;
             border-radius: 10px;
         }
     </style>
@@ -56,8 +56,8 @@
                                 <div class="tab-pane fade  <%= index === 0 ? 'show active' : '' %>"
                                     id="tabs-<%= index+1 %>" role="tabpanel">
                                     <div class="product__details__pic__item">
-                                        <img id="zoom<%= index %>" src="<%= image.replace(/\\/g, '/') %>" alt=""
-                                            style="width: 450px; height: 550px; object-fit: cover;"
+                                        <img id="zoom<%= index %>" src="<%= image.replace(/\\/g, '/') %>" alt="" style="    margin-left: -220px
+                                            ;width: 450px; height: 550px; object-fit: cover;"
                                             data-zoom-image="<%= image.replace(/\\/g, '/') %>">
                                     </div>
                                     <div class="zoomContainer">
@@ -101,16 +101,22 @@
                             <p>
                                 <%= singleProduct.description %>
                             </p>
-                            <h5 class="mb-3">
-                                <%= singleProduct.status %> (<%= singleProduct.quantity %> in Stock)
-                            </h5>
-                            <p class="fw-lighter">Gender: <%= singleProduct.gender %>
-                            </p>
-                            <p class="fw-lighter">Brand: <%= singleProduct.brand.brandName %>
-                            </p>
-                            <p class="fw-lighter">Note: <%= singleProduct.category.name %>
-                            </p>
-                            <br>
+                            <% if (singleProduct.quantity===0) { %>
+                                <h5 class="mb-3 text-danger">
+                                    <%= singleProduct.status %> (<%= singleProduct.quantity %> in Stock)
+                                </h5>
+                                <% } else { %>
+                                    <h5 class="mb-3">
+                                        <%= singleProduct.status %> (<%= singleProduct.quantity %> in Stock)
+                                    </h5>
+                                    <% } %>
+                                        <p class="fw-lighter">Gender: <%= singleProduct.gender %>
+                                        </p>
+                                        <p class="fw-lighter">Brand: <%= singleProduct.brand.brandName %>
+                                        </p>
+                                        <p class="fw-lighter">Note: <%= singleProduct.category.name %>
+                                        </p>
+                                        <br>
                         </div>
 
                         <div class="product__details__option">
@@ -129,17 +135,29 @@
                         <div class="product__details__cart__option">
                             <div class="quantity">
                                 <div class="pro-qty">
-                                    <input id="quantity-<%= singleProduct._id %>" type="number" value="1" min="1" max="10">
+                                    <input id="quantity-<%= singleProduct._id %>" type="number" value="1" min="1"
+                                        max="10" <% if (singleProduct.quantity===0) { %> disabled <% } %> >
                                 </div>
                             </div>
-                            <button type="button" class="primary-btn rounded" onclick="addToCart('<%= singleProduct._id %>')">
-                                Add to Cart
+                            <button type="button" class="primary-btn rounded"
+                                onclick="addToCart('<%= singleProduct._id %>')" <% if (singleProduct.quantity===0) { %>
+                                disabled style="background-color: grey ; cursor: not-allowed;" <% } %> >
+                                    Add to Cart
                             </button>
                         </div>
 
                         <div class="product__details__cart__option">
-                            <a href="/loadCartPage" class="primary-btn bg-success text-dark border border-5 fw-bolder rounded">Buy
-                                it Now</a>
+                            <% if (singleProduct.quantity===0) { %>
+                                <span class="primary-btn bg-danger text-light border border-5 fw-bolder rounded"
+                                    style="cursor: not-allowed;">
+                                    Out of Stock
+                                </span>
+                                <% } else { %>
+                                    <a href="/loadCartPage"
+                                        class="primary-btn bg-success text-dark border border-5 fw-bolder rounded">
+                                        Buy it Now
+                                    </a>
+                                    <% } %>
                         </div>
 
                         <div class="product__details__btns__option">
@@ -149,7 +167,7 @@
                                 <i class="fa fa-heart text-danger"></i>wishlist
                                 <!-- <%= wishlistProductIds.includes(singleProduct._id.toString()) ? 'Add to wishlist'
                                     : 'Remove From wishlist' %> -->
-                            <!-- the problem is everything is working properly but the text is not changing when togggling -->
+                                <!-- the problem is everything is working properly but the text is not changing when togggling -->
 
                             </button>
                         </div>
@@ -395,9 +413,46 @@
         function addToCart(productId) {
             event.preventDefault()
 
-            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const inputField = document.getElementById(`quantity-${productId}`);
+            const quantity = parseInt(inputField.value);
 
-            axios.post('/addProductToCart', { productId,quantity })
+            if (quantity < 1) {
+                inputField.value = 1;
+
+                Swal.fire({
+                    toast: true,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    title: 'Invalid Quantity!',
+                    text: 'Quantity cannot be less than 1.',
+                    icon: 'error',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'custom-toast'
+                    }
+                });
+                return;
+            }
+            if (quantity > 10) {
+                inputField.value = 10;
+
+                Swal.fire({
+                    toast: true,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    title: 'Invalid Quantity!',
+                    text: 'Quantity cannot be greater than 10.',
+                    icon: 'error',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'custom-toast'
+                    }
+                });
+                return;
+            }
+            axios.post('/addProductToCart', { productId, quantity })
                 .then(response => {
                     if (response.data.success) {
                         Swal.fire({
@@ -433,6 +488,20 @@
                     console.error('There was an error adding the product to the cart:', error);
                 });
         }
+
+
+
+        // document.querySelectorAll('.pro-qty input').forEach(input => {
+        //     input.addEventListener('change', function () {
+        //         let value = parseInt(this.value);
+        //         if (value < 1) {
+        //             this.value = 1;
+        //         } else if (value > 10) {
+        //             this.value = 10;
+        //         }
+        //     });
+        // });
+
     </script>
 
 
@@ -444,15 +513,16 @@
                 zoomType: "lens",
                 lensShape: "square",
                 lensSize: 2000,
-                scrollZoom: true,
+                // scrollZoom: true,
                 zoomActivation: "hover",
                 containLensZoom: true,
-                cursor: "crosshair",
                 responsive: true,
             });
           <% }); %>
         });
     </script>
+
+
 
 
     <%- include('../partials/users/userFooter') -%>

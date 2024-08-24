@@ -1,7 +1,9 @@
 const User = require('../../models/userSchema')
 const Product = require('../../models/productSchema')
 const Wishlist = require('../../models/wishlistSchema')
-const Cart=require('../../models/cartSchema')
+const Cart = require('../../models/cartSchema')
+const Category=require('../../models/categorySchema')
+const Brand=require('../../models/brandSchema')
 const nodemailer = require("nodemailer")
 const bcrypt = require('bcrypt');
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
@@ -272,10 +274,15 @@ const loadShopPage = async (req, res) => {
         let order = req.query.order === 'desc' ? -1 : 1;
 
         const searchQuery = req.query.search || '';
+        const stockFilter = req.query.stock || '';
+
 
         let query = { isBlocked: false };
         if (searchQuery) {
             query.name = { $regex: searchQuery, $options: 'i' };
+        }
+        if (stockFilter) {
+            query.status = stockFilter; // Filter by stock status
         }
 
         const products = await Product.find({ isBlocked: false }).populate({ path: 'category', match: { isListed: true } }).populate('brand').sort({ [sort]: order })
@@ -288,6 +295,9 @@ const loadShopPage = async (req, res) => {
         const startProduct = skip + 1;
         const endProduct = Math.min(skip + paginatedProducts.length, totalProductsCount);
 
+        const categories = await Category.find({ isListed: true });
+        const brands = await Brand.find({});
+        
 
         const wishlist = await Wishlist.findOne({ userId })
         const wishlistProductIds = wishlist ? wishlist.products.map(item => item.productId.toString()) : []
@@ -310,7 +320,10 @@ const loadShopPage = async (req, res) => {
             endProduct,
             searchQuery,
             wishlistProductIds,
-            cartProductIds
+            cartProductIds,
+            categories, // Pass categories to the template
+            brands,     // Pass brands to the template
+            stockFilter
         })
     } catch (error) {
         console.log(error, 'ShopPage not loading');
@@ -323,7 +336,7 @@ const loadShopPage = async (req, res) => {
 
 const loadSingleProduct = async (req, res) => {
     try {
-        const userId=req.session.user
+        const userId = req.session.user
         const ProductId = req.query.id
         const relatedProducts = await Product.find().populate('brand').populate('category');
         const singleProduct = await Product.findOne({ _id: ProductId }).populate('brand').populate('category').populate({ path: 'reviews.user', select: 'name' });
@@ -331,7 +344,7 @@ const loadSingleProduct = async (req, res) => {
         const wishlist = await Wishlist.findOne({ userId })
         const wishlistProductIds = wishlist ? wishlist.products.map(item => item.productId.toString()) : []
 
-        res.render('singleProduct', { userName: req.session.userName, singleProduct, relatedProducts ,wishlistProductIds})
+        res.render('singleProduct', { userName: req.session.userName, singleProduct, relatedProducts, wishlistProductIds })
     } catch (error) {
         console.log(error, 'Product detailed page is not loading');
         errorResponse(res, error, "Internal server error");

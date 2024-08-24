@@ -39,9 +39,15 @@ const orderSchema= new mongoose.Schema({
         ref:"User",
         required:true
     },
-    status:{
+    paymentMethod: {
+        type: String,
+        enum: ['COD', 'Wallet', 'Card', 'UPI'],
+        required: true
+    },
+    orderStatus:{
         type:String,
         required:true,
+        default:'Processing',
         enum:['Processing','Shipped','Delivered','Cancelled','Return Request','Returned']
     },
     couponApplied:{

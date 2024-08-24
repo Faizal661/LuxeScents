@@ -1399,11 +1399,11 @@ ol {
 	visibility: hidden;
 }
 
-.shop__sidebar__tags {
+.shop__sidebar__gender {
 	padding-top: 15px;
 }
 
-.shop__sidebar__tags a {
+.shop__sidebar__gender a {
 	color: #404040;
 	font-size: 13px;
 	font-weight: 700;
@@ -1418,7 +1418,7 @@ ol {
 	transition: all, 0.3s;
 }
 
-.shop__sidebar__tags a:hover {
+.shop__sidebar__gender a:hover {
 	background: #111111;
 	color: #ffffff;
 }

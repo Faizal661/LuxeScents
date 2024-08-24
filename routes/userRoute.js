@@ -5,6 +5,7 @@ const cartController=require('../controllers/user/cartController')
 const checkoutController=require('../controllers/user/checkoutController')
 const userProfileController=require('../controllers/user/userProfileController')
 const wishlistController=require('../controllers/user/wishlistController')
+const OrderController=require('../controllers/user/orderController')
 
 const { userAuth } = require('../middlewares/authentication');
 const upload=require('../middlewares/multer')
@@ -73,6 +74,8 @@ userRouter.post('/removeFromWishlist',userAuth,wishlistController.removeFromWish
 userRouter.get('/loadCartPage',userAuth,cartController.loadCartPage )
 userRouter.post('/addProductToCart',userAuth,cartController.addProductToCart)
 userRouter.post('/removeFromCart',userAuth,cartController.removeFromCart)
+userRouter.post('/updateCartItem',userAuth,cartController.updateCartItem)
+userRouter.get('/cartTotal',userAuth,cartController.cartTotal )
 
 
 
@@ -80,6 +83,9 @@ userRouter.post('/removeFromCart',userAuth,cartController.removeFromCart)
 userRouter.get('/checkoutPage',userAuth,checkoutController.loadCheckoutPage)
 
 userRouter.get('/orderSuccess',userAuth,checkoutController.orderSuccess)
+
+
+userRouter.get('/placeOrder',userAuth,OrderController.placeOrder)
 
 
 

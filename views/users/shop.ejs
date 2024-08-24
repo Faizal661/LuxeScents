@@ -4,6 +4,12 @@
         .product__item:hover {
             cursor: pointer;
         }
+
+        .out-of-stock-overlay {
+            top: 0;
+            left: 0;
+            background: rgba(255, 255, 255, 0.9);
+        }
     </style>
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-option">
@@ -47,25 +53,43 @@
                                         <div class="card-body">
                                             <div class="shop__sidebar__categories">
                                                 <ul class="nice-scroll">
-                                                    <li><a href="#">Floral Fragrances</a></li>
-                                                    <li><a href="#">Citrus Scents </a></li>
-                                                    <li><a href="#">Woody Aromas </a></li>
-                                                    <li><a href="#">Gourmand Fragrances </a></li>
-                                                    <li><a href="#">Fresh Scents</a></li>
-                                                    <li><a href="#">Aquatic Fragrances </a></li>
-
+                                                    <% categories.forEach(category=> { %>
+                                                        <li><a href="/shoppage?sort=<%= category._id %>">
+                                                                <%= category.name %>
+                                                            </a></li>
+                                                        <% }); %>
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="card">
+                                    <div class="card-heading">
+                                        <a data-toggle="collapse" data-target="#collapseTwo">Branding</a>
+                                    </div>
+                                    <div id="collapseTwo" class="collapse show" data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <div class="shop__sidebar__categories">
+                                                <ul class="nice-scroll">
+                                                    <% brands.forEach(brand=> { %>
+                                                        <li><a href="#">
+                                                                <%= brand.brandName %>
+                                                            </a></li>
+                                                        <% }); %>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="card">
                                     <div class="card-heading">
                                         <a data-toggle="collapse" data-target="#collapseFive">Gender</a>
                                     </div>
                                     <div id="collapseFive" class="collapse show" data-parent="#accordionExample">
                                         <div class="card-body">
-                                            <div class="shop__sidebar__tags">
+                                            <div class="shop__sidebar__gender">
                                                 <ul class="nice-scroll">
                                                     <li><a href="#">Men </a></li>
                                                     <li><a href="#">Women </a></li>
@@ -75,125 +99,33 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="card">
                                     <div class="card-heading">
-                                        <a data-toggle="collapse" data-target="#collapseTwo">Branding</a>
+                                        <a data-toggle="collapse" data-target="#collapseFour">Stock Status</a>
                                     </div>
-                                    <div id="collapseTwo" class="collapse show" data-parent="#accordionExample">
+                                    <div id="collapseFour" class="collapse show" data-parent="#accordionExample">
                                         <div class="card-body">
-                                            <div class="shop__sidebar__brand">
-                                                <ul>
-                                                    <li><a href="#">Lancôme</a></li>
-                                                    <li><a href="#">Burberry</a></li>
-                                                    <li><a href="#">Givenchy</a></li>
-                                                    <li><a href="#">Calvin Klein</a></li>
+                                            <div class="shop__sidebar__gender">
+                                                <ul class="nice-scroll">
+                                                    <li>
+                                                        <a href="/shoppage?stock=" class="<%= !stockFilter ? 'active' : '' %>">All Stock Status</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/shoppage?stock=Available" class="<%= stockFilter === 'Available' ? 'active' : '' %>">Available</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/shoppage?stock=Out%20of%20Stock" class="<%= stockFilter === 'Out of Stock' ? 'active' : '' %>">Out of Stock</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/shoppage?stock=Discontinued" class="<%= stockFilter === 'Discontinued' ? 'active' : '' %>">Discontinued</a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="card">
-                                    <div class="card-heading">
-                                        <a data-toggle="collapse" data-target="#collapseThree">Filter Price</a>
-                                    </div>
-                                    <div id="collapseThree" class="collapse show" data-parent="#accordionExample">
-                                        <div class="card-body">
-                                            <div class="shop__sidebar__price">
-                                                <ul>
-                                                    <li><a href="#">₹0.00 - ₹400.00</a></li>
-                                                    <li><a href="#">₹400.00 - ₹800.00</a></li>
-                                                    <li><a href="#">₹8000.00 - ₹1200.00</a></li>
-                                                    <li><a href="#">₹1200.00 - ₹1800.00</a></li>
-                                                    <li><a href="#">₹1800.00 - ₹2300.00</a></li>
-                                                    <li><a href="#">2300.00+</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="card">
-                                    <div class="card-heading">
-                                        <a data-toggle="collapse" data-target="#collapseFour">Size</a>
-                                    </div>
-                                    <div id="collapseFour" class="collapse show" data-parent="#accordionExample">
-                                        <div class="card-body">
-                                            <div class="shop__sidebar__size">
-                                                <label for="xs">25ml
-                                                    <input type="radio" id="xs">
-                                                </label>
-                                                <label for="sm">50ml
-                                                    <input type="radio" id="sm">
-                                                </label>
-                                                <label for="md">75ml
-                                                    <input type="radio" id="md">
-                                                </label>
-                                                <label for="xl">100ml
-                                                    <input type="radio" id="xl">
-                                                </label>
-                                                <label for="xxl">150ml
-                                                    <input type="radio" id="xxl">
-                                                </label>
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="card">
-                                    <div class="card-heading">
-                                        <a data-toggle="collapse" data-target="#collapseFive">Colors</a>
-                                    </div>
-                                    <div id="collapseFive" class="collapse show" data-parent="#accordionExample">
-                                        <div class="card-body">
-                                            <div class="shop__sidebar__color">
-                                                <label class="c-1" for="sp-1">
-                                                    <input type="radio" id="sp-1">
-                                                </label>
-                                                <label class="c-2" for="sp-2">
-                                                    <input type="radio" id="sp-2">
-                                                </label>
-                                                <label class="c-3" for="sp-3">
-                                                    <input type="radio" id="sp-3">
-                                                </label>
-                                                <label class="c-4" for="sp-4">
-                                                    <input type="radio" id="sp-4">
-                                                </label>
-                                                <label class="c-5" for="sp-5">
-                                                    <input type="radio" id="sp-5">
-                                                </label>
-                                                <label class="c-6" for="sp-6">
-                                                    <input type="radio" id="sp-6">
-                                                </label>
-                                                <label class="c-7" for="sp-7">
-                                                    <input type="radio" id="sp-7">
-                                                </label>
-                                                <label class="c-8" for="sp-8">
-                                                    <input type="radio" id="sp-8">
-                                                </label>
-                                                <label class="c-9" for="sp-9">
-                                                    <input type="radio" id="sp-9">
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="card">
-                                    <div class="card-heading">
-                                        <a data-toggle="collapse" data-target="#collapseSix">Tags</a>
-                                    </div>
-                                    <div id="collapseSix" class="collapse show" data-parent="#accordionExample">
-                                        <div class="card-body">
-                                            <div class="shop__sidebar__tags">
-                                                <a href="#">Product</a>
-                                                <a href="#">Bags</a>
-                                                <a href="#">Shoes</a>
-                                                <a href="#">Fashio</a>
-                                                <a href="#">Clothing</a>
-                                                <a href="#">Hats</a>
-                                                <a href="#">Accessories</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -241,31 +173,50 @@
                                         <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
                                             alt="<%= product.productName %> "
                                             onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
-                                        <ul class="product__hover">
-                                            <li>
-                                                <a href="#" onclick="toggleWishlist('<%= product._id %>')">
-                                                    <img src="img/icon/<%= wishlistProductIds.includes(product._id.toString()) ? 'heartFill.png' : 'heart.png' %>"
-                                                        class="rounded rounded-5 " data-product-id="<%= product._id %>"
-                                                        alt="wishlist">
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <% if (cartProductIds.includes(product._id.toString())) { %>
-                                                    <a href="/loadCartPage" >
-                                                        <img src="img/icon/inCart.png" class="rounded rounded-5"
-                                                            alt="Go to Cart" title="Go to Cart">
-                                                    </a>
-                                                    <%}else { %>
-                                                        <a href="#" onclick="addToCart('<%= product._id %>')" >
-                                                            <img src="img/icon/cart.png" class="rounded rounded-5 "
-                                                                alt="cart" title="Add to Cart">
+
+                                        <% if (product.quantity===0) { %>
+                                            <div
+                                                class="out-of-stock-overlay d-flex align-items-center justify-content-center position-absolute w-100 h-100">
+                                                <h4 class="text-danger fw-bold">Out of Stock</h4>
+                                            </div>
+                                            <% } %>
+
+                                                <ul class="product__hover">
+                                                    <li>
+                                                        <a href="#" onclick="toggleWishlist('<%= product._id %>')">
+                                                            <img src="img/icon/<%= wishlistProductIds.includes(product._id.toString()) ? 'heartFill.png' : 'heart.png' %>"
+                                                                class="rounded rounded-5 "
+                                                                data-product-id="<%= product._id %>" alt="wishlist">
                                                         </a>
-                                                        <% } %>
+                                                    </li>
+                                                    <li>
+                                                        <% if(product.quantity!==0){ %>
+                                                            <% if (cartProductIds.includes(product._id.toString())) { %>
+                                                                <a href="/loadCartPage">
+                                                                    <img src="img/icon/inCart.png"
+                                                                        class="rounded rounded-5" alt="Go to Cart"
+                                                                        title="Go to Cart">
+                                                                </a>
+                                                                <%}else { %>
+                                                                    <a href="#"
+                                                                        onclick="addToCart('<%= product._id %>')">
+                                                                        <img src="img/icon/cart.png"
+                                                                            class="rounded rounded-5 " alt="cart"
+                                                                            title="Add to Cart">
+                                                                    </a>
+                                                                    <% } %>
+                                                                        <%}else { %>
+                                                                            <a onclick="outOfStock()">
+                                                                                <img src="img/icon/out-of-stock.png"
+                                                                                    class="rounded rounded-5"
+                                                                                    alt="out-of-stock"
+                                                                                    title="out-of-stock">
+                                                                            </a>
+                                                                            <% } %>
 
 
-
-                                            </li>
-                                        </ul>
+                                                    </li>
+                                                </ul>
                                     </div>
                                     <div class="product__item__text">
 
@@ -297,26 +248,26 @@
                     </div>
 
 
-                    <div class="pagination-container d-flex justify-content-center">
+                    <div class="pagination-container d-flex justify-content-center m-2 ">
                         <% if (currentPage> 1) { %>
-                            <a href="?page=<%= currentPage - 1 %>" class="border border-1 rounded-pill  p-2 m-1">&laquo;
-                                Previous</a>
+                            <a href="?page=<%= currentPage - 1 %>"
+                                class="btn btn-outline-dark rounded-pill my-2 px-3 mx-1">&laquo; Previous</a>
                             <% } %>
                                 <% for (let i=1; i <=totalPages; i++) { %>
                                     <% if (i===currentPage) { %>
-                                        <span class="current-page border border-1 rounded-pill p-2 m-1" style="  background-color: black;
-                                        color: white;">
+                                        <span class="btn btn-dark rounded-pill my-2 px-3 mx-1">
                                             <%= i %>
                                         </span>
                                         <% } else { %>
-                                            <a href="?page=<%= i %>" class="border border-1 rounded-pill p-2 m-1">
+                                            <a href="?page=<%= i %>"
+                                                class="btn btn-outline-dark rounded-pill my-2 px-3 mx-1">
                                                 <%= i %>
                                             </a>
                                             <% } %>
                                                 <% } %>
                                                     <% if (currentPage < totalPages) { %>
                                                         <a href="?page=<%= currentPage + 1 %>"
-                                                            class="border border-1 rounded-pill p-2 m-1">Next
+                                                            class="btn btn-outline-dark rounded-pill my-2 px-3 mx-1">Next
                                                             &raquo;</a>
                                                         <% } %>
                     </div>
@@ -370,8 +321,8 @@
                             toast: true,
                             timer: 800,
                             timerProgressBar: true,
-                            title: 'Added!',
-                            text: response.data.message,
+                            title: response.data.message,
+                            // text: response.data.message,
                             icon: 'success',
                             position: 'top-end',
                             showConfirmButton: false,
@@ -386,7 +337,7 @@
                             img.src = 'img/icon/inCart.png';
                             img.alt = 'Go to Cart';
                             img.title = 'Go to Cart';
-                            cartButton.setAttribute('onclick', ''); 
+                            cartButton.setAttribute('onclick', '');
                         }
                     } else {
                         Swal.fire({
@@ -394,7 +345,7 @@
                             timer: 800,
                             timerProgressBar: true,
                             title: 'Failed!',
-                            text: 'Failed to add product to cart', 
+                            text: 'Failed to add product to cart',
                             icon: 'error',
                             position: 'top-end',
                             showConfirmButton: false,
@@ -407,6 +358,22 @@
                 .catch(error => {
                     console.error('There was an error adding the product to the cart:', error);
                 });
+        }
+
+        function outOfStock() {
+            Swal.fire({
+                toast: true,
+                timer: 1100,
+                timerProgressBar: true,
+                title: 'Out Of Stock',
+                // text: 'Failed to add product to cart',
+                icon: 'warning',
+                position: 'top-end',
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'custom-toast'
+                }
+            })
         }
     </script>
 

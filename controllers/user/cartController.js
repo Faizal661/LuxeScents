@@ -29,7 +29,7 @@ const loadCartPage = async (req, res) => {
                 totalPrice: item.totalPrice,
                 productImages: product.productImages,
             };
-        }); 3
+        });
 
 
 
@@ -111,9 +111,65 @@ const removeFromCart = async (req, res) => {
 };
 
 
+const updateCartItem = async (req, res) => {
+    const { productId, quantity } = req.body; // Here, productId is the _id of the product object in the products array, not the actual Product ID.
+    try {
+        const cart = await Cart.findOne({ "products._id": productId });
+
+        if (cart) {
+
+            const product = cart.products.find(p => p._id.toString() === productId);
+            if (product) {
+                const totalPrice = product.price * quantity; 
+                await Cart.findOneAndUpdate(
+                    { "products._id": productId },
+                    {
+                        $set: {
+                            "products.$.quantity": quantity,
+                            "products.$.totalPrice": totalPrice
+                        }
+                    },
+                    { new: true }
+                );
+
+                res.json({ success: true, totalPrice });
+            } else {
+                res.json({ success: false, message: 'Product not found in cart.' });
+            }
+        } else {
+            res.json({ success: false, message: 'Cart item not found.' });
+        }
+    } catch (error) {
+        console.error('Error updating cart item:', error);
+        res.status(500).json({ success: false, message: 'Error updating cart item.' });
+    }
+};
+
+
+const cartTotal = async (req, res) => {
+    try {
+        const userId = req.session.user; 
+        const cart = await Cart.findOne({ userId });
+  
+        if (cart) {
+            const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            const total = subtotal;
+            res.json({ success: true, subtotal, total });
+        } else {
+            res.json({ success: false, message: 'Cart not found.' });
+        }
+    } catch (error) {
+        console.error('Error fetching cart total:', error);
+        res.status(500).json({ success: false, message: 'Error fetching cart total.' });
+    }
+};
+
+
 module.exports = {
     loadCartPage,
     addProductToCart,
-    removeFromCart
+    removeFromCart,
+    updateCartItem,
+    cartTotal
 
 }

@@ -1,6 +1,7 @@
 const User = require('../../models/userSchema')
 const Product = require('../../models/productSchema')
 const Cart = require('../../models/cartSchema')
+const addressSchema=require('../../models/addressSchema')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
 
@@ -10,6 +11,8 @@ const loadCheckoutPage = async (req, res) => {
             const userName = req.session.userName
             const userId = req.session.user;
 
+            const addresses = await addressSchema.find({ userId: userId })
+
             const cart = await Cart.findOne({ userId })
                 .populate({
                     path: 'products.productId',
@@ -17,7 +20,7 @@ const loadCheckoutPage = async (req, res) => {
                 });
 
             if (!cart) {
-                return res.render('checkout', { userName, products: [] });
+                return res.render('checkout', { userName, products: [],addresses: addresses ? addresses : [] });
             }
 
             const products = cart.products.map(item => {
@@ -36,7 +39,8 @@ const loadCheckoutPage = async (req, res) => {
             res.render('checkout', {
                 userName,
                 products,
-                cart
+                cart,
+                addresses: addresses ? addresses : []
             });
 
         } else {
@@ -52,6 +56,8 @@ const loadCheckoutPage = async (req, res) => {
 const orderSuccess = async (req, res) => {
     try {
         if (req.session.user) {
+
+            console.log(req.body)
             res.render('orderSuccess')
         } else {
             res.redirect("/login")
