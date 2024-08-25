@@ -8,6 +8,8 @@ const userRouter=require('./routes/userRoute')
 const adminRouter=require('./routes/adminRoute')
 const userController=require('./controllers/user/userController')
 const adminController=require('./controllers/admin/adminController')
+const fetchCartCount = require('./middlewares/cartCount');
+const fetchWishlistCount = require('./middlewares/wishlistCount');
 const passport=require('./config/passport')
 const connectDB = require('./config/db');
 require('dotenv').config();
@@ -55,7 +57,9 @@ app.use(express.static(path.join(__dirname, 'public', 'user-assets')));
 app.set('view engine','ejs'); 
 app.set('views',[ path.join(__dirname, 'views/users'), path.join(__dirname, 'views/admin')]);
 
- 
+app.use(fetchCartCount);
+app.use(fetchWishlistCount);
+
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
  
