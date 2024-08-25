@@ -33,7 +33,7 @@ const loadCheckoutPage = async (req, res) => {
                     totalPrice: item.totalPrice,
                     productImages: product.productImages,
                 };
-            }); 3
+            }); 
 
 
             res.render('checkout', {

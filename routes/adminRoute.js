@@ -14,6 +14,7 @@ adminRouter.get('/dashboard', adminAuth, adminController.loadDashboard)
 adminRouter.get('/', adminAuth, adminController.loadDashboard)
 adminRouter.get('/logoutadmin', adminAuth, adminController.adminLogout)
 
+
 //users
 adminRouter.get('/users', adminAuth, customerController.customerInfo)
 adminRouter.get('/blockCustomer', adminAuth, customerController.toggleCustomerBlocking)

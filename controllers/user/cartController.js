@@ -87,7 +87,7 @@ const addProductToCart = async (req, res) => {
 
         await cart.save();
         successResponse(res, {}, 'Product added to cart');
-    } catch (error) {
+    } catch (error) { 
         console.error(error);
         errorResponse(res, error, 'Server error');
     }
@@ -103,10 +103,9 @@ const removeFromCart = async (req, res) => {
             { userId },
             { $pull: { products: { _id: new mongoose.Types.ObjectId(itemId) } } }
         );
-
-        res.status(200).json({ success: true, message: "Product removed from cart." });
+        successResponse(res,{},"Product removed from cart.")
     } catch (error) {
-        res.status(500).json({ success: false, message: "Failed to remove product from cart." });
+        errorResponse(res, error, "Failed to remove product from cart.");
     }
 };
 
@@ -131,7 +130,6 @@ const updateCartItem = async (req, res) => {
                     },
                     { new: true }
                 );
-
                 res.json({ success: true, totalPrice });
             } else {
                 res.json({ success: false, message: 'Product not found in cart.' });

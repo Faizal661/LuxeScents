@@ -14,8 +14,7 @@ const User = require('../models/userSchema')
 var url = require('url')
 
 
-userRouter.get('/',userController.loadLogin) 
-
+userRouter.get('/',userController.loadHomepage) 
 
 userRouter.get('/login',userController.loadLogin)
 userRouter.post('/login',userController.userLogin );
@@ -43,6 +42,8 @@ function storeUserIdInSession(req, res) {
     }} 
 userRouter.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }),storeUserIdInSession);
 
+
+//user pages
 userRouter.get('/homepage',userController.loadHomepage )
 userRouter.get('/shoppage',userController.loadShopPage )
 userRouter.get('/singleProduct',userController.loadSingleProduct )
@@ -85,9 +86,8 @@ userRouter.get('/checkoutPage',userAuth,checkoutController.loadCheckoutPage)
 userRouter.get('/orderSuccess',userAuth,checkoutController.orderSuccess)
 
 
+//order 
 userRouter.get('/placeOrder',userAuth,OrderController.placeOrder)
-
-
 
 
 

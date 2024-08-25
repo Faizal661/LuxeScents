@@ -40,33 +40,6 @@ const loadWishlist = async (req, res) => {
 }
 
 
-// const addProductToWishlist = async (req, res) => {
-//     try {
-//         const userId = req.session.user;  
-
-//         const { productId } = req.body;
-
-//         let wishlist = await Wishlist.findOne({ userId });
-
-//         if (!wishlist) {
-//             wishlist = new Wishlist({ userId, products: [{ productId }] });
-//         } else {
-//             const productExists = wishlist.products.some(p => p.productId.equals(productId));
-//             if (!productExists) {
-//                 wishlist.products.push({ productId });
-//             }
-//         }
-
-//         await wishlist.save();
-//         res.json({ success: true, message: 'Product added to wishlist' });
-
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ success: false, message: 'Server error' });
-//     }
-// };
-
-
 const removeFromWishlist = async (req, res) => {
     try {
         const { productId } = req.body;
@@ -118,6 +91,5 @@ const toggleWishlist = async (req, res) => {
 module.exports = {
     toggleWishlist,
     loadWishlist,
-    // addProductToWishlist,
     removeFromWishlist
 }
