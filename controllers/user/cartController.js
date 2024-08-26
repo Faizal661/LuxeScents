@@ -7,7 +7,6 @@ const { successResponse, errorResponse } = require('../../helpers/responseHandle
 
 const loadCartPage = async (req, res) => {
     try {
-        const userName = req.session.userName
         const userId = req.session.user;
 
         const cart = await Cart.findOne({ userId })
@@ -17,7 +16,7 @@ const loadCartPage = async (req, res) => {
             });
 
         if (!cart) {
-            return res.render('cart', { userName, products: [] });
+            return res.render('cart', { products: [] });
         }
 
         const products = cart.products.map(item => {
@@ -35,7 +34,6 @@ const loadCartPage = async (req, res) => {
 
 
         res.render('cart', {
-            userName,
             products,
             cart
         });

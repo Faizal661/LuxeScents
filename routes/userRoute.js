@@ -21,6 +21,7 @@ userRouter.post('/login',userController.userLogin );
 
 userRouter.get('/forgotPassword',userController.loadForgotPassword)
 userRouter.post('/sendOtpToChangePassword',userController.sendOtpToChangePassword)
+
 userRouter.get('/loadChangePasswordPage',userController.loadChangePasswordPage)
 
 
@@ -62,8 +63,11 @@ userRouter.get('/loadEditAddressPage',userAuth,userProfileController.loadEditAdd
 userRouter.post('/editAddress/:id',userAuth,userProfileController.editAddress)
 userRouter.delete('/deleteAddress/:id',userAuth,userProfileController.deleteAddress)
 
-userRouter.get('/loadResetPassword',userAuth,userProfileController.loadResetPassword)
+userRouter.get('/loadChangePassword',userAuth,userProfileController.loadChangePassword)
+userRouter.post('/changePassword',userAuth,userProfileController.changePassword)
 userRouter.get('/loadOtpVerify',userAuth,userProfileController.loadOtpVerify)
+userRouter.post('/verify-otp',userAuth,userProfileController.verifyOtp)
+userRouter.post('/resend-otp',userAuth,userProfileController.resendOtp)
 userRouter.get('/loadNewPassword',userAuth,userProfileController.loadNewPassword)
 
 //wishlist

@@ -8,7 +8,6 @@ const { successResponse, errorResponse } = require('../../helpers/responseHandle
 const loadCheckoutPage = async (req, res) => {
     try {
         if (req.session.user) {
-            const userName = req.session.userName
             const userId = req.session.user;
 
             const addresses = await addressSchema.find({ userId: userId })
@@ -20,7 +19,7 @@ const loadCheckoutPage = async (req, res) => {
                 });
 
             if (!cart) {
-                return res.render('checkout', { userName, products: [],addresses: addresses ? addresses : [] });
+                return res.render('checkout', { products: [],addresses: addresses ? addresses : [] });
             }
 
             const products = cart.products.map(item => {
@@ -37,7 +36,6 @@ const loadCheckoutPage = async (req, res) => {
 
 
             res.render('checkout', {
-                userName,
                 products,
                 cart,
                 addresses: addresses ? addresses : []

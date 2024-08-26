@@ -243,14 +243,13 @@ const resendOtp = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
     try {
-        const userName = req.session.userName
         //best seller filter need to change based on the higher ordered products .so it is pending now.
         const bestSellers = await Product.find({ isBlocked: false }).populate({ path: 'category', match: { isListed: true } }).populate('brand');
         const filteredBestSellers = bestSellers.filter(product => product.category);
         const newArrivals = await Product.find({ isBlocked: false }).sort({ createdAt: -1 }).populate({ path: 'category', match: { isListed: true } }).populate('brand');
         const filteredNewArrivals = newArrivals.filter(product => product.category);
-        if (userName) {
-            res.render('homepage', { userName: userName, bestSellers: filteredBestSellers, newArrivals: filteredNewArrivals })
+        if (req.session.userName) {
+            res.render('homepage', { bestSellers: filteredBestSellers, newArrivals: filteredNewArrivals })
         } else {
             return res.render('homepage', { bestSellers: filteredBestSellers, newArrivals: filteredNewArrivals })
         }
@@ -308,7 +307,6 @@ const loadShopPage = async (req, res) => {
 
 
         res.render('shop', {
-            userName: req.session.userName,
             products: paginatedProducts,
             currentPage: page,
             totalPages,
@@ -344,7 +342,7 @@ const loadSingleProduct = async (req, res) => {
         const wishlist = await Wishlist.findOne({ userId })
         const wishlistProductIds = wishlist ? wishlist.products.map(item => item.productId.toString()) : []
 
-        res.render('singleProduct', { userName: req.session.userName, singleProduct, relatedProducts, wishlistProductIds })
+        res.render('singleProduct', { singleProduct, relatedProducts, wishlistProductIds })
     } catch (error) {
         console.log(error, 'Product detailed page is not loading');
         errorResponse(res, error, "Internal server error");
@@ -408,5 +406,9 @@ module.exports = {
 
     userLogout,
     pageNotfound,
+
+
+    generateOtp,
+    sendVerificationEmail
 
 } 

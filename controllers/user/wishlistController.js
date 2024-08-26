@@ -4,7 +4,6 @@ const { successResponse, errorResponse } = require('../../helpers/responseHandle
 
 const loadWishlist = async (req, res) => {
     try {
-        const userName = req.session.userName
         const userId = req.session.user;  
 
         const wishlist = await Wishlist.findOne({ userId })
@@ -14,7 +13,7 @@ const loadWishlist = async (req, res) => {
         });
 
         if (!wishlist) {
-            return res.render('wishlist', {userName, products: [], currentPage: 1, totalPages: 1 });
+            return res.render('wishlist', {products: [], currentPage: 1, totalPages: 1 });
         }
         const products = wishlist.products.map(item => item.productId);
 
@@ -26,7 +25,6 @@ const loadWishlist = async (req, res) => {
         const paginatedProducts = products.slice((page - 1) * pageSize, page * pageSize);
 
         res.render('wishlist', {
-            userName,
             products: paginatedProducts,
             currentPage: page,
             totalPages: totalPages

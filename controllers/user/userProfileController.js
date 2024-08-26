@@ -1,7 +1,8 @@
 const User = require('../../models/userSchema')
 const addressSchema = require('../../models/addressSchema')
+const bcrypt = require('bcrypt');
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
-
+const { generateOtp, sendVerificationEmail } = require('../../controllers/user/userController')
 
 const loadUserProfilePage = async (req, res) => {
     try {
@@ -9,7 +10,7 @@ const loadUserProfilePage = async (req, res) => {
         const user = await User.findOne({ name: userName })
         if (user) {
             const addresses = await addressSchema.find({ userId: user._id })
-            return res.render('userProfile/userProfile', { userName, user, addresses: addresses ? addresses : [] })
+            return res.render('userProfile/userProfile', { user, addresses: addresses ? addresses : [] })
         } else {
             res.redirect("/login")
         }
@@ -23,7 +24,7 @@ const loadEditUserProfilePage = async (req, res) => {
         const userId = req.session.user
         const user = await User.findOne({ _id: userId })
         if (user) {
-            return res.render('userProfile/editDetails', { userName: user.name, user })
+            return res.render('userProfile/editDetails', { user })
         } else {
             res.redirect("/login")
         }
@@ -59,7 +60,7 @@ const loadAddAddressPage = async (req, res) => {
     try {
         const userId = req.session.user;
         if (userId) {
-            res.render('userProfile/addAddress', { userName: req.session.userName, userId });
+            res.render('userProfile/addAddress', { userId });
         } else {
             res.redirect('/login');
         }
@@ -86,25 +87,24 @@ const addAddress = async (req, res) => {
             altPhone,
             locality,
             city,
-            state, 
+            state,
             pincode,
             landMark,
             isActive: isActive ? true : false
         });
 
         await newAddress.save();
-        return successResponse(res,{},'Address added successfully!')
+        return successResponse(res, {}, 'Address added successfully!')
 
     } catch (error) {
         console.error('Error adding address:', error);
-        return errorResponse(res,error,'Error adding address. Please try again.') 
+        res.render('404')
     }
 };
 
 
 const loadEditAddressPage = async (req, res) => {
     try {
-        const userName = req.session.userName;
         const addressId = req.query.id;
         const address = await addressSchema.findById(addressId);
 
@@ -112,10 +112,10 @@ const loadEditAddressPage = async (req, res) => {
             return res.status(404).send('Address not found');
         }
 
-        res.render('userProfile/editAddress', { userName, address });
+        res.render('userProfile/editAddress', { address });
     } catch (error) {
         console.error("Error loading edit address page:", error);
-        res.status(500).send('Server Error');
+        res.render('404')
     }
 };
 
@@ -138,7 +138,7 @@ const editAddress = async (req, res) => {
             altPhone,
             isActive: isActive ? true : false
         };
-        console.log('new Data',updatedData)
+        console.log('new Data', updatedData)
 
         if (updatedData.isActive) {
             await addressSchema.updateMany({ userId: userId, _id: { $ne: addressId } }, { isActive: false });
@@ -150,11 +150,11 @@ const editAddress = async (req, res) => {
             return res.status(404).send('Address not found');
         }
 
-        return successResponse(res,{},'Address updated successfully!')
+        return successResponse(res, {}, 'Address updated successfully!')
 
     } catch (error) {
         console.error("Error updating address:", error);
-        return errorResponse(res,error,'Error while updating address. Please try again.') 
+        res.render('404')
     }
 };
 
@@ -172,50 +172,129 @@ const deleteAddress = async (req, res) => {
         res.status(200).json({ message: 'Address deleted successfully' });
     } catch (error) {
         console.error("Error deleting address:", error);
-        res.status(500).json({ error: 'Server Error' });
+        res.render('404')
     }
 }
 
 
-const loadResetPassword = async (req, res) => {
+
+//---------------------------change password-----------
+
+const loadChangePassword = async (req, res) => {
     try {
-        res.render('userProfile/resetPassword',{ userName: req.session.userName})
+        res.render('userProfile/changePassword')
     } catch (error) {
-        console.log(error, 'page not found');
-        errorResponse(res, error, "Internal server error");
+        console.log(error, 'Error while loading change password page');
+        res.render('404')
     }
 }
 
-// const loadForgotPassword = async (req, res) => {
-//     try {
-//         res.render('userProfile/forgotPassword', { title: 'forgot password' })
-//     } catch (error) {
-//         console.log(error, 'page not found');
-//         errorResponse(res, error, "Internal server error");
-//     } 
-// }
+
+const changePassword = async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+
+    try {
+        const user = await User.findById(req.session.user);
+
+        if (!user) {
+            return errorResponse(res, {}, 'User not found', 404);
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+        if (!isMatch) {
+            return errorResponse(res, {}, 'Current password is incorrect', 400);
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+
+        await user.save()
+
+        return successResponse(res, {}, 'Password updated successfully');
+    } catch (error) {
+        console.log(error, 'Error while changing password');
+        res.render('404')
+    }
+};
+
+
+//-----------------------Forget Password------------
 
 const loadOtpVerify = async (req, res) => {
     try {
-        res.render('userProfile/verify-otp',{ userName: req.session.userName})
+        const user = await User.findOne({ _id: req.session.user })
+        console.log(user)
+        req.session.email = user.email
+        const email = user.email
+        const otp = generateOtp();
+        const emailSent = await sendVerificationEmail(email, otp);
+
+        if (!emailSent) {
+            return res.json("email-error")
+        }
+
+        req.session.userOtp = otp;
+
+        res.render('userProfile/verify-otp')
+        console.log('OTP Sent', otp);
+
     } catch (error) {
-        console.log(error, 'page not found');
-        errorResponse(res, error, "Internal server error");
+        console.log(error, 'otp verify page loading error');
+        res.render('404')
     }
 }
+
+const verifyOtp = async (req, res) => {
+    try {
+        const { otp } = req.body
+        console.log(otp)
+        if (otp === req.session.userOtp) {
+            res.render('userProfile/newPassword')
+        } else {
+            res.status(400).json({ success: false, message: "Invalid OTP ,Please try again" })
+        }
+    } catch (error) {
+        console.error("Error Verifying OTP", error)
+        res.status(500).json({ success: false, message: "An error occured " })
+    }
+}
+
+const resendOtp = async (req, res) => {
+    try {
+        const { email } = req.session.email
+        if (!email) {
+            return res.status(400).json({ success: false, message: "Email not found in session" })
+        }
+        const otp = generateOtp();
+        req.session.userOtp = otp;
+        const emailSent = await sendVerificationEmail(email, otp);
+
+        if (emailSent) {
+            console.log('Resend OTP :', otp)
+            res.status(200).json({ success: true, message: "OTP Resend Successfully" })
+        } else {
+            res.status(500).json({ success: false, message: "Failed to resend OTP. Please try again." })
+        }
+    } catch (error) {
+        console.error("Error resending otp", error)
+        res.status(500).json({ success: false, message: "Internal server error,Please try again" })
+    }
+}
+
 
 const loadNewPassword = async (req, res) => {
     try {
-        res.render('userProfile/newPassword',{ userName: req.session.userName})
+        res.render('userProfile/newPassword')
     } catch (error) {
         console.log(error, 'page not found');
-        errorResponse(res, error, "Internal server error");
+        res.render('404')
     }
 }
 
 
 
- 
+
 
 module.exports = {
     loadUserProfilePage,
@@ -228,9 +307,12 @@ module.exports = {
     editAddress,
     deleteAddress,
 
-    loadResetPassword,
-    // loadForgotPassword,
+    loadChangePassword,
+    changePassword,
+
     loadOtpVerify,
-    loadNewPassword
+    verifyOtp,
+    resendOtp,
+    loadNewPassword,
 
 }
