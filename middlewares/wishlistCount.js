@@ -5,17 +5,17 @@ const fetchWishlistCount = async (req, res, next) => {
     if (req.session.user) {
       const userId = req.session.user; 
       const wishlist = await Wishlist.findOne({ userId });
-      const wishlistCount = wishlist ? wishlist.products.length : 0; 
+      const wishlistCount = wishlist ? wishlist.products.length : ''; 
 
       res.locals.wishlistCount = wishlistCount;
     } else {
-      res.locals.wishlistCount = 0;
+      res.locals.wishlistCount = '';
     }
   } catch (error) {
     console.error('Error fetching wishlist count:', error);
-    res.locals.wishlistCount = 0; 
+    res.locals.wishlistCount = ''; 
   }
-
+ 
   next(); 
 };
 

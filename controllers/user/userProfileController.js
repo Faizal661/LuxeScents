@@ -59,7 +59,6 @@ const loadAddAddressPage = async (req, res) => {
     try {
         const userId = req.session.user;
         if (userId) {
-            console.log(userId)
             res.render('userProfile/addAddress', { userName: req.session.userName, userId });
         } else {
             res.redirect('/login');
@@ -87,20 +86,21 @@ const addAddress = async (req, res) => {
             altPhone,
             locality,
             city,
-            state,
+            state, 
             pincode,
             landMark,
             isActive: isActive ? true : false
         });
 
         await newAddress.save();
-        res.redirect('/userProfile');
+        return successResponse(res,{},'Address added successfully!')
 
     } catch (error) {
         console.error('Error adding address:', error);
-        res.redirect('/addAddress');
+        return errorResponse(res,error,'Error adding address. Please try again.') 
     }
 };
+
 
 const loadEditAddressPage = async (req, res) => {
     try {
@@ -124,6 +124,7 @@ const editAddress = async (req, res) => {
         const addressId = req.params.id;
         const userId = req.session.user;
         const { addressType, name, city, landMark, locality, state, pincode, phone, altPhone, isActive } = req.body;
+        console.log(req.body)
 
         const updatedData = {
             addressType,
@@ -135,8 +136,9 @@ const editAddress = async (req, res) => {
             pincode,
             phone,
             altPhone,
-            isActive: isActive === 'true'
+            isActive: isActive ? true : false
         };
+        console.log('new Data',updatedData)
 
         if (updatedData.isActive) {
             await addressSchema.updateMany({ userId: userId, _id: { $ne: addressId } }, { isActive: false });
@@ -148,10 +150,11 @@ const editAddress = async (req, res) => {
             return res.status(404).send('Address not found');
         }
 
-        res.redirect('/userProfile');
+        return successResponse(res,{},'Address updated successfully!')
+
     } catch (error) {
         console.error("Error updating address:", error);
-        res.status(500).send('Server Error');
+        return errorResponse(res,error,'Error while updating address. Please try again.') 
     }
 };
 

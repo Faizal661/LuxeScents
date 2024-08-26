@@ -1,6 +1,7 @@
 const Cart = require('../../models/cartSchema')
 const Product = require('../../models/productSchema')
 const mongoose = require('mongoose');
+
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
 
@@ -86,6 +87,7 @@ const addProductToCart = async (req, res) => {
         }
 
         await cart.save();
+        
         successResponse(res, {}, 'Product added to cart');
     } catch (error) { 
         console.error(error);

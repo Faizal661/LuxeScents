@@ -27,8 +27,7 @@
                 <div class="column col-lg-6">
                     <div class="form-group">
                         <label for="name">Username</label>
-                        <input type="text" name="name" id="name" class="form-control shadow" value="<%= user.name %>"
-                            required>
+                        <input type="text" name="name" id="name" class="form-control shadow " oninput="handleChange('name')" value="<%= user.name %>">
                         <div class="text-danger mb-1" id="errorName">
                             <span></span>
                         </div>
@@ -36,9 +35,13 @@
                     </div>
                     <div class="form-group">
                         <label for="phone">Phone</label>
-                        <input type="text" name="phone" id="phone" class="form-control shadow" value="<%= user.phone %>"
-                            required>
+                        <input type="text" name="phone" id="phone" class="form-control shadow" oninput="handleChange('phone')"
+                            value="<%= user.phone %>">
+                        <div class="text-danger mb-1" id="errorPhone">
+                            <span></span>
+                        </div>
                     </div>
+
                 </div>
                 <div class="column col-lg-6">
                     <div class="form-group">
@@ -49,7 +52,8 @@
                 </div>
             </div>
             <div class="text-center col-lg-12">
-                <button type="submit" class="btn btn-primary mt-3 col-lg-6 shadow">Update Profile</button>
+                <button type="button" onclick="editProfileForm()" class="btn btn-primary mt-3 col-lg-6 shadow">Update
+                    Profile</button>
             </div>
         </form>
     </div>
@@ -58,20 +62,97 @@
     </div>
 
 
-    
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 
     <script>
-        document.getElementById('editProfileForm').addEventListener('submit', async function (event) {
-            event.preventDefault();
 
+
+
+        const nameid = document.getElementById("name")
+        const phoneid = document.getElementById("phone")
+        const errorName = document.getElementById("errorName")
+        const errorPhone = document.getElementById("errorPhone")
+
+
+        function handleChange(input){
+            console.log('sdfghjk');
+            if(input==='name'){
+                nameid.style.border="1px solid black"
+                errorName.style.display = "none";
+                errorName.innerHTML = ""
+
+            }else if(input==="phone"){
+                phoneid.style.border="1px solid black"
+                errorPhone.style.display = "none";
+                errorPhone.innerHTML = ""
+
+            }
+        }
+
+        function nameValidateChecking(e) {
+            const nameval = nameid.value;
+            const namepattern = /^[A-Za-z\s]+$/;
+            if (nameval.trim() === "") {
+                errorName.style.display = "block";
+                errorName.innerHTML = "Please enter a valid name"
+                nameid.style.border = "2px solid red"
+            } else if (!namepattern.test(nameval)) {
+                errorName.style.display = "block";
+                errorName.innerHTML = "Name can only contain alphabets and spaces"
+                nameid.style.border = "2px solid red"
+            } else {
+                errorName.style.display = "none";
+                errorName.innerHTML = ""
+            }
+        }
+
+        function phoneValidateChecking(e) {
+            const phoneval = phoneid.value;
+            if (phoneval.trim() === "") {
+                errorPhone.style.display = "block"
+                errorPhone.innerHTML = "Enter valid phone number"
+                phoneid.style.border = "2px solid red"
+            }
+            else if (isNaN(phoneval)) {
+                errorPhone.style.display = "block"
+                errorPhone.innerHTML = "Characters not allowed"
+                phoneid.style.border = "2px solid red"
+            } else if (phoneval.length > 10 || phoneval.length < 10) {
+                errorPhone.style.display = "block"
+                errorPhone.innerHTML = "Enter  10 digit"
+                phoneid.style.border = "2px solid red"
+            }
+            else {
+                errorPhone.style.display = "none";
+                errorPhone.innerHTML = "";
+            }
+        }
+
+
+        async function editProfileForm() {
+            nameValidateChecking();
+            phoneValidateChecking();
+
+            if (
+                !nameid || !phoneid || !errorName || !errorPhone
+            ) {
+                console.error("One or more elements not found.")
+            }
+            if (
+                errorName.innerHTML || errorPhone.innerHTML
+            ) {
+                return
+
+            }
             const userId = "<%= user._id %>";
             const formData = {
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
             };
+
 
             try {
                 const response = await axios.post(`/editUserProfile/${userId}`, formData);
@@ -81,7 +162,7 @@
                         title: 'Success',
                         text: 'Profile updated successfully!',
                         icon: 'success',
-                        timer:1000,
+                        timer: 1000,
                         confirmButtonText: 'OK'
                     }).then(() => {
                         window.location.href = '/userProfile';
@@ -90,7 +171,7 @@
             } catch (error) {
                 if (error.response && error.response.data.error) {
                     Swal.fire({
-                        timer:1500,
+                        timer: 1200,
                         title: 'Error!',
                         text: error.response.data.error,
                         icon: 'error',
@@ -105,7 +186,7 @@
                     });
                 }
             }
-        });
+        };
     </script>
 
 

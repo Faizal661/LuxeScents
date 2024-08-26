@@ -21,51 +21,75 @@
 
 <div class="container my-5 border  p-5 rounded rounded-5 spad shadow-lg">
     <h2 class="pb-3">Edit Address</h2>
-    <form action="/editAddress/<%= address._id %>" method="POST">
+    <form>
         <div class="row  col-lg-12">
             <div class="column col-lg-6">
                 <div class="form-group ">
                     <label for="addressType">Address Label</label>
-                    <select name="addressType" id="addressType" class="form-control  shadow " required>
+                    <select name="addressType" id="addressType" class="form-control  shadow " >
                         <option value="Home" <%= address.addressType === "Home" ? "selected" : "" %>>Home</option>
                         <option value="Work" <%= address.addressType === "Work" ? "selected" : "" %>>Work</option>
                     </select>
                 </div>
                 <div class="form-group ">
                     <label for="phone">Phone *</label>
-                    <input type="text" name="phone" id="phone" class="form-control  shadow " value="<%= address.phone %>" required>
+                    <input type="text" name="phone" id="phone" class="form-control  shadow " value="<%= address.phone %>" >
+                    <div class="text-danger mb-1" id="errorPhone">
+                        <span></span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="city">Locality *</label>
-                    <input type="text" name="locality" id="locality" class="form-control  shadow " value="<%= address.locality %>" required>
+                    <input type="text" name="locality" id="locality" class="form-control  shadow " value="<%= address.locality %>" >
+                    <div class="text-danger mb-1" id="errorLocality">
+                        <span></span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="landMark">Landmark *</label>
-                    <input type="text" name="landMark" id="landMark" class="form-control  shadow " value="<%= address.landMark %>" required>
+                    <input type="text" name="landMark" id="landMark" class="form-control  shadow " value="<%= address.landMark %>" >
+                    <div class="text-danger mb-1" id="errorLandmark">
+                        <span></span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="pincode">Pincode *</label>
-                    <input type="number" name="pincode" id="pincode" class="form-control  shadow " value="<%= address.pincode %>" required>
+                    <input type="number" name="pincode" id="pincode" class="form-control  shadow " value="<%= address.pincode %>" >
+                    <div class="text-danger mb-1" id="errorPincode">
+                        <span></span>
+                    </div>
                 </div>
             </div>
             <div class="column col-lg-6">
                 <div class="form-group">
                     <label for="name">Name *</label>
-                    <input type="text" name="name" id="name" class="form-control shadow " value="<%= address.name %>" required>
+                    <input type="text" name="name" id="name" class="form-control shadow " value="<%= address.name %>" >
+                    <div class="text-danger mb-1" id="errorName">
+                        <span></span>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="altPhone">Alternate Phone</label>
                     <input type="text" name="altPhone" id="altPhone" class="form-control shadow " value="<%= address.altPhone %>" >
+                    <div class="text-danger mb-1" id="errorAltPhone">
+                        <span></span>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="city">City *</label>
-                    <input type="text" name="city" id="city" class="form-control shadow " value="<%= address.city %>" required>
+                    <input type="text" name="city" id="city" class="form-control shadow " value="<%= address.city %>" >
+                    <div class="text-danger mb-1" id="errorCity">
+                        <span></span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="state">State *</label>
-                    <input type="text" name="state" id="state" class="form-control shadow " value="<%= address.state %>" required>
+                    <input type="text" name="state" id="state" class="form-control shadow " value="<%= address.state %>" >
+                    <div class="text-danger mb-1" id="errorState">
+                        <span></span>
+                    </div>
                 </div>
                 <div class="form-group mt-5">
                     <div class="form-check ">
@@ -79,12 +103,132 @@
             </div>
         </div>
         <div class="text-center col-lg-12">
-            <button type="submit" class="btn btn-primary mt-3  col-lg-6 shadow">Update Address</button>
+            <button type="button" onclick="editAddressForm()" class="btn btn-primary mt-3  col-lg-6 shadow">Update Address</button>
         </div>
     </form>
 </div>
 <div class="m-5">
     <br>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+    const nameid = document.getElementById("name");
+    const localityid = document.getElementById("locality");
+    const landmarkid = document.getElementById("landMark");
+    const pincodeid = document.getElementById("pincode");
+    const phoneid = document.getElementById("phone");
+    const altPhoneid = document.getElementById("altPhone");
+    const cityid = document.getElementById("city");
+    const stateid = document.getElementById("state");
+
+    const errorName = document.getElementById("errorName");
+    const errorLocality = document.getElementById("errorLocality");
+    const errorLandmark = document.getElementById("errorLandmark");
+    const errorPincode = document.getElementById("errorPincode");
+    const errorPhone = document.getElementById("errorPhone");
+    const errorAltPhone = document.getElementById("errorAltPhone");
+    const errorCity = document.getElementById("errorCity");
+    const errorState = document.getElementById("errorState");
+
+
+    function validateField(field, errorElement, pattern, errorMessageEmpty, errorMessagePattern) {
+        const value = field.value.trim();
+        if (value === "") {
+            errorElement.style.display = "block";
+            errorElement.innerHTML = errorMessageEmpty;
+            return false;
+        } else if (!pattern.test(value)) {
+            errorElement.style.display = "block";
+            errorElement.innerHTML = errorMessagePattern;
+            return false;
+        } else {
+            errorElement.style.display = "none";
+            errorElement.innerHTML = "";
+            return true;
+        }
+    }
+
+    function validatePhone(field, errorElement, isMandatory) {
+        const value = field.value.trim();
+        if (isMandatory && value === "") {
+            errorElement.style.display = "block";
+            errorElement.innerHTML = "Enter a valid phone number";
+            return false;
+        } else if (value && value.length !== 10) {
+            errorElement.style.display = "block";
+            errorElement.innerHTML = "Enter a 10-digit phone number";
+            return false;
+        } else {
+            errorElement.style.display = "none";
+            errorElement.innerHTML = "";
+            return true;
+        }
+    }
+
+
+    async function editAddressForm() {
+        const isValidName = validateField(nameid, errorName, /^[A-Za-z\s]+$/, "Please enter a valid name", "Name can only contain alphabets and spaces");
+        const isValidLocality = validateField(localityid, errorLocality, /^[A-Za-z0-9\s]+$/, "Please enter a valid locality", "Locality can only contain letters, numbers, and spaces");
+        const isValidLandmark = validateField(landmarkid, errorLandmark, /.+/, "Please enter a valid landmark", "");
+        const isValidPincode = validateField(pincodeid, errorPincode, /^[0-9]{6}$/, "Please enter a valid pincode", "Pincode must be a 6-digit number");
+        const isValidCity = validateField(cityid, errorCity, /^[A-Za-z\s]+$/, "Please enter a valid city", "City can only contain alphabets and spaces");
+        const isValidState = validateField(stateid, errorState, /^[A-Za-z\s]+$/, "Please enter a valid state", "State can only contain alphabets and spaces");
+        const isValidPhone = validatePhone(phoneid, errorPhone, true);
+        const isValidAltPhone = validatePhone(altPhoneid, errorAltPhone, false);
+
+        if (isValidName && isValidLocality && isValidLandmark && isValidPincode && isValidCity && isValidState && isValidPhone && isValidAltPhone) {
+            const formData = {
+                addressType: document.getElementById("addressType").value,
+                name: nameid.value,
+                phone: phoneid.value,
+                altPhone: altPhoneid.value,
+                locality: localityid.value,
+                city: cityid.value,
+                state: stateid.value,
+                pincode: pincodeid.value,
+                landMark: landmarkid.value,
+                isActive: document.getElementById("isActive").checked
+            };
+
+            console.log(formData)
+
+            try {
+                const response = await axios.post(`/editAddress/<%= address._id%>`, formData)
+
+                if (response.data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.data.message,
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/userProfile';
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.data.message,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'There was an error updating the address. Please try again later.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+    }
+</script>
+
 
 <%- include('../partials/users/footer') %>
