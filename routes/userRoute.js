@@ -63,12 +63,15 @@ userRouter.get('/loadEditAddressPage',userAuth,userProfileController.loadEditAdd
 userRouter.post('/editAddress/:id',userAuth,userProfileController.editAddress)
 userRouter.delete('/deleteAddress/:id',userAuth,userProfileController.deleteAddress)
 
+//------- change and forgot password
 userRouter.get('/loadChangePassword',userAuth,userProfileController.loadChangePassword)
 userRouter.post('/changePassword',userAuth,userProfileController.changePassword)
+
 userRouter.get('/loadOtpVerify',userAuth,userProfileController.loadOtpVerify)
-userRouter.post('/verify-otp',userAuth,userProfileController.verifyOtp)
-userRouter.post('/resend-otp',userAuth,userProfileController.resendOtp)
+userRouter.post('/verifyOtpForgotPassword',userAuth,userProfileController.verifyOtp)
+userRouter.post('/resendOtpForgotPassword',userAuth,userProfileController.resendOtp)
 userRouter.get('/loadNewPassword',userAuth,userProfileController.loadNewPassword)
+userRouter.post('/resetPassword',userAuth,userProfileController.resetPassword)
 
 //wishlist
 userRouter.get('/loadWishlistPage',userAuth,wishlistController.loadWishlist)

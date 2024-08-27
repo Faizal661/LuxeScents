@@ -98,7 +98,7 @@ const addAddress = async (req, res) => {
 
     } catch (error) {
         console.error('Error adding address:', error);
-        res.render('404')
+        res.redirect('/pageNotfound');
     }
 };
 
@@ -115,7 +115,7 @@ const loadEditAddressPage = async (req, res) => {
         res.render('userProfile/editAddress', { address });
     } catch (error) {
         console.error("Error loading edit address page:", error);
-        res.render('404')
+        res.redirect('/pageNotfound');
     }
 };
 
@@ -154,7 +154,7 @@ const editAddress = async (req, res) => {
 
     } catch (error) {
         console.error("Error updating address:", error);
-        res.render('404')
+        res.redirect('/pageNotfound');
     }
 };
 
@@ -172,7 +172,7 @@ const deleteAddress = async (req, res) => {
         res.status(200).json({ message: 'Address deleted successfully' });
     } catch (error) {
         console.error("Error deleting address:", error);
-        res.render('404')
+        res.redirect('/pageNotfound');
     }
 }
 
@@ -185,7 +185,7 @@ const loadChangePassword = async (req, res) => {
         res.render('userProfile/changePassword')
     } catch (error) {
         console.log(error, 'Error while loading change password page');
-        res.render('404')
+        res.redirect('/pageNotfound');
     }
 }
 
@@ -214,7 +214,7 @@ const changePassword = async (req, res) => {
         return successResponse(res, {}, 'Password updated successfully');
     } catch (error) {
         console.log(error, 'Error while changing password');
-        res.render('404')
+        res.redirect('/pageNotfound');
     }
 };
 
@@ -224,7 +224,7 @@ const changePassword = async (req, res) => {
 const loadOtpVerify = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.session.user })
-        console.log(user)
+        // console.log(user)
         req.session.email = user.email
         const email = user.email
         const otp = generateOtp();
@@ -241,7 +241,7 @@ const loadOtpVerify = async (req, res) => {
 
     } catch (error) {
         console.log(error, 'otp verify page loading error');
-        res.render('404')
+        res.redirect('/pageNotfound');
     }
 }
 
@@ -250,7 +250,7 @@ const verifyOtp = async (req, res) => {
         const { otp } = req.body
         console.log(otp)
         if (otp === req.session.userOtp) {
-            res.render('userProfile/newPassword')
+            res.json({ success: true, redirectUrl: "/loadNewPassword" })
         } else {
             res.status(400).json({ success: false, message: "Invalid OTP ,Please try again" })
         }
@@ -262,7 +262,8 @@ const verifyOtp = async (req, res) => {
 
 const resendOtp = async (req, res) => {
     try {
-        const { email } = req.session.email
+        // console.log(req.session)
+        const email = req.session.email
         if (!email) {
             return res.status(400).json({ success: false, message: "Email not found in session" })
         }
@@ -288,7 +289,29 @@ const loadNewPassword = async (req, res) => {
         res.render('userProfile/newPassword')
     } catch (error) {
         console.log(error, 'page not found');
-        res.render('404')
+        res.redirect('/pageNotfound');
+    }
+}
+
+const resetPassword=async(req,res)=>{
+    const { newPassword } = req.body;
+
+    try {
+        const user = await User.findById(req.session.user);
+
+        if (!user) {
+            return errorResponse(res, {}, 'User not found', 404);
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+
+        await user.save()
+
+        return successResponse(res, {}, 'Password updated successfully');
+    } catch (error) {
+        console.log(error, 'Error while resetting password');
+        res.redirect('/pageNotfound');
     }
 }
 
@@ -314,5 +337,6 @@ module.exports = {
     verifyOtp,
     resendOtp,
     loadNewPassword,
+    resetPassword
 
 }
