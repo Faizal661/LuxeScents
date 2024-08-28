@@ -140,7 +140,7 @@
                                         </p>
                                         <p class="fw-lighter">Brand: <%= singleProduct.brand.brandName %>
                                         </p>
-                                        <p class="fw-lighter">Note: <%= singleProduct.category.name %>
+                                        <p class="fw-lighter">Scent : <%= singleProduct.category.name %>
                                         </p>
                                         <br>
                         </div>
@@ -163,7 +163,7 @@
                                 <div class="pro-qty-2">
                                     <button type="button" class="qty-btn"
                                         onclick="decrementQuantity('<%= singleProduct._id %>')">-</button>
-                                    <input type="text" value=<%= productQuantityInCart %> min="1" id="quantity-<%= singleProduct._id %>" max="10"
+                                    <input type="text" value=<%= productQuantityInCart ===0 ? 1 : productQuantityInCart %> min="1" id="quantity-<%= singleProduct._id %>" max="10"
                                         id="quantity-<%= singleProduct._id %>" <% if (singleProduct.quantity===0) { %>
                                     disabled <% } %> readonly>
                                         <button type="button" class="qty-btn"

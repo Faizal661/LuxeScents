@@ -17,7 +17,7 @@ const { successResponse, errorResponse } = require('../../helpers/responseHandle
 const loadLogin = async (req, res) => {
     try {
         if (!req.session.user) {
-            return res.render('signin', { title: 'Login page' })
+            return res.render('authentication/signin', { title: 'Login page' })
         } else {
             res.redirect("/homepage")
         }
@@ -32,15 +32,15 @@ const userLogin = async (req, res) => {
         const { email, password } = req.body;
         const findUser = await User.findOne({ isAdmin: 0, email: email });
         if (!findUser) {
-            return res.render("signin", { message: "User not found" })
+            return res.render("authentication/signin", { message: "User not found" })
         }
         if (findUser.isBlocked) {
-            return res.render("signin", { message: "User is blocked by admin" })
+            return res.render("authentication/signin", { message: "User is blocked by admin" })
         }
 
         const passwordMatch = await bcrypt.compare(password, findUser.password)
         if (!passwordMatch) {
-            return res.render("signin", { message: "Incorrect Password" })
+            return res.render("authentication/signin", { message: "Incorrect Password" })
         }
         req.session.user = findUser._id;
         req.session.userName = findUser.name
@@ -48,7 +48,7 @@ const userLogin = async (req, res) => {
 
     } catch (error) {
         console.error('login error', error);
-        res.render("signin", { message: "Login failed ,please try again later" })
+        res.render("authentication/signin", { message: "Login failed ,please try again later" })
     }
 
 }
@@ -81,7 +81,7 @@ const sendOtpToChangePassword = async (req, res) => {
 const loadChangePasswordPage = async (req, res) => {
     try {
         // res.send('dsafg')
-        res.render('changePassword', { title: 'change password' })
+        res.render('authentication/changePassword', { title: 'change password' })
     } catch (error) {
         console.log(error, 'page not found');
         errorResponse(res, error, "Internal server error");
@@ -93,7 +93,7 @@ const loadChangePasswordPage = async (req, res) => {
 const loadSignup = async (req, res) => {
     try {
         if (!req.session.user) {
-            return res.render('signup')
+            return res.render('authentication/signup')
         } else {
             res.redirect("/homepage")
         }
@@ -145,11 +145,11 @@ const registerNew = async (req, res) => {
         //Checking the entered name and email is already is in db.
         const findUser = await User.findOne({ name: username });
         if (findUser) {
-            return res.render("signup", { message: "User name already taken" })
+            return res.render("authentication/signup", { message: "User name already taken" })
         }
         const findEmail = await User.findOne({ email: email });
         if (findEmail) {
-            return res.render("signup", { message: "User with this Email already exist" })
+            return res.render("authentication/signup", { message: "User with this Email already exist" })
         }
 
         const otp = generateOtp();
@@ -165,7 +165,7 @@ const registerNew = async (req, res) => {
 
 
         //render otp entering page
-        res.render('verify-otp')
+        res.render('authentication/verify-otp')
         console.log('OTP Sent', otp);
 
 

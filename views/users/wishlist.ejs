@@ -31,7 +31,7 @@
 
                     <% products.forEach(product=> { %>
                         <div id="wishlist-item-<%= product._id %>"
-                            class="wishlist__item d-flex align-items-center border-bottom pb-3 mb-3">
+                            class="wishlist__item d-flex align-items-center border-bottom pb-3 mb-3 col-lg-5 p-2 m-5 border">
                             <!-- Thumbnail -->
                             <div class="wishlist__item__thumbnail col-lg-2">
                                 <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
@@ -70,7 +70,7 @@
                         </div>
                         <% }) %>
 
-                            <div class="pagination-container d-flex justify-content-between my-4">
+                            <div class="pagination-container d-flex justify-content-between my-4 text-center">
                                 <% if (currentPage> 1) { %>
                                     <a href="?page=<%= currentPage - 1 %>"
                                         class="btn btn-outline-dark rounded-pill my-2 px-3">&laquo; Previous</a>

@@ -51,61 +51,72 @@
                 <div class="col-lg-8">
                     <div class="shopping__cart__table">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% products.forEach(product=> { %>
-                                    <tr id="cart-item-<%= product._id %>">
-                                        <td class="product__cart__item">
-                                            <div class="product__cart__item__pic col-lg-4">
-                                                <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
-                                                    alt="<%= product.productName %>" class="img-fluid rounded"
-                                                    onclick="window.location.href='/singleProduct?id=<%= product.productId %>';">
-                                            </div>
-                                            <div class="product__cart__item__text">
-                                                <h6>
-                                                    <%= product.productName %>
-                                                </h6>
-                                                <h5>₹<%= product.salePrice %>
-                                                </h5>
-                                                <p>Stock : <span id="quantityStock-<%= product._id %>">
-                                                        <%= product.stock %>
-                                                    </span>
-                                                </p>
-                                            </div>
-                                        </td>
+                            <% if(products.length===0){ %>
+                                <div class="container text-center">
+                                    <div class=" h4 text-center mb-5" >
+                                        Your cart is empty! Start adding products you love.
+                                    </div>
+                                </div>
+                                    <% }else{ %>
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Total</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% products.forEach(product=> { %>
+                                                <tr id="cart-item-<%= product._id %>">
+                                                    <td class="product__cart__item">
+                                                        <div class="product__cart__item__pic col-lg-4">
+                                                            <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
+                                                                alt="<%= product.productName %>"
+                                                                class="img-fluid rounded cursor-pointer"
+                                                                onclick="window.location.href='/singleProduct?id=<%= product.productId %>';">
+                                                        </div>
+                                                        <div class="product__cart__item__text">
+                                                            <h6>
+                                                                <%= product.productName %>
+                                                            </h6>
+                                                            <h5>₹<%= product.salePrice %>
+                                                            </h5>
+                                                            <p>Stock : <span id="quantityStock-<%= product._id %>">
+                                                                    <%= product.stock %>
+                                                                </span>
+                                                            </p>
+                                                        </div>
+                                                    </td>
 
-                                        <td class="quantity__item">
-                                            <div class="quantity">
-                                                <div class="pro-qty-2">
-                                                    <button type="button" class="qty-btn"
-                                                        onclick="decrementQuantity('<%= product._id %>')">-</button>
-                                                    <input type="text" value="<%= product.quantity %>" min="1" max="10"
-                                                        id="quantity-<%= product._id %>"
-                                                        onchange="updateCartItem('<%= product._id %>')" readonly>
-                                                    <button type="button" class="qty-btn"
-                                                        onclick="incrementQuantity('<%= product._id %>','<%= product.stock %>')">+</button>
-                                                </div>
-                                            </div>
-                                        </td>
+                                                    <td class="quantity__item">
+                                                        <div class="quantity">
+                                                            <div class="pro-qty-2">
+                                                                <button type="button" class="qty-btn"
+                                                                    onclick="decrementQuantity('<%= product._id %>')">-</button>
+                                                                <input type="text" value="<%= product.quantity %>"
+                                                                    min="1" max="10" id="quantity-<%= product._id %>"
+                                                                    onchange="updateCartItem('<%= product._id %>')"
+                                                                    readonly>
+                                                                <button type="button" class="qty-btn"
+                                                                    onclick="incrementQuantity('<%= product._id %>','<%= product.stock %>')">+</button>
+                                                            </div>
+                                                        </div>
+                                                    </td>
 
-                                        <td class="cart__price" id="total-price-<%= product._id %>">₹<%=
-                                                product.totalPrice %>
-                                        </td>
-                                        <td class="cart__close">
-                                            <a onclick="removeFromCart('<%= product._id %>')">
-                                                <i class="fa fa-close"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <% }); %>
-                            </tbody>
+                                                    <td class="cart__price" id="total-price-<%= product._id %>">₹<%=
+                                                            product.totalPrice %>
+                                                    </td>
+                                                    <td class="cart__close">
+                                                        <a onclick="removeFromCart('<%= product._id %>')">
+                                                            <i class="fa fa-close cursor-pointer"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <% }); %>
+                                                    <% } %>
+
+                                        </tbody>
                         </table>
                     </div>
                     <div class="row">
@@ -121,7 +132,9 @@
                         </div> -->
                     </div>
                 </div>
-                <div class="col-lg-4">
+
+                <% if(products.length!==0){ %>
+                    <div class="col-lg-4">
                     <!-- <div class="cart__discount">
                     <h6>Discount codes</h6>
                     <form action="#">
@@ -135,9 +148,11 @@
                         <ul>
                             <% products.forEach((product)=> { %>
                                 <li>
-                                            <%= product.productName %>                                               
-                                            <q id="quantity2-<%= product._id %>"><%= product.quantity %></q>
-                                            <span id="total-price2-<%= product._id %>">₹<%= product.totalPrice %></span>
+                                    <%= product.productName %>
+                                        <q id="quantity2-<%= product._id %>">
+                                            <%= product.quantity %>
+                                        </q>
+                                        <span id="total-price2-<%= product._id %>">₹<%= product.totalPrice %></span>
                                 </li>
                                 <% }); %>
 
@@ -160,6 +175,7 @@
                         <a href="/checkoutPage" class="primary-btn">Proceed to checkout</a>
                     </div>
                 </div>
+                <% }  %>
             </div>
         </div>
     </section>
