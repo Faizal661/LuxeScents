@@ -16,7 +16,7 @@
     </div>
 
 
-    <div class="right mt-5 mx-5 card p-3 shadow col-sm col-md col-lg">
+    <div class="right mt-5 mx-5 card p-3 shadow col-sm col-md col-lg ">
         <table class="table table-striped border border-2 table-hover table-light ">
             <thead>
                 <% if(userData.length==0){ %>
@@ -86,9 +86,9 @@
         </table>
     </div>
 
-    <div class="container mt-3">
+    <div class="container ">
         <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
+            <ul class="pagination justify-content-center mb-20" >
                 <% for(let i=1;i<=totalPages;i++){ %>
                     <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
                         <a class="page-link" href="?page=<%= i %>">

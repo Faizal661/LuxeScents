@@ -18,6 +18,9 @@ const loadCartPage = async (req, res) => {
         if (!cart) {
             return res.render('cart', { products: [] });
         }
+        const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+        const tax = (subtotal * 10) / 100;
+        const grandTotal = subtotal + tax;
 
         const products = cart.products.map(item => {
             const product = item.productId;
@@ -28,6 +31,8 @@ const loadCartPage = async (req, res) => {
                 quantity: item.quantity,
                 totalPrice: item.totalPrice,
                 productImages: product.productImages,
+                stock: product.quantity,
+                productId:item.productId._id
             };
         });
 
@@ -35,7 +40,9 @@ const loadCartPage = async (req, res) => {
 
         res.render('cart', {
             products,
-            cart
+            cart,
+            tax,
+            grandTotal
         });
 
 
@@ -51,9 +58,9 @@ const addProductToCart = async (req, res) => {
         const { productId, quantity = 1 } = req.body;
 
         const quantityNumber = parseInt(quantity, 10);
-        if (isNaN(quantityNumber) || quantityNumber <= 0) {
-            return errorResponse(res, {}, 'Quantity must be a positive number', 400);
-        }
+        // if (isNaN(quantityNumber) || quantityNumber <= 0) {
+        //     return errorResponse(res, {}, 'Quantity must be a positive number', 400);
+        // }
 
 
         const product = await Product.findById(productId).select('salePrice')
@@ -74,20 +81,20 @@ const addProductToCart = async (req, res) => {
             if (productIndex === -1) {
                 cart.products.push({
                     productId,
-                    quantity : quantityNumber ,
+                    quantity: quantityNumber,
                     price,
                     totalPrice
                 });
             } else {
-                cart.products[productIndex].quantity += quantityNumber ;
+                cart.products[productIndex].quantity = quantityNumber;
                 cart.products[productIndex].totalPrice = cart.products[productIndex].price * cart.products[productIndex].quantity;
             }
         }
 
         await cart.save();
-        
+
         successResponse(res, {}, 'Product added to cart');
-    } catch (error) { 
+    } catch (error) {
         console.error(error);
         errorResponse(res, error, 'Server error');
     }
@@ -103,7 +110,7 @@ const removeFromCart = async (req, res) => {
             { userId },
             { $pull: { products: { _id: new mongoose.Types.ObjectId(itemId) } } }
         );
-        successResponse(res,{},"Product removed from cart.")
+        successResponse(res, {}, "Product removed from cart.")
     } catch (error) {
         errorResponse(res, error, "Failed to remove product from cart.");
     }
@@ -119,7 +126,7 @@ const updateCartItem = async (req, res) => {
 
             const product = cart.products.find(p => p._id.toString() === productId);
             if (product) {
-                const totalPrice = product.price * quantity; 
+                const totalPrice = product.price * quantity;
                 await Cart.findOneAndUpdate(
                     { "products._id": productId },
                     {
@@ -146,13 +153,14 @@ const updateCartItem = async (req, res) => {
 
 const cartTotal = async (req, res) => {
     try {
-        const userId = req.session.user; 
+        const userId = req.session.user;
         const cart = await Cart.findOne({ userId });
-  
+
         if (cart) {
             const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-            const total = subtotal;
-            res.json({ success: true, subtotal, total });
+            const tax = (subtotal * 10) / 100;
+            const total = subtotal + tax;
+            res.json({ success: true, subtotal, total,tax });
         } else {
             res.json({ success: false, message: 'Cart not found.' });
         }

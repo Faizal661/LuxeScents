@@ -75,13 +75,13 @@
                                                         </a>
                                                     </th>
 
-                                                    <th class="text-center h6 text-uppercase fw-normal">
+                                                    <!-- <th class="text-center h6 text-uppercase fw-normal">
                                                         <a
                                                             href="?sort=isListed&order=<%= order === 'asc' && sort === 'isListed' ? 'desc' : 'asc' %>">
                                                             Status <%= order==='asc' && sort==='isListed' ? '▲' :
                                                                 (sort==='isListed' ? '▼' : '' ) %>
                                                         </a>
-                                                    </th>
+                                                    </th> -->
 
                                                     <th class="text-center h6 text-uppercase fw-normal">Actions</th>
                                                 </tr>
@@ -108,7 +108,7 @@
                                                     <a href="#" class="text-white">Remove</a>
                                                 </button>
                                             </td> -->
-                                                        <td class="text-center">
+                                                        <!-- <td class="text-center">
                                                             <% if(category.isListed===true) {%>
                                                                 <span class="badge rounded-pill alert-success"
                                                                     style="width: 60px">Listed</span>
@@ -117,7 +117,7 @@
                                                                         style="width: 60px">Unlisted</span>
                                                                     <% } %>
 
-                                                        </td>
+                                                        </td> -->
                                                         <td class="text-center ">
                                                             <a href="/admin/editCategory?id=<%=category._id%>"
                                                                 class="btn btn-info text-white">Edit</a>

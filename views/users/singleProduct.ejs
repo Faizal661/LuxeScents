@@ -17,6 +17,32 @@
             left: 830px !important;
             border-radius: 10px;
         }
+
+        .pro-qty-2 {
+            display: flex;
+            align-items: center;
+        }
+
+        .qty-btn {
+            background-color: #fff;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .qty-btn:focus {
+            outline: none;
+        }
+
+        input[type="text"] {
+            height: 30px;
+            width: 50px;
+            text-align: center;
+            border: 2px solid #000;
+            border-radius: 5px;
+            margin: 0 2px;
+        }
     </style>
 
     <section class="shop-details">
@@ -134,11 +160,17 @@
 
                         <div class="product__details__cart__option">
                             <div class="quantity">
-                                <div class="pro-qty">
-                                    <input id="quantity-<%= singleProduct._id %>" type="number" value="1" min="1"
-                                        max="10" <% if (singleProduct.quantity===0) { %> disabled <% } %> >
+                                <div class="pro-qty-2">
+                                    <button type="button" class="qty-btn"
+                                        onclick="decrementQuantity('<%= singleProduct._id %>')">-</button>
+                                    <input type="text" value=<%= productQuantityInCart %> min="1" id="quantity-<%= singleProduct._id %>" max="10"
+                                        id="quantity-<%= singleProduct._id %>" <% if (singleProduct.quantity===0) { %>
+                                    disabled <% } %> readonly>
+                                        <button type="button" class="qty-btn"
+                                            onclick="incrementQuantity('<%= singleProduct._id %>')">+</button>
                                 </div>
                             </div>
+
                             <button type="button" class="primary-btn rounded"
                                 onclick="addToCart('<%= singleProduct._id %>')" <% if (singleProduct.quantity===0) { %>
                                 disabled style="background-color: grey ; cursor: not-allowed;" <% } %> >
@@ -371,43 +403,88 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <script>
-        function addToWishlist(productId) {
-            event.preventDefault()
-            axios.post('/toggleWishlist', { productId })
-                .then(response => {
-                    if (response.data.success) {
-                        Swal.fire({
-                            toast: true,
-                            timer: 800,
-                            timerProgressBar: true,
-                            title: response.data.data.inWishlist ? 'Added' : 'Removed',
-                            text: response.data.message,
-                            icon: response.data.data.inWishlist ? 'success' : 'error',
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            customClass: {
-                                popup: 'custom-toast'
-                            }
-                        })
-                    } else {
-                        Swal.fire({
-                            toast: true,
-                            timer: 800,
-                            timerProgressBar: true,
-                            title: 'Failed!',
-                            text: 'Failed to add product to wishlist',
-                            icon: 'error',
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            customClass: {
-                                popup: 'custom-toast'
-                            }
-                        })
+
+
+        function incrementQuantity(productId) {
+            const quantityInput = document.getElementById('quantity-' + productId);
+            const stockQuantity =<%= singleProduct.quantity %>;
+            let currentQuantity = parseInt(quantityInput.value);
+            if (currentQuantity < stockQuantity && currentQuantity < 10) {
+                quantityInput.value = currentQuantity + 1;
+                Swal.fire({
+                    toast: true,
+                    timer: 1000,
+                    timerProgressBar: true,
+                    title: 'Product quantity increased',
+                    icon: 'success',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'custom-toast'
                     }
-                })
-                .catch(error => {
-                    console.error('There was an error adding the product to the wishlist:', error);
                 });
+            }
+             if(currentQuantity === stockQuantity){
+                Swal.fire({
+                    toast: true,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    title: 'You reached the stock limit',
+                    icon: 'warning',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'custom-toast'
+                    }
+                });
+            }else if(currentQuantity ===10){
+                Swal.fire({
+                    toast: true,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    title: 'You reached the maximum buying limit',
+                    icon: 'warning',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'custom-toast'
+                    }
+                });
+            }
+        }
+
+        function decrementQuantity(productId) {
+            const quantityInput = document.getElementById('quantity-' + productId);
+            let currentQuantity = parseInt(quantityInput.value);
+            if (currentQuantity > 1) {
+                quantityInput.value = currentQuantity - 1;
+                Swal.fire({
+                    toast: true,
+                    timer: 1000,
+                    timerProgressBar: true,
+                    title: 'Product quantity decreased',
+                    icon: 'success',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'custom-toast'
+                    }
+                });
+            }
+            if(currentQuantity === 1){
+                Swal.fire({
+                    toast: true,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    title: 'You reached the  minimum buying limit',
+                    icon: 'warning',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'custom-toast'
+                    }
+                });
+            }
         }
 
         function addToCart(productId) {
@@ -489,11 +566,50 @@
                 });
         }
 
+        function addToWishlist(productId) {
+            event.preventDefault()
+            axios.post('/toggleWishlist', { productId })
+                .then(response => {
+                    if (response.data.success) {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: response.data.data.inWishlist ? 'Added' : 'Removed',
+                            text: response.data.message,
+                            icon: response.data.data.inWishlist ? 'success' : 'error',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: 'Failed!',
+                            text: 'Failed to add product to wishlist',
+                            icon: 'error',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'
+                            }
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.error('There was an error adding the product to the wishlist:', error);
+                });
+        }
 
     </script>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+    <!-- <script src="../../public/user-assets/js/elevateZoom.js"></script> -->
     <script>
         $(document).ready(function () {
           <% singleProduct.productImages.forEach(function (image, index) { %>

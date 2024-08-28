@@ -2,8 +2,8 @@ const User = require('../../models/userSchema')
 const Product = require('../../models/productSchema')
 const Wishlist = require('../../models/wishlistSchema')
 const Cart = require('../../models/cartSchema')
-const Category=require('../../models/categorySchema')
-const Brand=require('../../models/brandSchema')
+const Category = require('../../models/categorySchema')
+const Brand = require('../../models/brandSchema')
 const nodemailer = require("nodemailer")
 const bcrypt = require('bcrypt');
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
@@ -296,7 +296,7 @@ const loadShopPage = async (req, res) => {
 
         const categories = await Category.find({ isListed: true });
         const brands = await Brand.find({});
-        
+
 
         const wishlist = await Wishlist.findOne({ userId })
         const wishlistProductIds = wishlist ? wishlist.products.map(item => item.productId.toString()) : []
@@ -335,14 +335,24 @@ const loadShopPage = async (req, res) => {
 const loadSingleProduct = async (req, res) => {
     try {
         const userId = req.session.user
-        const ProductId = req.query.id
+        const ProductID = req.query.id
         const relatedProducts = await Product.find().populate('brand').populate('category');
-        const singleProduct = await Product.findOne({ _id: ProductId }).populate('brand').populate('category').populate({ path: 'reviews.user', select: 'name' });
+        const singleProduct = await Product.findOne({ _id: ProductID }).populate('brand').populate('category').populate({ path: 'reviews.user', select: 'name' });
 
         const wishlist = await Wishlist.findOne({ userId })
         const wishlistProductIds = wishlist ? wishlist.products.map(item => item.productId.toString()) : []
 
-        res.render('singleProduct', { singleProduct, relatedProducts, wishlistProductIds })
+        const cart = await Cart.findOne({ userId })
+        let productQuantityInCart = 0;
+        if (cart) {
+            // Find the product in the cart
+            const cartProduct = cart.products.find(item => item.productId.toString() === ProductID);
+            if (cartProduct) {
+                productQuantityInCart = cartProduct.quantity; // Get the quantity of the product if it exists
+            }
+        }
+
+        res.render('singleProduct', { singleProduct, relatedProducts, wishlistProductIds,productQuantityInCart })
     } catch (error) {
         console.log(error, 'Product detailed page is not loading');
         errorResponse(res, error, "Internal server error");

@@ -1,0 +1,110 @@
+<%- include("../../views/partials/admin/header") %>
+
+    <body>
+        <section class="content-main">
+            <div class="content-header shadow   ">
+                <div>
+                    <h2 class="content-title card-title">
+                        orders</h2>
+                </div>
+                <header class="card-header  bg-transparent col-10 d-flex justify-content-end">
+                    <form action="/admin/users/" method="get" class="col-lg-5 me-5">
+                        <div class="input-group input-group-sm  border border-2 shadow rounded-pill ">
+                            <input type="text" class="form-control border-0 rounded-pill bg-transparent" placeholder="Search here... "
+                                name="search" >
+                            <button class="btn border border-2 border-end-0 border-top-0 border-bottom-0"
+                                type="submit">Search</button>
+                        </div>
+                    </form>
+                </header>
+            </div>
+
+            <div class="right mt-5 mx-5 card p-3 shadow col-sm col-md col-lg ">
+                <table class="table table-striped border border-2 table-hover table-light ">
+                    <thead>
+                        <% if(userData.length==0){ %>
+                            <h1 class="text-center">No orders found</h1>
+                            <% } else{%>
+                                <tr>
+                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold"> ID </th>
+                
+                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                        <a href="?sort=name&order=<%= order === 'asc' && sort === 'name' ? 'desc' : 'asc' %>">
+                                            Name <%= order === 'asc' && sort === 'name' ? '▲' : (sort === 'name' ? '▼' : '') %>
+                                        </a>
+                                    </th>
+                
+                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                        <a href="?sort=email&order=<%= order === 'asc' && sort === 'email' ? 'desc' : 'asc' %>">
+                                            Email <%= order === 'asc' && sort === 'email' ? '▲' : (sort === 'email' ? '▼' : '') %>
+                                        </a>
+                                    </th>
+                
+                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                        <a href="?sort=phone&order=<%= order === 'asc' && sort === 'phone' ? 'desc' : 'asc' %>">
+                                            Phone No <%= order === 'asc' && sort === 'phone' ? '▲' : (sort === 'phone' ? '▼' : '') %>
+                                        </a>
+                                    </th>
+                
+                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold"> Action </th>
+                                </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i=0;i<userData.length;i++) {%>
+                            <tr>
+                                <td class=" border border-2 text-center">
+                                    <%= i+1+(limit*(currentPage-1)) %>
+                                </td>
+                                <td class=" border border-2 text-center">
+                                    <%= userData[i].name %>
+                                </td>
+                                <td class=" border border-2 text-center">
+                                    <%= userData[i].email %>
+                                </td>
+                                <td class=" border border-2 text-center">
+                                    <% if(userData[i].phone==null){ %>
+                                        Google user
+                                        <% }else{ %>
+                                            <%= userData[i].phone %>
+                                                <% } %>
+                                </td>
+                                <td class=" border border-2 text-center ">
+                                    <% if(userData[i].isBlocked===false) {%>
+                                        <button class="btn btn-danger" style="width: 80px;">
+                                            <a href="/admin/blockCustomer?id=<%= userData[i]._id %>" class="text-white"
+                                                style="text-decoration: none;">Block</a>
+                                        </button>
+                                        <% }else{ %>
+                                            <button class="btn btn-success" style="width: 85px;">
+                                                <a href="/admin/unblockCustomer?id=<%= userData[i]._id %>" class="text-white"
+                                                    style="text-decoration: none;">Unblock</a>
+                                            </button>
+                                            <% } %>
+                                </td>
+                            </tr>
+                            <% } %>
+                                <% } %>
+        
+                    </tbody>
+                </table>
+            </div>
+        
+            <div class="container ">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-20" >
+                        <% for(let i=1;i<=totalPages;i++){ %>
+                            <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>">
+                                    <%= i %>
+                                </a>
+                            </li>
+                            <% } %>
+                    </ul>
+                </nav>
+            </div>
+        
+
+
+
+
+            <%- include("../../views/partials/admin/footer") %>

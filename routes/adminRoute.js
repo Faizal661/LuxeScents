@@ -5,6 +5,7 @@ const adminController = require('../controllers/admin/adminController')
 const customerController = require('../controllers/admin/customerController')
 const categoryController = require('../controllers/admin/categoryController')
 const productController = require('../controllers/admin/productController')
+const orderController= require('../controllers/admin/orderController')
 
 adminRouter.get('/pageerror', adminAuth, adminController.pageerror)
 
@@ -37,6 +38,11 @@ adminRouter.get('/addProduct', adminAuth, productController.getAddProduct)
 adminRouter.post('/addProduct', adminAuth, productController.addProduct)
 adminRouter.get('/editProduct/:id', adminAuth, productController.getEditProduct)
 adminRouter.post('/editProduct/:id', adminAuth, productController.editProduct)
+
+
+//orders
+adminRouter.get('/orders', adminAuth, orderController.orderInfo)
+
 
 
 //page error
