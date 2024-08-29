@@ -35,13 +35,28 @@
             <div class="row">
                 <div class="col-lg-3">
                     <div class="shop__sidebar">
-
                         <div class="shop__sidebar__search">
-                            <form action="/shoppage" method="GET">
-                                <input type="text" name="search" placeholder="Search..." value="<%= searchQuery %>">
-                                <button type="submit"><span class="icon_search"></span></button>
-                            </form>
+
+                            <div class="row">
+                                <form action="/shoppage" method="GET">
+                                    <input type="text" name="search" placeholder="Search..." value="<%= searchQuery %>">
+                                    <input type="hidden" name="category" value="<%= categoryFilter %>">
+                                    <input type="hidden" name="brand" value="<%= brandFilter %>">
+                                    <input type="hidden" name="gender" value="<%= genderFilter %>">
+                                    <input type="hidden" name="stock" value="<%= stockFilter %>">
+                                    <input type="hidden" name="sort" value="<%= sort %>">
+                                    <input type="hidden" name="order" value="<%= order %>">
+                                    <button type="submit"><span class="icon_search"></span></button>
+                                </form>
+                                <div class="shop__sidebar__refresh pt-1 pl-1">
+                                    <button type="button" class="btn " onclick="window.location.href='/shoppage'"><i
+                                            class="fa fa-refresh cursor-pointer "></i></button>
+                                </div>
+                            </div>
+
                         </div>
+
+
 
                         <div class="shop__sidebar__accordion">
                             <div class="accordion" id="accordionExample">
@@ -51,15 +66,24 @@
                                     </div>
                                     <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
                                         <div class="card-body">
+
+
+
                                             <div class="shop__sidebar__categories">
                                                 <ul class="nice-scroll">
                                                     <% categories.forEach(category=> { %>
-                                                        <li><a href="/shoppage?sort=<%= category._id %>">
+                                                        <li>
+                                                            <a
+                                                                href="/shoppage?category=<%= category._id %>&brand=<%= brandFilter %>&gender=<%= genderFilter %>&stock=<%= stockFilter %>&sort=<%= sort %>&order=<%= order %>">
                                                                 <%= category.name %>
-                                                            </a></li>
+                                                            </a>
+                                                        </li>
                                                         <% }); %>
                                                 </ul>
                                             </div>
+
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -70,15 +94,24 @@
                                     </div>
                                     <div id="collapseTwo" class="collapse show" data-parent="#accordionExample">
                                         <div class="card-body">
+
+
+
                                             <div class="shop__sidebar__categories">
                                                 <ul class="nice-scroll">
                                                     <% brands.forEach(brand=> { %>
-                                                        <li><a href="#">
+                                                        <li>
+                                                            <a
+                                                                href="/shoppage?brand=<%= brand._id %>&sort=<%= sort %>&order=<%= order %>&stock=<%= stockFilter %>">
                                                                 <%= brand.brandName %>
-                                                            </a></li>
+                                                            </a>
+                                                        </li>
                                                         <% }); %>
                                                 </ul>
                                             </div>
+
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -89,13 +122,24 @@
                                     </div>
                                     <div id="collapseFive" class="collapse show" data-parent="#accordionExample">
                                         <div class="card-body">
+
+
                                             <div class="shop__sidebar__gender">
                                                 <ul class="nice-scroll">
-                                                    <li><a href="#">Men </a></li>
-                                                    <li><a href="#">Women </a></li>
-                                                    <li><a href="#">Unisex</a></li>
+                                                    <li><a
+                                                            href="/shoppage?gender=Men&sort=<%= sort %>&order=<%= order %>&stock=<%= stockFilter %>">Men</a>
+                                                    </li>
+                                                    <li><a
+                                                            href="/shoppage?gender=Women&sort=<%= sort %>&order=<%= order %>&stock=<%= stockFilter %>">Women</a>
+                                                    </li>
+                                                    <li><a
+                                                            href="/shoppage?gender=Unisex&sort=<%= sort %>&order=<%= order %>&stock=<%= stockFilter %>">Unisex</a>
+                                                    </li>
                                                 </ul>
                                             </div>
+
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -106,22 +150,31 @@
                                     </div>
                                     <div id="collapseFour" class="collapse show" data-parent="#accordionExample">
                                         <div class="card-body">
+
+
                                             <div class="shop__sidebar__gender">
                                                 <ul class="nice-scroll">
                                                     <li>
-                                                        <a href="/shoppage?stock=" class="<%= !stockFilter ? 'active' : '' %>">All Stock Status</a>
+                                                        <a href="/shoppage?stock=&sort=<%= sort %>&order=<%= order %>"
+                                                            class="<%= !stockFilter ? 'active' : '' %>">All Products</a>
                                                     </li>
                                                     <li>
-                                                        <a href="/shoppage?stock=Available" class="<%= stockFilter === 'Available' ? 'active' : '' %>">Available</a>
+                                                        <a href="/shoppage?stock=Available&sort=<%= sort %>&order=<%= order %>"
+                                                            class="<%= stockFilter === 'Available' ? 'active' : '' %>">Available</a>
                                                     </li>
                                                     <li>
-                                                        <a href="/shoppage?stock=Out%20of%20Stock" class="<%= stockFilter === 'Out of Stock' ? 'active' : '' %>">Out of Stock</a>
+                                                        <a href="/shoppage?stock=Out%20of%20Stock&sort=<%= sort %>&order=<%= order %>"
+                                                            class="<%= stockFilter === 'Out of Stock' ? 'active' : '' %>">Out
+                                                            of Stock</a>
                                                     </li>
                                                     <li>
-                                                        <a href="/shoppage?stock=Discontinued" class="<%= stockFilter === 'Discontinued' ? 'active' : '' %>">Discontinued</a>
+                                                        <a href="/shoppage?stock=Discontinued&sort=<%= sort %>&order=<%= order %>"
+                                                            class="<%= stockFilter === 'Discontinued' ? 'active' : '' %>">Discontinued</a>
                                                     </li>
                                                 </ul>
                                             </div>
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -136,28 +189,46 @@
 
                     <div class="shop__product__option">
                         <div class="row">
+
+
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="shop__product__option__left">
                                     <p>Showing <%= startProduct %>–<%= endProduct %> of <%= totalProductsCount %>
                                                     results</p>
                                 </div>
                             </div>
+
+
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="shop__product__option__right">
                                     <p>Sort by :</p>
-                                    <select>
-                                        <option value="">Popularity</option>
-                                        <option value="">Price: low to high</option>
-                                        <option value="">Price: high to low</option>
-                                        <option value="">Average ratings</option>
-                                        <option value="">Featured</option>
-                                        <option value="">New Arrivals</option>
-                                        <option value="">aA - zZ</option>
-                                        <option value="">zZ - aA</option>
-
+                                    <select onchange="location = this.value;">
+                                        <option
+                                            value="/shoppage?sort=createdAt&order=desc&category=<%= categoryFilter %>&brand=<%= brandFilter %>&gender=<%= genderFilter %>&stock=<%= stockFilter %>"
+                                            <%=sort==='createdAt' && order==='desc' ? 'selected' : '' %>>New Arrivals
+                                        </option>
+                                        <option
+                                            value="/shoppage?sort=salePrice&order=asc&category=<%= categoryFilter %>&brand=<%= brandFilter %>&gender=<%= genderFilter %>&stock=<%= stockFilter %>"
+                                            <%=sort==='salePrice' && order==='asc' ? 'selected' : '' %>>Price: low to
+                                            high</option>
+                                        <option
+                                            value="/shoppage?sort=salePrice&order=desc&category=<%= categoryFilter %>&brand=<%= brandFilter %>&gender=<%= genderFilter %>&stock=<%= stockFilter %>"
+                                            <%=sort==='salePrice' && order==='desc' ? 'selected' : '' %>>Price: high to
+                                            low</option>
+                                        <option
+                                            value="/shoppage?sort=productName&order=asc&category=<%= categoryFilter %>&brand=<%= brandFilter %>&gender=<%= genderFilter %>&stock=<%= stockFilter %>"
+                                            <%=sort==='productName' && order==='asc' ? 'selected' : '' %>>aA - zZ
+                                        </option>
+                                        <option
+                                            value="/shoppage?sort=productName&order=desc&category=<%= categoryFilter %>&brand=<%= brandFilter %>&gender=<%= genderFilter %>&stock=<%= stockFilter %>"
+                                            <%=sort==='productName' && order==='desc' ? 'selected' : '' %>>zZ - aA
+                                        </option>
                                     </select>
                                 </div>
                             </div>
+
+
+
                         </div>
                     </div>
 
@@ -175,7 +246,7 @@
                                             onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
 
                                         <% if (product.quantity===0) { %>
-                                            <div  onclick="window.location.href='/singleProduct?id=<%= product._id %>';"
+                                            <div onclick="window.location.href='/singleProduct?id=<%= product._id %>';"
                                                 class="out-of-stock-overlay cursor-pointer d-flex align-items-center justify-content-center position-absolute w-100 h-100">
                                                 <h4 class="text-danger fw-bold">Out of Stock</h4>
                                             </div>
@@ -259,10 +330,11 @@
                                             <%= i %>
                                         </span>
                                         <% } else { %>
-                                            <a href="?page=<%= i %>"
-                                                class="btn btn-outline-dark rounded-pill my-2 px-3 mx-1">
-                                                <%= i %>
-                                            </a>
+                                            <a href="/shoppage?page=<%= i %>&sort=<%= sort %>&order=<%= order %>&category=<%= categoryFilter %>&brand=<%= brandFilter %>&gender=<%= genderFilter %>&stock=<%= stockFilter %>
+                                            <%= i === currentPage ? ' class=" active"' : '' %>" class="btn
+                                                btn-outline-dark rounded-pill my-2 px-3
+                                                mx-1"><%= i %></a>
+
                                             <% } %>
                                                 <% } %>
                                                     <% if (currentPage < totalPages) { %>

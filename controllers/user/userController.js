@@ -260,39 +260,60 @@ const loadHomepage = async (req, res) => {
 }
 
 
-
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 const loadShopPage = async (req, res) => {
     try {
         const userId = req.session.user;
+
+        //pagination
         const page = parseInt(req.query.page) || 1;
         const limit = 6;
         const skip = (page - 1) * limit;
-        let sort = req.query.sort || 'createdAt';
-        let order = req.query.order === 'desc' ? -1 : 1;
 
-        const searchQuery = req.query.search || '';
-        const stockFilter = req.query.stock || '';
+        //sortingggg
+        let sort = req.query.sort || 'createdAt';//sorting criteria
+        let order = req.query.order === 'desc' ? -1 : 1;//sorting order asc and desc 
 
+        const searchQuery = req.query.search || ''; //search method in product
+        const stockFilter = req.query.stock || '';//stock based filter (out of stock,available ,all)
+        const categoryFilter = req.query.category || ''; // New category filter
+        const brandFilter = req.query.brand || ''; // New brand filter
+        const genderFilter = req.query.gender || ''; // New gender filter
 
         let query = { isBlocked: false };
+
         if (searchQuery) {
-            query.name = { $regex: searchQuery, $options: 'i' };
+            query.productName = { $regex: searchQuery, $options: 'i' };
         }
         if (stockFilter) {
-            query.status = stockFilter; // Filter by stock status
+            query.status = stockFilter;
+        }
+        if (categoryFilter) {
+            query.category = categoryFilter;
+        }
+        if (brandFilter) {
+            query.brand = brandFilter;
+        }
+        if (genderFilter) {
+            query.gender = genderFilter;
         }
 
-        const products = await Product.find({ isBlocked: false }).populate({ path: 'category', match: { isListed: true } }).populate('brand').sort({ [sort]: order })
+        const products = await Product.find(query).populate({ path: 'category', match: { isListed: true } }).populate('brand').sort({ [sort]: order }).skip(skip)
+            .limit(limit);
 
-        const filteredProducts = products.filter(product => product.category);
-        const totalProductsCount = filteredProducts.length
+
+
+        // Count total products matching the filters for pagination
+        const totalProductsCount = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalProductsCount / limit);
-        const paginatedProducts = filteredProducts.slice(skip, skip + limit);
 
+       
+
+        // Calculate start and end product indexes for display
         const startProduct = skip + 1;
-        const endProduct = Math.min(skip + paginatedProducts.length, totalProductsCount);
+        const endProduct = Math.min(skip + products.length, totalProductsCount);
 
         const categories = await Category.find({ isListed: true });
         const brands = await Brand.find({});
@@ -305,9 +326,8 @@ const loadShopPage = async (req, res) => {
         const cartProductIds = cart ? cart.products.map(item => item.productId.toString()) : [];
 
 
-
         res.render('shop', {
-            products: paginatedProducts,
+            products,
             currentPage: page,
             totalPages,
             totalProductsCount,
@@ -321,7 +341,10 @@ const loadShopPage = async (req, res) => {
             cartProductIds,
             categories, // Pass categories to the template
             brands,     // Pass brands to the template
-            stockFilter
+            stockFilter,
+            categoryFilter,  // Pass category filter to EJS
+            brandFilter,     // Pass brand filter to EJS
+            genderFilter
         })
     } catch (error) {
         console.log(error, 'ShopPage not loading');
@@ -330,6 +353,9 @@ const loadShopPage = async (req, res) => {
 }
 
 
+
+
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 
 const loadSingleProduct = async (req, res) => {
@@ -352,7 +378,7 @@ const loadSingleProduct = async (req, res) => {
             }
         }
 
-        res.render('singleProduct', { singleProduct, relatedProducts, wishlistProductIds,productQuantityInCart })
+        res.render('singleProduct', { singleProduct, relatedProducts, wishlistProductIds, productQuantityInCart })
     } catch (error) {
         console.log(error, 'Product detailed page is not loading');
         errorResponse(res, error, "Internal server error");
