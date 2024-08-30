@@ -2,7 +2,7 @@ const User = require('../../models/userSchema')
 const Product = require('../../models/productSchema')
 const Cart = require('../../models/cartSchema')
 const Address = require('../../models/addressSchema')
-const Order=require('../../models/orderSchema')
+const Order = require('../../models/orderSchema')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
 
@@ -42,7 +42,7 @@ const loadCheckoutPage = async (req, res) => {
                     totalPrice: item.totalPrice,
                     productImages: product.productImages,
                     stock: variation[0].quantity,
-                    size:variation[0].size
+                    size: variation[0].size
                 };
             });
 
@@ -76,26 +76,26 @@ const placeOrder = async (req, res) => {
             paymentMethod
         } = req.body;
 
-        console.log('bboooodddyyy',req.body)
 
-        // Fetch the selected address details based on the address ID
         const address = await Address.findById(selectedAddressId);
-        console.log(address);
+
         if (!address) {
             return res.status(404).json({ error: 'Address not found' });
         }
 
-        // Create a new order
         const newOrder = new Order({
+            userId:req.session.user,
             orderedItems: orderedItems.map(item => ({
                 product: item.productId,
                 quantity: item.quantity,
+                size:item.productSize,
                 price: item.price,
                 variationID: item.variationID
             })),
-            totalPrice: subtotal + tax,
-            discount: 0, // Assuming no discount applied
-            finalAmount: totalPrice,
+            subtotal: subtotal,
+            tax: tax,
+            discount: 0,
+            finalAmount: subtotal + tax,
             address: {
                 addressType: address.addressType,
                 name: address.name,
@@ -109,7 +109,7 @@ const placeOrder = async (req, res) => {
             },
             paymentMethod,
             orderStatus: 'Processing',
-            couponApplied: false 
+            couponApplied: false
         });
 
         await newOrder.save();
@@ -123,24 +123,26 @@ const placeOrder = async (req, res) => {
                     variation.quantity -= item.quantity;
 
                     if (variation.quantity < 0) {
-                        return errorResponse(res, `Not enough stock for ${product.productName}`, null);
+                        return errorResponse(res, null, `Not enough stock for ${product.productName}`);
                     }
                 } else {
-                    return errorResponse(res, `Variation not found for product ${product.productName}`, null);
+                    return errorResponse(res, null, `Variation not found for product ${product.productName}`);
                 }
 
                 await product.save();
             } else {
-                return errorResponse(res, 'Product not found', null);
+                return errorResponse(res, null, 'Product not found');
             }
         }
 
         await Cart.deleteOne({ userId: req.session.user });
 
-        successResponse(res, 'Order placed successfully', { orderId: newOrder.orderId });
+
+
+        successResponse(res, { orderId: newOrder._id }, 'Order placed successfully');
     } catch (error) {
         console.error('Error placing order:', error);
-        errorResponse(res, 'Failed to place order', error);
+        errorResponse(res, error, 'Failed to place order');
     }
 }
 

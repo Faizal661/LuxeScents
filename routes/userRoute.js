@@ -63,10 +63,11 @@ userRouter.get('/loadEditAddressPage',userAuth,userProfileController.loadEditAdd
 userRouter.post('/editAddress/:id',userAuth,userProfileController.editAddress)
 userRouter.delete('/deleteAddress/:id',userAuth,userProfileController.deleteAddress)
 
-//------- change and forgot password
+// change password
 userRouter.get('/loadChangePassword',userAuth,userProfileController.loadChangePassword)
 userRouter.post('/changePassword',userAuth,userProfileController.changePassword)
 
+//forgot password
 userRouter.get('/loadOtpVerify',userAuth,userProfileController.loadOtpVerify)
 userRouter.post('/verifyOtpForgotPassword',userAuth,userProfileController.verifyOtp)
 userRouter.post('/resendOtpForgotPassword',userAuth,userProfileController.resendOtp)
@@ -85,8 +86,6 @@ userRouter.post('/removeFromCart',userAuth,cartController.removeFromCart)
 userRouter.post('/updateCartItem',userAuth,cartController.updateCartItem)
 userRouter.get('/cartTotal',userAuth,cartController.cartTotal )
 
-
-
 //checkout
 userRouter.get('/checkoutPage',userAuth,checkoutController.loadCheckoutPage)
 userRouter.post('/placeOrder',userAuth,checkoutController.placeOrder)
@@ -95,7 +94,8 @@ userRouter.post('/placeOrder',userAuth,checkoutController.placeOrder)
 //order 
 userRouter.get('/orderSuccess',userAuth,OrderController.orderSuccess)
 userRouter.get('/orderDetails',userAuth,OrderController.orderDetails)
-
+userRouter.post('/cancelOrder',userAuth,OrderController.cancelOrder)
+userRouter.get('/loadOrders',userAuth,OrderController.loadOrders)
 
 
 userRouter.get('/logout',userAuth,userController.userLogout)

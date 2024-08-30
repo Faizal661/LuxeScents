@@ -4,7 +4,9 @@ const { successResponse, errorResponse } = require('../../helpers/responseHandle
 
 const orderInfo= async (req,res)=>{
     try {
-        res.render('ordersInfo')
+        const orders = await Order.find().sort({ createdAt: -1 }).populate('userId')
+
+        res.render('ordersInfo' ,{ orders })
     } catch (error) {
         console.error('Error while loading order listing page:', error);
         res.redirect("/pageerror");

@@ -7,6 +7,11 @@ const orderSchema= new mongoose.Schema({
         default: ()=>uuidv4(),
         unique:true
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
     orderedItems:[{
         product:{
             type:mongoose.Schema.Types.ObjectId,
@@ -17,6 +22,11 @@ const orderSchema= new mongoose.Schema({
             type:Number,
             required:true
         },
+        size: {
+            type: String,
+            enum: ["25ml", "50ml", "75ml", "100ml", "150ml"],
+            required: true,
+        },
         price:{
             type:Number,
             default:0
@@ -26,7 +36,11 @@ const orderSchema= new mongoose.Schema({
             required:true
         }
     }],
-    totalPrice:{
+    subtotal:{
+        type:Number,
+        required:true
+    },
+    tax:{
         type:Number,
         required:true
     },

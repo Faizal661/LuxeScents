@@ -1,0 +1,217 @@
+<%- include('../partials/users/userHeader') %>
+
+    <style>
+        .container {
+            margin-top: 30px;
+        }
+
+        .order-items,
+        .order-summary {
+            margin-bottom: 20px;
+        }
+
+        .list-group-item {
+            border: none;
+        }
+
+
+        .order-item-images img {
+            max-width: 100%;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .address p {
+            padding-bottom: 10px;
+
+        }
+
+        .order-summary .card {
+            background-color: #f8f9fa;
+        }
+
+        .order-summary div p {
+            padding-bottom: 10px;
+        }
+
+        .btn-cancel {
+            float: right;
+        }
+
+        .card p {
+            margin: 0;
+        }
+    </style>
+
+    </head>
+
+    <body>
+        <!-- Breadcrumb Section Begin -->
+        <section class="breadcrumb-option">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="breadcrumb__text">
+                            <h4>Order Details</h4>
+                            <div class="breadcrumb__links">
+                                <a href="/">Home</a>
+                                <a href="/loadOrders">orders</a>
+                                <span>Order Details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Breadcrumb Section End -->
+
+        <div class="container">
+            <h2 class="mb-4">
+                </h1>
+
+                <div class="row">
+                    <!-- Order Items Section -->
+                    <div class="col-md-6 order-items ">
+                        <h3 class="text-center mb-3">Order Items
+            </h3>
+            <ul class="list-group">
+                <% order.orderedItems.forEach(item=> { %>
+                    <li class="list-group-item d-flex cursor-pointer" onclick="window.location.href='/singleProduct?id=<%= item.product._id %>';">
+                        <div class="col-6">
+                            <strong>Product:</strong>
+                            <%= item.product.productName %><br>
+                                <strong>Quantity:</strong>
+                                <%= item.quantity %><br>
+                                    <strong>Size:</strong>
+                                    <%= item.size %><br>
+                                        <strong>Price:</strong> ₹<%= item.price %><br>
+                        </div>
+                        <div class="col-6">
+                            <img src="<%= item.product.productImages[0].replace(/\\/g, '/') %>" class="col-5 " >
+                            <img src="<%= item.product.productImages[1].replace(/\\/g, '/') %>" class="col-5 " >
+                        </div>
+
+                    </li>
+                    <% }); %>
+            </ul>
+        </div>
+
+        <!-- Shipping Address Section -->
+        <div class="col-md-6">
+            <h3 class="text-center mb-3">Shipping Address</h3>
+            <div class="card p-3 address">
+                <p><strong>Address Type:</strong>
+                    <%= order.address.addressType %>
+                </p>
+                <p><strong>Name:</strong>
+                    <%= order.address.name %>
+                </p>
+                <p><strong>Locality:</strong>
+                    <%= order.address.locality %>
+                </p>
+                <p><strong>City:</strong>
+                    <%= order.address.city %>
+                </p>
+                <p><strong>Landmark:</strong>
+                    <%= order.address.landMark %>
+                </p>
+                <p><strong>State:</strong>
+                    <%= order.address.state %>
+                </p>
+                <p><strong>Pin Code:</strong>
+                    <%= order.address.pincode %>
+                </p>
+                <p><strong>Phone:</strong>
+                    <%= order.address.phone %>
+                </p>
+                <p><strong>Alternate Phone:</strong>
+                    <%= order.address.altPhone %>
+                </p>
+            </div>
+        </div>
+        </div>
+
+        <div class="row my-4 ">
+            <div class="col-md-6 d-flex justify-content-center align-items-center">
+                <% if (order.orderStatus !=='Cancelled' ) { %>
+                  <button class="btn btn-danger mt-3" onclick="cancelOrder('<%= order._id %>')">Cancel
+                      Order</button>
+                  <% } else { %>
+                      <p class="text-danger mt-3 h3">This order has been cancelled.</p>
+                      <% } %>
+          </div>
+            <!-- Order Summary Section -->
+            <div class="col-md-6 order-summary">
+                <h3 class="text-center mb-3">Order Summary</h3>
+                <div class="card p-3">
+                    <p><strong>Subtotal:</strong> ₹<%= order.subtotal %>
+                    </p>
+                    <p><strong>Tax:</strong> ₹<%= order.tax %>
+                    </p>
+                    <p><strong>Total Price:</strong> ₹<%= order.finalAmount %>
+                    </p>
+                    <p><strong>Payment Method:</strong>
+                        <%= order.paymentMethod %>
+                    </p>
+                    <p><strong>Status:</strong>
+                        <%= order.orderStatus %>
+                    </p>
+                    <p><strong>Ordered Date:</strong>
+                        <%= order.createdAt %>
+                    </p>
+                </div>
+                
+
+              
+            </div>
+            
+        </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            async function cancelOrder(orderId) {
+                const confirmResult = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, cancel it!',
+                    cancelButtonText: 'No, keep it'
+                });
+        
+                if (confirmResult.isConfirmed) {
+                    try {
+                        const response = await axios.post('/cancelOrder', { orderId });
+        
+                        if (response.data.success) {
+                            Swal.fire(
+                                'Cancelled!',
+                                'Your order has been cancelled.',
+                                'success'
+                            ).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Failed!',
+                                response.data.message,
+                                'error'
+                            );
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Swal.fire(
+                            'Error!',
+                            'Failed to cancel the order. Please try again.',
+                            'error'
+                        );
+                    }
+                }
+            }
+        </script>
+              
+    </body>
+
+    <%- include('../partials/users/userFooter') %>
