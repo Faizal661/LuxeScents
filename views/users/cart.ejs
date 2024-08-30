@@ -26,6 +26,8 @@
             margin: 0 2px;
         }
     </style>
+
+    
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-option">
         <div class="container">
@@ -86,6 +88,10 @@
                                                                     <%= product.stock %>
                                                                 </span>
                                                             </p>
+                                                            <p>Size :
+                                                                <%= product.size %>
+                                                            </span>
+                                                        </p>
                                                         </div>
                                                     </td>
 
@@ -170,7 +176,6 @@
                                     <hr>
                                     <li>Total <span id="cart-total">₹<%= (products.reduce((total, product)=> total +
                                                 product.totalPrice, tax)).toFixed(2) %></span></li>
-
                         </ul>
                         <a href="/checkoutPage" class="primary-btn">Proceed to checkout</a>
                     </div>

@@ -89,12 +89,12 @@ userRouter.get('/cartTotal',userAuth,cartController.cartTotal )
 
 //checkout
 userRouter.get('/checkoutPage',userAuth,checkoutController.loadCheckoutPage)
-
-userRouter.get('/orderSuccess',userAuth,checkoutController.orderSuccess)
+userRouter.post('/placeOrder',userAuth,checkoutController.placeOrder)
 
 
 //order 
-userRouter.get('/placeOrder',userAuth,OrderController.placeOrder)
+userRouter.get('/orderSuccess',userAuth,OrderController.orderSuccess)
+userRouter.get('/orderDetails',userAuth,OrderController.orderDetails)
 
 
 

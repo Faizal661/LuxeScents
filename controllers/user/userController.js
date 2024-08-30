@@ -369,6 +369,8 @@ const loadSingleProduct = async (req, res) => {
         const wishlistProductIds = wishlist ? wishlist.products.map(item => item.productId.toString()) : []
 
         const cart = await Cart.findOne({ userId })
+        const cartProductIds = cart ? cart.products.map(item => item.productId.toString()) : [];
+
         let productQuantityInCart = 0;
         if (cart) {
             // Find the product in the cart
@@ -378,7 +380,7 @@ const loadSingleProduct = async (req, res) => {
             }
         }
 
-        res.render('singleProduct', { singleProduct, relatedProducts, wishlistProductIds, productQuantityInCart })
+        res.render('singleProduct', { singleProduct, relatedProducts, wishlistProductIds,cartProductIds,  productQuantityInCart })
     } catch (error) {
         console.log(error, 'Product detailed page is not loading');
         errorResponse(res, error, "Internal server error");

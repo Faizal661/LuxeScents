@@ -15,7 +15,6 @@
     </div>
     </div>
 
-
     <div class="right mt-5 mx-5 card p-3 shadow col-sm col-md col-lg">
         <table class="table table-striped border border-2 table-hover table-light">
             <thead>
@@ -46,24 +45,16 @@
                                 </a>
                             </th>
 
-                            <!-- Price Column -->
+                            <!-- category Column -->
                             <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
                                 <a
-                                    href="?sort=salePrice&order=<%= order === 'asc' && sort === 'salePrice' ? 'desc' : 'asc' %>">
-                                    Price <%= order==='asc' && sort==='salePrice' ? '▲' : (sort==='salePrice' ? '▼' : ''
-                                        ) %>
+                                    href="?sort=category.name&order=<%= order === 'asc' && sort === 'category.name' ? 'desc' : 'asc' %>">
+                                    Category <%= order==='asc' && sort==='category.name' ? '▲' :
+                                        (sort==='category.name' ? '▼' : '' ) %>
                                 </a>
                             </th>
 
-                            <!-- Stock Column -->
-                            <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
-                                <a
-                                    href="?sort=quantity&order=<%= order === 'asc' && sort === 'quantity' ? 'desc' : 'asc' %>">
-                                    Stock <%= order==='asc' && sort==='quantity' ? '▲' : (sort==='quantity' ? '▼' : '' )
-                                        %>
-                                </a>
-                            </th>
-
+                            
                             <!-- Status Column -->
                             <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
                                 <a
@@ -92,11 +83,9 @@
                             <%= data[i].brand.brandName %>
                         </td>
                         <td class=" border border-2 text-center">
-                            <%= data[i].salePrice %>
+                            <%= data[i].category.name %>
                         </td class=" border border-2">
-                        <td class=" border border-2 text-center">
-                            <%= data[i].quantity %>
-                        </td>
+                       
                         <% if(data[i].status=="Out of Stock" ) {%>
                             <td class=" border border-2 text-center text-danger fw-bolder">
                                 <%= data[i].status %>

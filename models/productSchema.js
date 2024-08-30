@@ -19,29 +19,32 @@ const productSchema = new mongoose.Schema({
         ref: "Category",
         required: true,
     },
-    regularPrice: {
-        type: Number,
-        required: true,
-    },
-    salePrice: {
-        type: Number,
-        required: true,
-    },
+    variations: [
+        {
+            size: {
+                type: String,
+                enum: ["25ml", "50ml", "75ml", "100ml", "150ml"],
+                required: true,
+            },
+            regularPrice: {
+                type: Number,
+                required: true,
+            },
+            salePrice: {
+                type: Number,
+                required: true,
+            },
+            quantity: {
+                type: Number,
+                required: true,
+            }
+        }
+    ],
     gender: {
         type: String,
         enum: ['Men', 'Women', 'Unisex'],
         required: true,
         default: "Unisex"
-    },
-    size: {
-        type: [String],
-        enum: ["25ml", "50ml", "75ml", "100ml", "150ml"],
-        required: true,
-        default: "50ml"
-    },
-    quantity: {
-        type: Number,
-        required: true,
     },
     productImages: {
         type: [String],

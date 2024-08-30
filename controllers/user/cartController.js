@@ -9,30 +9,37 @@ const loadCartPage = async (req, res) => {
     try {
         const userId = req.session.user;
 
-        const cart = await Cart.findOne({ userId })
+        const cart = await Cart.findOne({ userId })//looking for user cart is already there or not
             .populate({
                 path: 'products.productId',
                 populate: { path: 'brand category' }
-            });
+            })
 
-        if (!cart) {
+        if (!cart) {//if there is no cart .creating new one
             return res.render('cart', { products: [] });
         }
+
+        //calculating subtotal,tax and grandtotal to display in the price details.
         const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0);
         const tax = (subtotal * 10) / 100;
         const grandTotal = subtotal + tax;
 
         const products = cart.products.map(item => {
             const product = item.productId;
+            const variation=product.variations.filter((vari) => vari._id.toString() === item.variationID.toString())
+            
             return {
-                _id: item._id,
+        
+                _id: item._id,//object id of objects in cart
+                productId: item.productId._id,//object id of product in cart
                 productName: product.productName,
-                salePrice: product.salePrice,
-                quantity: item.quantity,
+                salePrice: variation[0].salePrice,
+                quantity: item.quantity,//cart added quantity of that product
                 totalPrice: item.totalPrice,
                 productImages: product.productImages,
-                stock: product.quantity,
-                productId:item.productId._id
+                stock: variation[0].quantity,
+                size:variation[0].size
+
             };
         });
 
@@ -55,39 +62,51 @@ const loadCartPage = async (req, res) => {
 const addProductToCart = async (req, res) => {
     try {
         const userId = req.session.user;
-        const { productId, quantity = 1 } = req.body;
-
-        const quantityNumber = parseInt(quantity, 10);
-        // if (isNaN(quantityNumber) || quantityNumber <= 0) {
-        //     return errorResponse(res, {}, 'Quantity must be a positive number', 400);
-        // }
+        const { productId, quantity = 1, variation_id } = req.body;
+        // console.log(variation_id);
+        const quantityNumber = parseInt(quantity);
 
 
-        const product = await Product.findById(productId).select('salePrice')
+        const product = await Product.findById(productId).select('variations')//FIND all the variations from the product data
         if (!product) {
             return errorResponse(res, {}, 'Product not found', 404);
         }
+        // console.log(product);
+        let price = 0
+        let variationID = variation_id;
+        
+        if (variation_id) {
+            let selectedVariation = product.variations.filter((variation) => variation._id.toString() == variation_id.toString())
+            // console.log('variasdfas', selectedVariation);
+            price = selectedVariation[0].salePrice
+            variationID = selectedVariation[0]._id//in this case it take the id of filtered variation.it is filter like an array  so we need to gave an index.
+        } else {
+             price = product.variations[0].salePrice//In shop page, defaultly add first product into the cart
+            variationID = product.variations[0]._id
+        }
+        // console.log(price, variationID);
 
-        const price = product.salePrice
         const totalPrice = quantityNumber * price
 
 
-        let cart = await Cart.findOne({ userId });
+        let cart = await Cart.findOne({ userId });//check for if the cart is already created for this user
 
         if (!cart) {
-            cart = new Cart({ userId, products: [{ productId, quantity: quantityNumber, price, totalPrice }] });
+            cart = new Cart({ userId, products: [{ productId, quantity: quantityNumber, price, totalPrice, variationID }] });
         } else {
-            const productIndex = cart.products.findIndex(p => p.productId.equals(productId));
-            if (productIndex === -1) {
+            // const productIndex = cart.products.findIndex(p => p.productId.equals(productId));//check this product is in user cart
+            const variationIndex = cart.products.findIndex(v => v.variationID.equals(variationID))
+            if (variationIndex === -1 ) { //if product is not in cart this will add to the cart array
                 cart.products.push({
                     productId,
-                    quantity: quantityNumber,
+                    quantity: quantityNumber,//quantity of this product in cart
                     price,
-                    totalPrice
+                    totalPrice,
+                    variationID
                 });
-            } else {
-                cart.products[productIndex].quantity = quantityNumber;
-                cart.products[productIndex].totalPrice = cart.products[productIndex].price * cart.products[productIndex].quantity;
+            } else {//if product is already in cart it will update the data.
+                cart.products[variationIndex].quantity = quantityNumber;
+                cart.products[variationIndex].totalPrice = cart.products[variationIndex].price * cart.products[variationIndex].quantity;
             }
         }
 
@@ -160,7 +179,7 @@ const cartTotal = async (req, res) => {
             const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0);
             const tax = (subtotal * 10) / 100;
             const total = subtotal + tax;
-            res.json({ success: true, subtotal, total,tax });
+            res.json({ success: true, subtotal, total, tax });
         } else {
             res.json({ success: false, message: 'Cart not found.' });
         }

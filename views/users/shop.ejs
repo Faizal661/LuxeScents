@@ -95,8 +95,6 @@
                                     <div id="collapseTwo" class="collapse show" data-parent="#accordionExample">
                                         <div class="card-body">
 
-
-
                                             <div class="shop__sidebar__categories">
                                                 <ul class="nice-scroll">
                                                     <% brands.forEach(brand=> { %>
@@ -109,9 +107,6 @@
                                                         <% }); %>
                                                 </ul>
                                             </div>
-
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -237,7 +232,7 @@
                     </style>
 
                     <div class="row">
-                        <% products.forEach(product=> { %>
+                         <% products.forEach(product=> { %>
                             <div class="col-lg-4 col-md-6 col-sm-6  ">
                                 <div class="product__item border border-3 rounded rounded-3 p-2">
                                     <div class="product__item__pic ">
@@ -245,7 +240,7 @@
                                             alt="<%= product.productName %> "
                                             onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
 
-                                        <% if (product.quantity===0) { %>
+                                        <% if (product.variations[0].quantity===0) { %>
                                             <div onclick="window.location.href='/singleProduct?id=<%= product._id %>';"
                                                 class="out-of-stock-overlay cursor-pointer d-flex align-items-center justify-content-center position-absolute w-100 h-100">
                                                 <h4 class="text-danger fw-bold">Out of Stock</h4>
@@ -261,7 +256,7 @@
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <% if(product.quantity!==0){ %>
+                                                        <% if(product.variations[0].quantity!==0){ %>
                                                             <% if (cartProductIds.includes(product._id.toString())) { %>
                                                                 <a href="/loadCartPage">
                                                                     <img src="img/icon/inCart.png"
@@ -302,13 +297,12 @@
 
                                         </div>
                                         <div class="d-flex ">
-                                            <h5>₹<%= product.salePrice %>
+                                            <h5>₹<%= product.variations[0].salePrice %>
                                             </h5>
                                             <h5 class="pl-4 text-muted  " style="text-decoration: line-through;">₹<%=
-                                                    product.regularPrice %>
+                                                    product.variations[0].regularPrice %>
                                             </h5>
                                         </div>
-
 
                                     </div>
                                 </div>

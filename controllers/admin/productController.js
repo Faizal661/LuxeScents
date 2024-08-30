@@ -36,6 +36,7 @@ const productInfo = async (req, res) => {
             productName: { $regex: ".*" + search + ".*", $options: 'i' }
         })
             .populate('brand')
+            .populate('category')
             .sort({ [sort]: sortOrder })
             .limit(limit)
             .skip((page - 1) * limit)

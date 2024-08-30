@@ -23,73 +23,28 @@
     <section class="checkout spad">
         <div class="container">
             <div class="row">
-                <div class="col-lg-8">
-                    <div class="shopping__cart__table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% products.forEach(product=> { %>
-                                    <tr id="cart-item-<%= product._id %>">
-                                        <td class="product__cart__item">
-                                            <div class="product__cart__item__pic col-lg-4">
-                                                <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
-                                                    alt="<%= product.productName %>" class="img-fluid rounded">
-                                            </div>
-                                            <div class="product__cart__item__text">
-                                                <h6>
-                                                    <%= product.productName %>
-                                                </h6>
-                                                <h5>₹<%= product.salePrice %>
-                                                </h5>
-                                            </div>
-                                        </td>
-                                        <td class="quantity__item">
-                                            <div class="quantity">
-                                                <div class="pro-qty-2">
-                                                    <input type="number" value="<%= product.quantity %>" min="1"
-                                                        id="quantity-<%= product._id %>"
-                                                        onchange="updateCartItem('<%= product._id %>')" max="10">
-                                                </div>
-                                            </div>
-                                        </td>
+                <div class="col-lg-6">
 
-                                        <td class="cart__price" id="total-price-<%= product._id %>">₹<%=
-                                                product.totalPrice %>
-                                        </td>
-                                        <td class="cart__close">
-                                            <a onclick="removeFromCart('<%= product._id %>')">
-                                                <i class="fa fa-close"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <% }); %>
-                            </tbody>
-                        </table>
+                    <div class="cart__discount col-9">
+                        <h6>Discount codes</h6>
+                        <form action="#">
+                            <input type="text" placeholder="Coupon code">
+                            <button type="submit">Apply</button>
+                        </form>
                     </div>
-                    <div class="row m-3 d-flex justify-content-end">
-                        <div class="continue__btn update__btn">
-                            <a href='/checkoutPage'><i class="fa fa-spinner"></i> Update</a>
-                        </div>
-                    </div>
-
-
                     <!-- Address Selection Section -->
-                    <div class="border border-dark p-4 rounded mt-5 col-10">
+                    <div class=" p-4 rounded mt-5 col-10">
                         <% if (addresses.length===0) { %>
                             <p>No addresses found. Please add one to place an order.</p>
                             <button class="btn btn-success" onclick="window.location.href='/loadAddAddressPage'">Add
                                 Address</button>
                             <% } else { %>
+                                <button class="btn btn-dark rounded-0 py-2 "
+                                    onclick="window.location.href='/loadAddAddressPage'">Add Another
+                                    Address</button>
                                 <% addresses.forEach((address, index)=> { %>
                                     <div
-                                        class="address_item border mb-2 p-2 rounded <%= address.isActive ? 'border-success' : 'border-dark' %> d-flex justify-content-between align-items-start">
+                                        class="address_item border my-3 p-3 rounded-0 <%= address.isActive ? 'border-success' : 'border-dark' %> d-flex justify-content-between align-items-start">
                                         <div class="address_info w-100">
                                             <div class="d-flex justify-content-between">
                                                 <div>
@@ -102,7 +57,7 @@
                                                                 <%= address.isActive ? ' (Primary Address)' : '' %>
                                                         </label>
                                                 </div>
-                                                <button class="btn btn-secondary btn-sm"
+                                                <button class="btn btn-dark rounded-0 mb-1 btn-sm"
                                                     onclick="window.location.href='/loadEditAddressPage?id=<%= address._id %>'">Edit</button>
                                             </div>
                                             <p class="mb-1"><strong>Name:</strong>
@@ -116,26 +71,19 @@
                                         </div>
                                     </div>
                                     <% }); %>
-                                        <button class="btn btn-success shadow"
-                                            onclick="window.location.href='/loadAddAddressPage'">Add Another
-                                            Address</button>
+
                                         <% } %>
                     </div>
+                    <hr>
                     <!-- End Address Selection Section -->
 
 
                 </div>
 
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-6 col-md-6">
 
 
-                    <div class="cart__discount ">
-                        <h6>Discount codes</h6>
-                        <form action="#">
-                            <input type="text" placeholder="Coupon code">
-                            <button type="submit">Apply</button>
-                        </form>
-                    </div>
+
 
                     <div class="checkout__order">
                         <h4 class="order__title">Your order</h4>
@@ -143,34 +91,36 @@
                         <ul class="checkout__total__products">
                             <% products.forEach((product,id)=> { %>
                                 <li>
-                                    <%= id+1 %> . <%= product.productName %>*<%= product.quantity %>
-                                                <span id="total-price-<%= product._id %>">₹<%= product.totalPrice %>
-                                                </span>
+                                    <%= id+1 %> . <%= product.productName %>* <label id="product-quantity">
+                                                <%= product.quantity %>
+                                            </label>
+                                            <span id="total-price-<%= product._id %>">₹<%= product.totalPrice %>
+                                                <span class="d-none" id="variationID"><%= product.variationID %></span>
+                                                <span class="d-none" id="productID"><%= product.productId %></span>
+                                            </span>
                                 </li>
                                 <% }); %>
                         </ul>
                         <ul class="checkout__total__all">
-                            <li>Subtotal <span id="cart-subtotal">₹<%= (products.reduce((total, product)=> total +
-                                        product.totalPrice, 0)).toFixed(2) %></span></li>
                             <li>Coupon Applied <span>- ₹ 0</span></li>
-                            <li>Delivery Charges <span>₹ 0</span></li>
+                            <li>Discount Price <span>- ₹ 0</span></li>
+                            <li>Delivery Charges <span>Free Delivery</span></li>
+                            <hr>
+                            <li>Subtotal <span id="cart-subtotal">₹<%= (products.reduce((total, product)=> total
+                                        +
+                                        product.totalPrice, 0)).toFixed(2) %></span></li>
+
+                            <li>Tax (10%) <span id="cart-tax">₹ <%= tax %></span></li>
                             <hr>
                             <li>Total <span id="cart-total">₹<%= (products.reduce((total, product)=> total +
-                                        product.totalPrice,
-                                        0)).toFixed(2) %></span></li>
+                                        product.totalPrice, tax)).toFixed(2) %></span></li>
                         </ul>
-                        <!-- <div class="checkout__input__checkbox">
-                            <label for="acc-or">
-                                Create an account?
-                                <input type="checkbox" id="acc-or">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div> -->
+
 
                         <div class="checkout__input__checkbox">
-                            <label for="payment-cod">
+                            <label for="payment-COD">
                                 Cash On Delivery
-                                <input type="radio" id="payment-cod" name="payment-method">
+                                <input type="radio" id="payment-COD" name="payment-method" checked>
                                 <span class="checkmark"></span>
                             </label>
                         </div>
@@ -216,186 +166,70 @@
 
 
         function gatherCheckoutData() {
-            const products = [];
-            document.querySelectorAll('.product-item').forEach(item => {
-                const productName = item.querySelector('.product-name').innerText;
-                const quantity = parseInt(item.querySelector('.product-quantity').value, 10);
-                const totalPrice = parseFloat(item.querySelector('.product-total-price').innerText.replace('$', ''));
-
-                products.push({ productName, quantity, totalPrice });
+            const orderedItems = [];
+            document.querySelectorAll('.checkout__total__products li').forEach(item => {
+                const productId = item.querySelector('#productID')?.textContent // Extract product ID from span id
+                const quantity = parseInt(item.querySelector('#product-quantity')?.textContent || 1, 10); // Default to 1 if not found
+                const price = parseFloat(item.querySelector('span').innerText.replace('₹', ''));
+                const variationID = item.querySelector('#variationID')?.textContent
+                orderedItems.push({ productId, quantity, price, variationID });
             });
-
-            const finalPrice = parseFloat(document.querySelector('#final-price').innerText.replace('$', ''));
-            const selectedAddress = document.querySelector('input[name="address"]:checked').value;
-            const paymentOption = document.querySelector('input[name="paymentOption"]:checked').value;
-
+            
+            
+            const subtotal = parseFloat(document.querySelector('#cart-subtotal').innerText.replace('₹', ''));
+            const tax = parseFloat(document.querySelector('#cart-tax').innerText.replace('₹', ''));
+            const totalPrice = parseFloat(document.querySelector('#cart-total').innerText.replace('₹', ''));
+            const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked')?.value;
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.id.split('-')[1];
+            // const paymentMethod = "COD"
             return {
-                products,
-                finalPrice,
-                selectedAddress,
-                paymentOption
+                orderedItems,//
+                subtotal,
+                tax,
+                totalPrice,
+                selectedAddressId,
+                paymentMethod//
             };
         }
 
-
-
         function placeOrder() {
-            const isCODSelected = document.getElementById('payment-cod').checked;
 
-            if (isCODSelected) {
-                        const checkoutData = gatherCheckoutData();
-                        axios.post('/placeOrder', checkoutData)
-                            .then(response => {
-                                if (response.data.success) {
-                                    Swal.fire({
-                                        title: 'Order Success!',
-                                        text: 'Your order has been placed successfully!',
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    });
-                                    window.location.href = '/orderConfirmation';
-                                } else {
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: 'Failed to place order. Please try again.',
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error placing order:', error);
-                                alert('An error occurred while placing your order. Please try again.');
-                            });
-                    
-            } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Order is only possible in Cash On Delivery (COD) mode.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
+            const orderData = gatherCheckoutData();
 
-
-
-
-
-        }
-
-        function updateCartItem(productId) {
-            const inputField = document.getElementById(`quantity-${productId}`);
-            let quantity = parseInt(inputField.value);
-
-            if (quantity < 1) {
-                quantity = 1;
-                inputField.value = 1;
-
-                showErrorToast('Invalid Quantity!', 'Quantity cannot be less than 1.');
-            } else if (quantity > 10) {
-                quantity = 10;
-                inputField.value = 10;
-                showErrorToast('Invalid Quantity!', 'Quantity cannot be greater than 10.');
-            }
-
-            axios.post('/updateCartItem', { productId, quantity })
+            
+            axios.post('/placeOrder', orderData)
                 .then(response => {
                     if (response.data.success) {
-                        const totalPriceElement = document.getElementById(`total-price-${productId}`);
-                        const newTotalPrice = response.data.totalPrice;
-                        totalPriceElement.innerHTML = `₹${newTotalPrice.toFixed(2)}`;
-                        updateCartTotal();
-                    } else {
-                        showErrorToast('Failed!', 'Failed to update product quantity.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating checkout item:', error);
-                    showErrorToast('Error', 'An error occurred while updating the checkout.');
-                });
-        }
-
-
-        function updateCartTotal() {
-            axios.get('/cartTotal')
-                .then(response => {
-                    if (response.data.success) {
-                        const cartSubtotalElement = document.getElementById('cart-subtotal');
-                        const cartTotalElement = document.getElementById('cart-total');
-                        const newSubtotal = response.data.subtotal;
-                        const newTotal = response.data.total;
-
-                        cartSubtotalElement.innerHTML = `₹${newSubtotal.toFixed(2)}`;
-                        cartTotalElement.innerHTML = `₹${newTotal.toFixed(2)}`;
-                    }
-                    // window.location.reload()
-                })
-                .catch(error => {
-                    console.error('Error fetching checkout total:', error);
-                });
-        }
-
-        function showErrorToast(title, text) {
-            Swal.fire({
-                toast: true,
-                timer: 1500,
-                timerProgressBar: true,
-                title: text,
-                icon: 'warning',
-                position: 'top-end',
-                showConfirmButton: false,
-                customClass: {
-                    popup: 'custom-toast'
-                }
-            });
-        }
-
-
-        function removeFromCart(itemId) {
-            axios.post('/removeFromCart', { itemId })
-                .then(response => {
-                    if (response.data.success) {
-                        const cartItem = document.getElementById(`cart-item-${itemId}`);
-                        if (cartItem) {
-                            cartItem.remove();
-                        }
                         Swal.fire({
-                            toast: true,
-                            timer: 1000,
-                            timerProgressBar: true,
-                            // title: 'Removed!',
-                            title: response.data.message,
+                            title: 'Order Success!',
+                            text: 'Your order has been placed successfully!',
                             icon: 'success',
-                            position: 'top-end',
+                            timer: 2000,
                             showConfirmButton: false,
-                            customClass: {
-                                popup: 'custom-toast'
-                            }
+                        }).then(()=>{
+                            window.location.href = `/orderSuccess/${response.data.orderId}`;
+
                         })
-                        updateCartTotal();
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to place order. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     }
                 })
                 .catch(error => {
+                    console.error('Error placing order:', error);
                     Swal.fire({
-                        toast: true,
-                        timer: 1000,
-                        timerProgressBar: true,
-                        title: 'Error!',
-                        text: 'Failed to remove product from checkout.',
-                        icon: 'error',
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        customClass: {
-                            popup: 'custom-toast'
-                        }
-                    });
-                    updateCartTotal();
-                    console.error(error);
+                            title: 'Error!',
+                            text: 'An error occurred while placing your order. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                 });
+
         }
-
-
-
 
     </script>
 

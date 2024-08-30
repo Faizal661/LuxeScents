@@ -21,9 +21,13 @@ const cartSchema=new mongoose.Schema({
         },
         totalPrice:{
             type:Number,
+        },
+        variationID:{
+            type:mongoose.Schema.Types.ObjectId,
+            required:true
         }
-
-    }]
+    },
+    ]
 })
 
 module.exports= mongoose.model("Cart",cartSchema)

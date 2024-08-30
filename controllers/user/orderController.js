@@ -2,27 +2,26 @@ const Product = require('../../models/productSchema')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 const Order = require('../../models/orderSchema'); 
 
-const placeOrder = async (req, res) => {
+const orderSuccess = async (req, res) => {
     try {
-        const { products, finalPrice, selectedAddress, paymentOption } = req.body;
-
-        const newOrder = new Order({
-            products,
-            finalPrice,
-            address: selectedAddress,
-            paymentMethod: paymentOption,
-            userId: req.session.user
-        });
-
-        await newOrder.save();
-        res.status(200).json({ success: true, message: 'Order placed successfully!' });
+      res.render('orderSuccess')
     } catch (error) {
-        console.error('Error placing order:', error);
-        res.status(500).json({ success: false, message: 'Failed to place order.' });
+        console.error('Error while loading order Success page', error);
+        res.redirect("/pageNotfound")
+    }
+};
+
+const orderDetails= async (req, res) => {
+    try {
+      res.render('orderSuccess')
+    } catch (error) {
+        console.error('Error while loading order Success page', error);
+        res.redirect("/pageNotfound")
     }
 };
 
 
 module.exports={
-    placeOrder
+    orderSuccess,
+    orderDetails
 }

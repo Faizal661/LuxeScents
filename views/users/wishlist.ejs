@@ -31,11 +31,12 @@
 
                     <% products.forEach(product=> { %>
                         <div id="wishlist-item-<%= product._id %>"
-                            class="wishlist__item d-flex align-items-center border-bottom pb-3 mb-3 col-lg-5 p-2 m-5 border">
+                            class="wishlist__item d-flex align-items-center border-bottom pb-3 mb-3 ">
                             <!-- Thumbnail -->
-                            <div class="wishlist__item__thumbnail col-lg-2">
+                            <div class="wishlist__item__thumbnail col-lg-1">
                                 <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
-                                    alt="<%= product.productName %>" class="img-fluid rounded">
+                                    alt="<%= product.productName %>" class="img-fluid rounded cursor-pointer"
+                                    onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
                             </div>
                             <!-- Product Details -->
                             <div class="wishlist__item__details col-lg-4 ">
@@ -48,14 +49,13 @@
                                 <p class="mb-1"><strong>Scent:</strong>
                                     <%= product.category.name %>
                                 </p>
-                                <p class="mb-1 text-primary"><strong>Price:</strong> ₹<%= product.salePrice %>
+                                <p class="mb-1 text-primary"><strong>Price:</strong> ₹<%= product.variations[0].salePrice %>
                                 </p>
                             </div>
                             <!-- Stock and Status -->
                             <div class="wishlist__item__status col-lg-3  text-center">
-                                <p class="mb-1"><strong>Stock:</strong>
-                                    <%= product.quantity %>
-                                </p>
+                                <!-- <p class="mb-1"><strong>Stock:</strong>
+                                </p> -->
                                 <p class="mb-1"><strong>Status:</strong>
                                     <%= product.status %>
                                 </p>
