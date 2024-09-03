@@ -46,7 +46,7 @@ const categoryInfo = async (req, res) => {
         })
     } catch (error) {
         console.error(error, "Error while loading category page.");
-        res.redirect("/pageerror")
+        res.redirect("/pageError")
     }
 }
 
@@ -113,14 +113,14 @@ const toggleCategoryListing = async (req, res) => {
 
         const category = await Category.findById(categoryId);
         if (!category) {
-            return res.redirect("/pageerror");
+            return res.redirect("/pageError");
         }
         const newIsListedValue = !category.isListed;
         await Category.updateOne({ _id: categoryId }, { $set: { isListed: newIsListedValue } });
         res.redirect("/admin/category");
     } catch (error) {
         console.error(error, "Error while isListed of category.");
-        res.redirect("/pageerror");
+        res.redirect("/pageError");
     }
 };
 

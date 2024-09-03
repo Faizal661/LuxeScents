@@ -17,39 +17,52 @@
         </div>
     </section>
     <!-- Breadcrumb Section End -->
+    
     <div class="container mt-5">
-        <table class="table table-striped my-5">
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Date of Order</th>
-                    <th>Price (₹)</th>
-                    <th>Status</th>
-                    <th>Payment Method</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (orders.length === 0) { %>
-                    <tr>
-                        <td colspan="6" class="text-center">No orders found.</td>
-                    </tr>
-                <% } else { %>
-                    <% orders.forEach(order => { %>
-                        <tr>
-                            <td><%= order.orderId.slice(0,18) %></td>
-                            <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
-                            <td>₹<%= order.finalAmount.toFixed(2) %></td>
-                            <td><%= order.orderStatus %></td>
-                            <td><%= order.paymentMethod %></td>
-                            <td>
-                                <option value=""></option>
-                            </td>
-                        </tr>
-                    <% }); %>
-                <% } %>
-            </tbody>
-        </table>
+        <div class="row">
+            <% if (orders.length === 0) { %>
+                <div class="col-12">
+                    <div class="alert alert-info text-center">No orders found.</div>
+                </div>
+            <% } else { %>
+                <% orders.forEach(order => { %>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- Order Items -->
+                                <h5 class="card-title text-uppercase">
+                                    <%= order.orderedItems.length > 1 ? `${order.orderedItems[0].product.productName} ... + ${order.orderedItems.length-1}  more` : order.orderedItems[0].product.productName %>
+                                </h5>
+    
+                                <!-- Order Date -->
+                                <p class="card-text">
+                                    <strong>Date of Order:</strong> <%= new Date(order.createdAt).toLocaleDateString() %>
+                                </p>
+    
+                                <!-- Order Price -->
+                                <p class="card-text">
+                                    <strong>Price:</strong> ₹<%= order.finalAmount.toFixed(2) %>
+                                </p>
+    
+                                <!-- Payment Method -->
+                                <p class="card-text">
+                                    <strong>Payment Method:</strong> <%= order.paymentMethod %>
+                                </p>
+    
+                                <!-- Order Status -->
+                                <p class="card-text">
+                                    <strong>Status:</strong> <%= order.orderStatus %>
+                                </p>
+    
+                                <!-- Action Button -->
+                                <a href="/orderDetails?orderId=<%= order._id %>" class="btn btn-dark btn-sm">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
     </div>
+    
     
     <%- include('../partials/users/userFooter') %>

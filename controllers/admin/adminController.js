@@ -37,7 +37,7 @@ const adminLogin = async (req, res) => {
         }
     } catch (error) {
         console.log(error, 'Admin login error');
-        res.redirect("/pageerror")
+        res.redirect("/pageError")
     }
 }
 
@@ -50,7 +50,7 @@ const loadDashboard = async (req, res) => {
         res.render('admin-login', { message: null })
     } catch (error) {
         console.log(error, 'Error while loading dashboard');
-        res.redirect("/pageerror")
+        res.redirect("/pageError")
     }
 }
 
@@ -59,24 +59,25 @@ const adminLogout = async (req, res) => {
         req.session.destroy((err) => {
             if (err) {
                 console.log("Error destroying admin session", err)
-                return res.redirect("/pageerror")
+                return res.redirect("/pageError")
             }
             res.redirect('/admin/login?logout')
         })
     } catch (error) {
         console.log(error, 'Error at admin logout');
-        res.redirect("/pageerror")
+        res.redirect("/pageError")
     }
 }
 
 
 
-const pageerror = async (req, res) => {
+const pageError = async (req, res) => {
     try {
-        res.render('pageerror', { url: req.url,})
+        res.render('pageError'
+        )
     }
     catch (error) {
-        res.redirect("/pageerror")
+        res.redirect("/pageError")
     }
 }
 
@@ -86,6 +87,6 @@ module.exports = {
     loadAdminLogin,
     adminLogin,
     loadDashboard,
-    pageerror,
+    pageError,
     adminLogout
 }

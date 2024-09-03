@@ -362,6 +362,12 @@ const loadSingleProduct = async (req, res) => {
     try {
         const userId = req.session.user
         const ProductID = req.query.id
+
+        const isValidProduct=await Product.findById({_id:ProductID})
+        if(!isValidProduct){
+            res.redirect('/pageNotfound')
+        }
+
         const relatedProducts = await Product.find().populate('brand').populate('category');
         const singleProduct = await Product.findOne({ _id: ProductID }).populate('brand').populate('category').populate({ path: 'reviews.user', select: 'name' });
 

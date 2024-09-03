@@ -1,56 +1,65 @@
 <%- include('../partials/users/userHeader') -%>
 
-    <body class=" ">
-        
-        <div class="text-center pt-4" id="login">
-            <div class="container w-25  rounded py-5 ">
+    <body class="">
+
+        <div class="text-center pt-4  mb-5 mx-5" id="login">
+            <div class="container w-25  rounded py-5 border border-5 shadow">
                 <div class="title pb-4">
                     <h3 class="fw-semibold">Sign Up</h3>
                 </div>
 
-
-                <form id="signform" action="/register_new" method="post" >
+                <form id="signform" action="/register_new" method="post">
 
                     <div class="form-group">
-                        <label for="" class="float-start fw-semibold pt-2">Username</label>
-                        <input type="text" value="faizal" class="form-control mb-1" id="username" name="username" required>
+                        <label for="" class="float-start fw-semibold pt-2 d-flex justify-content-start">Username</label>
+                        <input type="text" value="faizal" class="form-control mb-1  shadow" id="username"
+                            name="username" required>
                     </div>
                     <div class="text-danger mb-1" id="errorName">
                         <span></span>
                     </div>
 
                     <div class="form-group">
-                        <label for="" class="float-start fw-semibold pt-2">Email</label>
-                        <input type="text" value="faisalt661@gmail.com" class="form-control mb-1" id="email" name="email" required>
+                        <label for="" class="float-start fw-semibold pt-2 d-flex justify-content-start">Email</label>
+                        <input type="text" value="faisalt661@gmail.com" class="form-control mb-1 shadow" id="email"
+                            name="email" required>
                     </div>
                     <div class="text-danger text-center mt-2" id="errorEmail">
                         <span></span>
                     </div>
 
                     <div class="form-group">
-                        <label for="" class="float-start fw-semibold pt-2">Phone</label>
-                        <input type="text" value="7034595039" class="form-control mb-1" id="phone" name="phone" required>
+                        <label for="" class="float-start fw-semibold pt-2 d-flex justify-content-start">Phone</label>
+                        <input type="text" value="7034595039" class="form-control mb-1 shadow" id="phone" name="phone"
+                            required>
                     </div>
                     <div class="text-danger text-center mt-2" id="errorPhone">
                         <span></span>
                     </div>
 
                     <div class="form-group">
-                        <label for="" class="float-start fw-semibold pt-2">Password</label>
-                        <input type="password" value="1234567q" class="form-control" id="password" name="password" required>
+
+                        <label for="" class="float-start fw-semibold pt-2 d-flex justify-content-start">Password</label>
+                        <div class="form-control shadow d-flex justify-content-between">
+                            <input type="password" value="1234567q" class="border border-0  col-11" id="password"
+                                name="password" required><span id="toggle-password"><i
+                                    class="fas fa-eye cursor-pointer"></i></span>
+                        </div>
+
+
                     </div>
                     <% if(locals.message && message.length>0 ) {%>
-                        <div class="alert alert-danger text-center mt-2"  >
+                        <div class="alert alert-danger text-center mt-2">
                             <%= message %>
                         </div>
                         <% } %>
-                    <div class="text-danger text-center mt-2" id="errorPassword">
-                        <span></span>
-                    </div>
+                            <div class="text-danger text-center mt-2" id="errorPassword">
+                                <span></span>
+                            </div>
 
 
 
-                    <button type="submit" class="btn btn-dark rounded-pill w-100">Sign Up</button>
+                            <button type="submit" class="btn btn-dark rounded-pill w-100 shadow">Sign Up</button>
                 </form>
                 <div class="d-flex align-items-center pt-4">
                     <hr class="flex-grow-1">
@@ -58,10 +67,11 @@
                     <hr class="flex-grow-1">
                 </div>
                 <div class="title py-2">
-                    <a href="/auth/google" class="font-weight-bold btn rounded-pill border border-2 w-100 text-dark">
-                            <img src="img/googleLogo.png" alt="Google Logo" height="22">
-                            Sign in with Google
-                        </a>
+                    <a href="/auth/google"
+                        class="font-weight-bold btn rounded-pill border border-2 w-100 text-dark shadow">
+                        <img src="img/googleLogo.png" alt="Google Logo" height="22">
+                        Sign in with Google
+                    </a>
                 </div>
 
 
@@ -73,6 +83,23 @@
         </div>
 
         <script src="/user-assets/js/signUp.js"></script>
+        <script>
+            const passwordInput = document.getElementById('password');
+            const togglePasswordBtn = document.getElementById('toggle-password');
 
+            togglePasswordBtn.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type)
+                const icon = togglePasswordBtn.querySelector('i')
+                if (type === 'password') {
+                    icon.classList.remove('fa-eye')
+                    icon.classList.add('fa-eye-slash')
+
+                } else {
+                    icon.classList.remove('fa-eye-slash')
+                    icon.classList.add('fa-eye')
+                }
+            })
+        </script>
 
         <%- include("../partials/users/userFooter") -%>

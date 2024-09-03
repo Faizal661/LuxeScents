@@ -1,83 +1,112 @@
 <%- include('../partials/users/userHeader') -%>
-        
-        <div class="text-center pt-5 pb-3 " id="login">
-            <h5 class="text-success text-center fw-bold" id="logout">
-                <span></span>
-            </h5>
-            <h5 class="text-danger text-center fw-bold" id="blocked">
-                <span></span>
-            </h5>
-            <h5 class="text-success text-center fw-bold" id="newuser">
-                <span></span>
-            </h5>
-            <div class="container w-25  rounded pt-5 mb-5">
-                <div class="title pb-5">
-                    <h3 class="fw-semibold">Sign in</h3>
-                </div>
-                <div class="title pb-4 ">
-                    <a href="/auth/google">
 
-                        <button class="font-weight-bold btn rounded-pill border border-2 w-100 text-dark">
-                            <img src="img/googleLogo.png" alt="" height="22">
-                            Sign in with Google
-                        </button></a>
+    <div class="text-center pt-5 pb-3 " id="login">
+        <h5 class="text-success text-center fw-bold" id="logout">
+            <span></span>
+        </h5>
+        <h5 class="text-danger text-center fw-bold" id="blocked">
+            <span></span>
+        </h5>
+        <h5 class="text-success text-center fw-bold" id="newuser">
+            <span></span>
+        </h5>
+        <div class="container w-25  rounded pt-5 mb-5 shadow-lg p-3">
+            <div class="title pb-5">
+                <h3 class="fw-semibold">Sign in</h3>
+            </div>
+            <div class="title pb-4 ">
+                <a href="/auth/google">
+
+                    <button class="font-weight-bold btn rounded-pill border border-2 w-100 text-dark shadow">
+                        <img src="img/googleLogo.png" alt="" height="22">
+                        Sign in with Google
+                    </button></a>
+            </div>
+            <div class="d-flex align-items-center">
+                <hr class="flex-grow-1">
+                <span class="mx-2">or sign in with email</span>
+                <hr class="flex-grow-1">
+            </div>
+
+            <form action="/login" method="post">
+                <label for="" class="float-start fw-semibold pt-3 d-flex justify-content-start">Email</label>
+                <div class="form-group">
+                    <input type="email" class="form-control mb-3 shadow" value="faisalt661@gmail.com" name="email"
+                        required>
                 </div>
-                <div class="d-flex align-items-center">
-                    <hr class="flex-grow-1">
-                    <span class="mx-2">or sign in with email</span>
-                    <hr class="flex-grow-1">
+                <div class="pt-3 d-flex justify-content-between">
+                    <label for="" class="float-start fw-semibold ">Password</label>
+                    <a href="/forgotPassword"><span class="float-end text-decoration-underline text-black">Forgot
+                            password ?</span></a>
                 </div>
 
-                <form action="/login" method="post">
-                    <label for="" class="float-start fw-semibold pt-3">Email</label>
-                    <div class="form-group">
-                        <input type="email" class="form-control mb-3" value="faisalt661@gmail.com" name="email"
-                            required>
+
+                <!-- <div class="form-control shadow d-flex justify-content-between">
+                    <input type="password" value="1234567q" class="border border-0" id="password" name="password"
+                        required><span id="toggle-password"><i class="fas fa-eye cursor-pointer"></i></span>
+                </div> -->
+                <div class="form-control shadow d-flex justify-content-between">
+                    <input type="password" class=" col-11 border border-0" value="1234567q" id="password" name="password"
+                        required>
+                    <span id="toggle-password"><i class="fas fa-eye cursor-pointer"></i></span>
+                </div>
+
+
+
+                <% if(locals.message && message.length>0 ) {%>
+                    <div class="alert alert-danger text-center mt-2">
+                        <%= message %>
                     </div>
-                    <div class="pt-3">
-                        <label for="" class="float-start fw-semibold ">Password</label>
-                        <a href="/forgotPassword"><span class="float-end text-decoration-underline text-black">Forgot
-                                password ?</span></a>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control" value="1234567q" name="password" required>
-                    </div>
-                    <% if(locals.message && message.length>0 ) {%>
-                        <div class="alert alert-danger text-center mt-2">
-                            <%= message %>
+                    <% } %>
+                        <div class="text-warning text-center mt-2" id="msg">
+                            <span></span>
                         </div>
-                        <% } %>
-                            <div class="text-warning text-center mt-2" id="msg">
-                                <span></span>
-                            </div>
-                            <button type="submit" class="btn btn-dark rounded-pill w-100">Sign In</button>
-                </form>
-                <div class="mb-5 mt-4">
-                    Don't have an account ? <a href="/signup" class=" text-black">Sign up</a>
-                </div>
+                        <button type="submit" class="btn btn-dark rounded-pill w-100 shadow">Sign In</button>
+            </form>
+            <div class="mb-5 mt-4">
+                Don't have an account ? <a href="/signup" class=" text-black">Sign up</a>
             </div>
         </div>
+    </div>
 
 
-        <script>
-            const url = window.location.search.substring(1)
-            console.log(url)
-            if (url === 'invalid') {
-                const spanMsg = document.getElementById('msg').querySelector('span');
-                spanMsg.innerText = "Invalid Username and Password";
-            } else if (url === 'logout') {
-                const spanMsg = document.getElementById('logout').querySelector('span');
-                spanMsg.innerText = "Logout successfully";
+    <script>
+        const url = window.location.search.substring(1)
+        console.log(url)
+        if (url === 'invalid') {
+            const spanMsg = document.getElementById('msg').querySelector('span');
+            spanMsg.innerText = "Invalid Username and Password";
+        } else if (url === 'logout') {
+            const spanMsg = document.getElementById('logout').querySelector('span');
+            spanMsg.innerText = "Logout successfully";
+        }
+        else if (url === 'newuser') {
+            const spanMsg = document.getElementById('newuser').querySelector('span');
+            spanMsg.innerText = "User registered successfully, Login with your new account ";
+        }
+        else if (url === 'blocked') {
+            const spanMsg = document.getElementById('blocked').querySelector('span');
+            spanMsg.innerText = "User is blocked by Admin ";
+        }
+    </script>
+    <script>
+        const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('toggle-password');
+
+        togglePasswordBtn.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type)
+            const icon = togglePasswordBtn.querySelector('i')
+            if (type === 'password') {
+                icon.classList.remove('fa-eye')
+                icon.classList.add('fa-eye-slash')
+
+            } else {
+                icon.classList.remove('fa-eye-slash')
+                icon.classList.add('fa-eye')
             }
-            else if (url === 'newuser') {
-                const spanMsg = document.getElementById('newuser').querySelector('span');
-                spanMsg.innerText = "User registered successfully, Login with your new account ";
-            }
-            else if (url === 'blocked') {
-                const spanMsg = document.getElementById('blocked').querySelector('span');
-                spanMsg.innerText = "User is blocked by Admin ";
-            }
-        </script>
+        })
+    </script>
 
 
-        <%- include('../partials/users/userFooter') -%>
+    <%- include('../partials/users/userFooter') -%>

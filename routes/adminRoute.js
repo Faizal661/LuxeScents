@@ -7,7 +7,7 @@ const categoryController = require('../controllers/admin/categoryController')
 const productController = require('../controllers/admin/productController')
 const orderController= require('../controllers/admin/orderController')
 
-adminRouter.get('/pageerror', adminAuth, adminController.pageerror)
+adminRouter.get('/pageError', adminAuth, adminController.pageError)
 
 adminRouter.get('/login', adminController.loadAdminLogin)
 adminRouter.post('/admin-login', adminController.adminLogin)
@@ -42,10 +42,12 @@ adminRouter.post('/editProduct/:id', adminAuth, productController.editProduct)
 
 //orders
 adminRouter.get('/orders', adminAuth, orderController.orderInfo)
+adminRouter.get('/orderDetails',adminAuth,orderController.orderDetails)
+adminRouter.post('/updateOrderStatus', adminAuth, orderController.updateOrderStatus)
 
 
 
 //page error
-adminRouter.get('*', adminController.pageerror)
+adminRouter.get('*', adminController.pageError)
 
 module.exports = adminRouter;  

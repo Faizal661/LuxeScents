@@ -72,7 +72,7 @@ const loadOrders=async(req,res)=>{
     try {
         const userId = req.session.user; 
         
-        const orders = await Order.find({ userId }).sort({ createdAt: -1 }); 
+        const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate('orderedItems.product')
 
         res.render('orders', { orders });
     } catch (error) {

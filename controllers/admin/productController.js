@@ -58,7 +58,7 @@ const productInfo = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.redirect("/pageerror");
+        res.redirect("/pageError");
     }
 }
 
@@ -69,7 +69,7 @@ const toggleProductListing = async (req, res) => {
         const productId = req.query.id;
         const product = await Product.findById(productId);
         if (!product) {
-            return res.redirect("/pageerror");
+            return res.redirect("/pageError");
         }
         const newStatus = !product.isBlocked;
 
@@ -78,7 +78,7 @@ const toggleProductListing = async (req, res) => {
         res.redirect("/admin/products");
     } catch (error) {
         console.error(error, "Error while toggling product listing status.");
-        res.redirect("/pageerror");
+        res.redirect("/pageError");
     }
 };
 
@@ -90,7 +90,7 @@ const getAddProduct = async (req, res) => {
         res.render('addProducts', { adminName: req.session.adminName, categories: categories, brands: brands })
     } catch (error) {
         console.error(error);
-        res.redirect("/pageerror")
+        res.redirect("/pageError")
     }
 }
 
@@ -154,7 +154,7 @@ const getEditProduct = async (req, res) => {
         res.render('editProduct', { adminName: req.session.adminName, categories: categories, brands: brands, product })
     } catch (error) {
         console.error(error);
-        res.redirect("/pageerror")
+        res.redirect("/pageError")
     }
 }
 
