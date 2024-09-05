@@ -23,15 +23,15 @@
                             <!-- Product Details -->
                             <div class="col-md-6">
                                 <div class="mb-4">
-                                    <label for="product_name" class="form-label">Name</label> 
-                                    <input type="text" name="productName" placeholder="Type here" value="preoudt one"
+                                    <label for="product_name" class="form-label">Name</label>
+                                    <input type="text" name="productName" placeholder="Type here" 
                                         class="form-control shadow" id="product_name" />
                                     <div id="name-error" class="error-message"></div>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
-                                    <textarea placeholder="Type here" name="description" class="form-control shadow" 
-                                        id="descriptionId" rows="3">preoudt one descrrr</textarea>
+                                    <textarea placeholder="Type here" name="description" class="form-control shadow"
+                                        id="descriptionId" rows="3"></textarea>
                                     <div id="description-error" class="error-message"></div>
                                 </div>
                                 <div class="mb-4">
@@ -89,13 +89,12 @@
                             <!-- Variations Section -->
                             <div class="col-md-12">
                                 <div class="mb-4">
-                                    <label class="form-label">Variations</label>
+                                    <label class="">Variations</label><hr>
                                     <div id="variations-container">
-
                                         <!-- Initial Variation Input -->
                                         <div class="variation-item">
-                                            <div class="row">
-                                                <div class="col-md-3">
+                                            <div class="row ">
+                                                <div class="col-md-2 ms-5">
                                                     <label class="form-label">Size</label>
                                                     <select name="variations[0][size]"
                                                         class="form-select shadow form-control">
@@ -107,25 +106,26 @@
                                                     </select>
                                                     <div id="variation-0-size-error" class="error-message"></div>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <label class="form-label">Quantity</label>
-                                                    <input type="number" name="variations[0][quantity]" value="88"
-                                                        placeholder="Type here" class="form-control shadow" />
+                                                    <input type="number" name="variations[0][quantity]" 
+                                                        id="variation-0-quantity" placeholder="Type here"
+                                                        class="form-control shadow" />
                                                     <div id="variation-0-quantity-error" class="error-message"></div>
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <label class="form-label">Regular Price</label>
-                                                    <input type="number" name="variations[0][regularPrice]" value="388"
-                                                        placeholder="Type here" class="form-control shadow" />
+                                                    <input type="number" name="variations[0][regularPrice]" 
+                                                        id="variation-0-regularPrice" placeholder="Type here"
+                                                        class="form-control shadow" />
                                                     <div id="variation-0-regularPrice-error" class="error-message">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <label class="form-label">Sale Price</label>
-                                                    <input type="number" name="variations[0][salePrice]"  value="278"
-                                                        placeholder="Type here" class="form-control shadow" />
+                                                    <input type="number" name="variations[0][salePrice]" 
+                                                        id="variation-0-salePrice" placeholder="Type here"
+                                                        class="form-control shadow" />
                                                     <div id="variation-0-salePrice-error" class="error-message"></div>
                                                 </div>
 

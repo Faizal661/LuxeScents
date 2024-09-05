@@ -2,7 +2,6 @@ async function handleFormSubmit(event) {
 
     event.preventDefault();
 
-
     if (!validateForm()) {
         console.log("Form validation failed");
         return;
@@ -10,7 +9,6 @@ async function handleFormSubmit(event) {
 
     const formData = new FormData();
     const formElements = event.target.elements;
-    
 
     formData.append('productName', formElements['productName'].value.trim());
     formData.append('description', formElements['description'].value);
@@ -35,7 +33,6 @@ async function handleFormSubmit(event) {
     });
 
 
-
     croppedImagesArray.forEach((image, index) => {
         const blob = dataURItoBlob(image);
         formData.append('productImages', blob, `croppedImage${index}.png`);
@@ -46,22 +43,20 @@ async function handleFormSubmit(event) {
         method: 'POST',
         body: formData
     })
-        .then(response => {
+        .then(async response => {
             if (response.ok) {
-                return response.json().then(data => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: "Success",
-                        text: "product added successfully",
-                        timer: 2000
-                    }).then(() => {
-                        window.location.href = "/admin/products";
-                    });
+                const data = await response.json();
+                Swal.fire({
+                    icon: 'success',
+                    title: "Success",
+                    text: "product added successfully",
+                    timer: 2000
+                }).then(() => {
+                    window.location.href = "/admin/products";
                 });
             } else {
-                return response.json().then(err => {
-                    throw new Error(err.error);
-                });
+                const err = await response.json();
+                throw new Error(err.error);
             }
         })
         .catch(error => {
@@ -86,8 +81,6 @@ function dataURItoBlob(dataURI) {
     return new Blob([ab], { type: mimeString });
 }
 
-
-
 // varaitions management in add productt
 
 let variationCount = 1;
@@ -102,7 +95,6 @@ document.getElementById('add-variation-btn').addEventListener('click', function 
         });
         return;
     }
-
     const container = document.getElementById('variations-container');
 
     const newVariation = document.createElement('div');
@@ -110,9 +102,9 @@ document.getElementById('add-variation-btn').addEventListener('click', function 
     newVariation.innerHTML = `
         <div class="row">
             <div class="text-end mt-2">
-            <button type="button" class="btn btn-warning remove-variation-btn">X</button>
+            <button type="button" class="btn btn-danger remove-variation-btn">X</button>
         </div>
-            <div class="col-md-3">
+            <div class="col-md-2 ms-5">
                 <label class="form-label">Size</label>
                 <select name="variations[${variationCount}][size]" class="form-select shadow form-control">
                     <option value="25ml">25ml</option>
@@ -122,23 +114,22 @@ document.getElementById('add-variation-btn').addEventListener('click', function 
                     <option value="150ml">150ml</option>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Quantity</label>
-                <input type="number" name="variations[${variationCount}][quantity]" placeholder="Type here" class="form-control shadow" />
+                <input type="number" name="variations[${variationCount}][quantity]" placeholder="Type here" class="form-control shadow" id="variation-${variationCount}-quantity" />
+                <div id="variation-${variationCount}-quantity-error" class="error-message"></div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Regular Price</label>
-                <input type="number" name="variations[${variationCount}][regularPrice]" placeholder="Type here" class="form-control shadow" />
+                <input type="number" name="variations[${variationCount}][regularPrice]" placeholder="Type here" class="form-control shadow" id="variation-${variationCount}-regularPrice"/>
+                <div id="variation-${variationCount}-regularPrice-error" class="error-message"></div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Sale Price</label>
-                <input type="number" name="variations[${variationCount}][salePrice]" placeholder="Type here" class="form-control shadow" />
+                <input type="number" name="variations[${variationCount}][salePrice]" placeholder="Type here" class="form-control shadow" id="variation-${variationCount}-salePrice"/>
+                <div id="variation-${variationCount}-salePrice-error" class="error-message"></div>
             </div>
-            
         </div>
-        
         <hr>
     `;
     container.appendChild(newVariation);
@@ -150,24 +141,12 @@ document.getElementById('add-variation-btn').addEventListener('click', function 
     });
 });
 
-
-
 //validation of forms
 
 function validateForm() {
     clearErrorMessage();
     const name = document.getElementsByName("productName")[0].value.trim();
     const description = document.getElementById("descriptionId").value.trim();
-
-    // const quantityInput = document.getElementById("quantityId").value.trim();
-    // const regularPriceInput = document.getElementById("regularPriceId").value.trim();
-    // const salePriceInput = document.getElementById("salePriceId").value.trim();
-
-    // const quantity = quantityInput === "" ? NaN : parseFloat(quantityInput);
-    // const regularPrice = regularPriceInput === "" ? NaN : parseFloat(regularPriceInput);
-    // const salePrice = salePriceInput === "" ? NaN : parseFloat(salePriceInput);
-
-    const sizes = Array.from(document.querySelectorAll('input[name="size"]:checked'));
     const files = document.getElementById('productImages').files;
 
     let isValid = true;
@@ -185,75 +164,52 @@ function validateForm() {
         isValid = false
     }
 
-    // if (isNaN(quantity)) {
-    //     displayErrorMessage("quantity-error", "Please enter Stock of the product");
-    //     isValid = false;
-    // } else if (quantity < 0) {
-    //     displayErrorMessage("quantity-error", "Stock quantity can't be a negative value");
-    //     isValid = false;
-    // }
+    if (croppedImagesArray.length < 4) {
+        displayErrorMessage("images-error", "Please select at least four images");
+        isValid = false;
+    }
 
+    // Variation validation (loop through all variations)
+    const variationItems = document.querySelectorAll('.variation-item');
+    variationItems.forEach((item, index) => {
+        const quantityInput = item.querySelector(`[name="variations[${index}][quantity]"]`).value.trim();
+        const regularPriceInput = item.querySelector(`[name="variations[${index}][regularPrice]"]`).value.trim();
+        const salePriceInput = item.querySelector(`[name="variations[${index}][salePrice]"]`).value.trim();
 
+        const quantity = quantityInput === "" ? NaN : parseFloat(quantityInput);
+        const regularPrice = regularPriceInput === "" ? NaN : parseFloat(regularPriceInput);
+        const salePrice = salePriceInput === "" ? NaN : parseFloat(salePriceInput);
 
-    // if (isNaN(regularPrice)) {
-    //     displayErrorMessage("regularPrice-error", "Please enter Regular Price");
-    //     isValid = false;
-    // } else if (regularPrice <= 0) {
-    //     displayErrorMessage("regularPrice-error", "Regular Price can't be a negative value or zero");
-    //     isValid = false;
-    // }
+        // Quantity validation
+        if (isNaN(quantity)) {
+            displayErrorMessage(`variation-${index}-quantity-error`, "Please enter the stock of the product");
+            isValid = false;
+        } else if (quantity < 0) {
+            displayErrorMessage(`variation-${index}-quantity-error`, "Stock quantity can't be a negative value");
+            isValid = false;
+        }
 
-    // if (isNaN(salePrice)) {
-    //     displayErrorMessage("salePrice-error", "Please enter Sale Price");
-    //     isValid = false;
-    // } else if (salePrice <= 0) {
-    //     displayErrorMessage("salePrice-error", "Sale Price can't be a negative value or zero");
-    //     isValid = false;
-    // } else if (salePrice > regularPrice) {
-    //     displayErrorMessage("salePrice-error", "Sale Price must be lower than regular price");
-    //     isValid = false;
-    // }
+        // Regular Price validation
+        if (isNaN(regularPrice)) {
+            displayErrorMessage(`variation-${index}-regularPrice-error`, "Please enter Regular Price");
+            isValid = false;
+        } else if (regularPrice <= 0) {
+            displayErrorMessage(`variation-${index}-regularPrice-error`, "Regular Price can't be a negative value or zero");
+            isValid = false;
+        }
 
-    // if (sizes.length === 0) {
-    //     displayErrorMessage("size-error", "Please select at least one size");
-    //     isValid = false;
-    // }
-
-
-    // if (croppedImagesArray.length < 4) {
-    //     displayErrorMessage("images-error", "Please select at least four images");
-    //     isValid = false;
-    // }
-
-
-    // Variations Validation
-    // const variations = document.querySelectorAll('.variation');
-    // if (variations.length === 0) {
-    //     displayErrorMessage("variation-error", "Please add at least one variation");
-    //     isValid = false;
-    // } else {
-    //     variations.forEach((variation, index) => {
-    //         const variationName = variation.querySelector('.variation-name').value.trim();
-    //         const variationPrice = variation.querySelector('.variation-price').value.trim();
-
-    //         if (variationName === "") {
-    //             displayErrorMessage(`variation-${index + 1}-name-error`, "Please enter a variation name");
-    //             isValid = false;
-    //         } else if (!/^[a-zA-Z\s]+$/.test(variationName)) {
-    //             displayErrorMessage(`variation-${index + 1}-name-error`, "Variation name should contain only alphabetic characters");
-    //             isValid = false;
-    //         }
-
-    //         if (isNaN(parseFloat(variationPrice))) {
-    //             displayErrorMessage(`variation-${index + 1}-price-error`, "Please enter a valid price for the variation");
-    //             isValid = false;
-    //         } else if (parseFloat(variationPrice) <= 0) {
-    //             displayErrorMessage(`variation-${index + 1}-price-error`, "Variation price can't be zero or negative");
-    //             isValid = false;
-    //         }
-    //     });
-    // }
-
+        // Sale Price validation
+        if (isNaN(salePrice)) {
+            displayErrorMessage(`variation-${index}-salePrice-error`, "Please enter Sale Price");
+            isValid = false;
+        } else if (salePrice <= 0) {
+            displayErrorMessage(`variation-${index}-salePrice-error`, "Sale Price can't be a negative value or zero");
+            isValid = false;
+        } else if (salePrice > regularPrice) {
+            displayErrorMessage(`variation-${index}-salePrice-error`, "Sale Price must be lower than the regular price");
+            isValid = false;
+        }
+    });
 
     return isValid;
 }
@@ -277,22 +233,6 @@ function clearErrorMessage() {
     })
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //image cropping and preview of cropped images
 
@@ -338,22 +278,6 @@ function previewImages(event) {
         }
     });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 const upload = document.querySelector("#productImages");

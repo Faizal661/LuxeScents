@@ -87,10 +87,6 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
-
-
-
-
 module.exports = {
     orderInfo,
     updateOrderStatus,

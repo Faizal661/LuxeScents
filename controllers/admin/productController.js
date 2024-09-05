@@ -94,7 +94,6 @@ const getAddProduct = async (req, res) => {
     }
 }
 
-
 const uploadImages = upload.array('productImages', 10);
 
 const addProduct = async (req, res) => {
@@ -104,8 +103,6 @@ const addProduct = async (req, res) => {
                 console.error(err);
                 return res.status(400).json({ error: "Error uploading files." });
             }
-            console.log('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq', req.body)
-
             if (!req.files || req.files.length === 0) {
                 return res.status(400).json({ error: "No files uploaded." });
             }
@@ -120,7 +117,6 @@ const addProduct = async (req, res) => {
             }
 
             let variations = [];
-            // Check if the size is an array (indicating multiple variations)
             if (Array.isArray(req.body.variations)) {
                 variations = req.body.variations.map(variation => ({
                     size: variation.size,
@@ -128,14 +124,6 @@ const addProduct = async (req, res) => {
                     salePrice: parseFloat(variation.salePrice),
                     quantity: parseInt(variation.quantity, 10),
                 }));
-            // } else if (req.body.variations) { // Handle case where variations is a single object
-            //     const variation = req.body.variations;
-            //     variations = [{
-            //         size: variation.size,
-            //         regularPrice: parseFloat(variation.regularPrice),
-            //         salePrice: parseFloat(variation.salePrice),
-            //         quantity: parseInt(variation.quantity, 10),
-            //     }];
             }
 
             const newProduct = new Product({
@@ -158,7 +146,6 @@ const addProduct = async (req, res) => {
         errorResponse(res, error, "Internal server error");
     }
 };
-
 
 
 const getEditProduct = async (req, res) => {
@@ -192,9 +179,6 @@ const editProduct = async (req, res) => {
 
             let imageURL = [...existingProduct.productImages];
 
-
-
-
             if (req.body.removedImages && req.body.removedImages.length > 0) {
                 const removedImages = Array.isArray(req.body.removedImages)
                     ? req.body.removedImages
@@ -211,19 +195,28 @@ const editProduct = async (req, res) => {
 
             imageURL = Array.isArray(imageURL) ? imageURL.flat() : [imageURL];
 
+            let variations = [];
+            if (Array.isArray(req.body.variations)) {
+                variations = req.body.variations.map(variation => ({
+                    size: variation.size,
+                    regularPrice: parseFloat(variation.regularPrice),
+                    salePrice: parseFloat(variation.salePrice),
+                    quantity: parseInt(variation.quantity, 10),
+                }));
+            }
+
             const updateProduct = await Product.findByIdAndUpdate(productId, {
                 productName: req.body.productName,
                 description: req.body.description,
                 brand: req.body.brands,
                 category: req.body.category,
-                regularPrice: req.body.regularPrice,
-                salePrice: req.body.salePrice,
+                variations: variations,
                 gender: req.body.gender,
-                size: Array.isArray(req.body.size) ? req.body.size : [req.body.size],
-                quantity: req.body.quantity,
                 productImages: imageURL,
                 status: req.body.status,
             }, { new: true });
+
+            console.log('new updated data',updateProduct)
 
             if (updateProduct) {
                 res.json({ message: "Product updated successfully" });
