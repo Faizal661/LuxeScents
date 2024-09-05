@@ -20,8 +20,8 @@ const productInfo = async (req, res) => {
 
         const limit = 5;
 
-        let sort = 'createdAt'; 
-        let order = 'desc';         
+        let sort = 'createdAt';
+        let order = 'desc';
         if (req.query.sort) {
             sort = req.query.sort;
         }
@@ -97,7 +97,6 @@ const getAddProduct = async (req, res) => {
 
 const uploadImages = upload.array('productImages', 10);
 
-
 const addProduct = async (req, res) => {
     try {
         uploadImages(req, res, async (err) => {
@@ -105,6 +104,7 @@ const addProduct = async (req, res) => {
                 console.error(err);
                 return res.status(400).json({ error: "Error uploading files." });
             }
+            console.log('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq', req.body)
 
             if (!req.files || req.files.length === 0) {
                 return res.status(400).json({ error: "No files uploaded." });
@@ -119,16 +119,32 @@ const addProduct = async (req, res) => {
                 return res.status(400).json({ error: productAlreadyExists });
             }
 
+            let variations = [];
+            // Check if the size is an array (indicating multiple variations)
+            if (Array.isArray(req.body.variations)) {
+                variations = req.body.variations.map(variation => ({
+                    size: variation.size,
+                    regularPrice: parseFloat(variation.regularPrice),
+                    salePrice: parseFloat(variation.salePrice),
+                    quantity: parseInt(variation.quantity, 10),
+                }));
+            // } else if (req.body.variations) { // Handle case where variations is a single object
+            //     const variation = req.body.variations;
+            //     variations = [{
+            //         size: variation.size,
+            //         regularPrice: parseFloat(variation.regularPrice),
+            //         salePrice: parseFloat(variation.salePrice),
+            //         quantity: parseInt(variation.quantity, 10),
+            //     }];
+            }
+
             const newProduct = new Product({
                 productName: req.body.productName,
                 description: req.body.description,
                 brand: req.body.brands,
                 category: req.body.category,
-                regularPrice: req.body.regularPrice,
-                salePrice: req.body.salePrice,
+                variations: variations,
                 gender: req.body.gender,
-                size: Array.isArray(req.body.size) ? req.body.size : [req.body.size],
-                quantity: req.body.quantity,
                 productImages: imageURL,
                 status: req.body.status,
             });
@@ -177,14 +193,14 @@ const editProduct = async (req, res) => {
             let imageURL = [...existingProduct.productImages];
 
 
-     
+
 
             if (req.body.removedImages && req.body.removedImages.length > 0) {
                 const removedImages = Array.isArray(req.body.removedImages)
                     ? req.body.removedImages
                     : [req.body.removedImages];
 
-                imageURL = imageURL.filter(img => !removedImages.includes(img));         
+                imageURL = imageURL.filter(img => !removedImages.includes(img));
             }
 
             if (req.files && req.files.length > 0) {
@@ -205,7 +221,7 @@ const editProduct = async (req, res) => {
                 gender: req.body.gender,
                 size: Array.isArray(req.body.size) ? req.body.size : [req.body.size],
                 quantity: req.body.quantity,
-                productImages: imageURL, 
+                productImages: imageURL,
                 status: req.body.status,
             }, { new: true });
 
