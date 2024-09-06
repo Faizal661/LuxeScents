@@ -287,7 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
             imgContainer.remove();
             // document.getElementById('removedImages').value =JSON.stringify(removedImages); ;
         });
-        console.log('sdfsdfasdfasd');
 
         imgContainer.appendChild(img);
         imgContainer.appendChild(deleteBtn);

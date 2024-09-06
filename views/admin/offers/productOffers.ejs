@@ -1,0 +1,84 @@
+<%- include("../../views/partials/admin/header") %>
+
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css" />
+        <link rel="stylesheet" href="/admin-assets/css/productsCategory.css">
+    </head>
+
+    <body>
+        <section class="content-main">
+            <div class="content-header shadow">
+                <div class="d-flex align-items-center justify-content-between col-lg-12">
+                    <h2 class="content-title card-title col-lg-4"> Product Offers</h2>
+                    <a href="/admin/loadAddProductOfferPage" class="btn  shadow border col-lg-2">Add New Offer</a>
+                    <header class="card-header text-center bg-transparent  col-lg-4">
+                        <form action="/admin/products/" method="get">
+                            <div class="input-group input-group-sm  border border-1 rounded-pill shadow">
+                                <input type="text" class="form-control border-0 bg-transparent pt-3 ps-3"
+                                    placeholder="Search product offers by name...." name="search" />
+                                <button class="btn border border-end-0 border-top-0 border-bottom-0 border-3"
+                                    type="submit">Search</button>
+                            </div>
+                        </form>
+                    </header>
+                </div>
+
+            </div>
+
+            <div class="container card py-3 shadow">
+                <!-- Display table if there are product offers -->
+                <% if (productOffers.length >0) { %>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Offer Name</th>
+                                <th>Product Name</th>
+                                <th>Offer Percentage</th>
+                                <th>Is Active</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% productOffers.forEach(productOffer => { %>
+                                <tr>
+                                    <td><%= productOffer.offerName %></td>
+                                    <td><%= productOffer.productName %></td>
+                                    <td><%= productOffer.offerPercentage %></td>
+                                    <td>
+                                        <% if (productOffer.isActive) { %>
+                                            <span class="badge bg-success">Active</span>
+                                        <% } else { %>
+                                            <span class="badge bg-danger">Inactive</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <!-- Toggle isActive button -->
+                                        <form action="/admin/toggleOffer/<%= productOffer._id %>" method="POST" style="display:inline;">
+                                            <button type="submit" class="btn btn-warning">
+                                                <% if (productOffer.isActive) { %>Deactivate<% } else { %>Activate<% } %>
+                                            </button>
+                                        </form>
+        
+                                        <!-- Delete button -->
+                                        <form action="/admin/deleteOffer/<%= productOffer._id %>" method="POST" style="display:inline;">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <h1 class="d-flex justify-content-center py-5">No product-offers found.</h1>
+                <% } %>
+            </div>
+        
+
+
+
+
+        </section>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+        <%- include("../../views/partials/admin/footer") %>

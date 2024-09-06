@@ -143,7 +143,7 @@ const addProduct = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        errorResponse(res, error, "Internal server error");
+        res.redirect("/pageError")
     }
 };
 
