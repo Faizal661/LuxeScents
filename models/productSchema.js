@@ -60,6 +60,10 @@ const productSchema = new mongoose.Schema({
         required: true,
         default: "Available"
     },
+    offerPercentage:{
+        type:Number,
+        default:0
+    },
     rating: {
         type: Number,
         default: 0,

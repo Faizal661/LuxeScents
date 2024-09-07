@@ -19,7 +19,13 @@
                 <select name="productId" id="productId" class="form-select shadow border" required>
                     <option value="">-- Select a Product --</option>
                     <% products.forEach(product => { %>
-                        <option value="<%= product._id %>"><%= product.productName %></option>
+                        <% if (product.isBlocked !==true) { %>
+                            <% if (product.offerPercentage==0) { %>
+                                <option name="productId" value="<%= product._id %>"><%= product.productName %></option>
+                              <% }else{ %>
+                                <option name="productId" value="<%= product._id %>" class="bg-dark text-light" disabled><%= product.productName %> (Offer Already Applied) </option>
+                              <% } %>
+                        <% } %>
                     <% }); %>
                 </select>
             </div>

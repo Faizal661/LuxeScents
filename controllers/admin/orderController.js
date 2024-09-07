@@ -18,7 +18,6 @@ const orderInfo = async (req, res) => {
         const totalPages = Math.ceil(totalOrders / limit);
 
         res.render('ordersInfo', {
-            adminName: req.session.adminName,
             orders,
             currentPage: page,
             totalPages,
@@ -38,7 +37,6 @@ const orderDetails = async (req, res) => {
         }
 
         res.render('orderDetailed', {
-            adminName: req.session.adminName,
             order,
         });
     } catch (error) {

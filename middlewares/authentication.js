@@ -34,6 +34,7 @@ const adminAuth = (req, res, next) => {
         User.findOne({ isAdmin: true })
             .then(data => {
                 if (data) {
+                    res.locals.adminName= req.session.adminName
                     next();
                 } else {
                     res.redirect('/admin/login')

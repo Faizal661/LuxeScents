@@ -35,7 +35,6 @@ const categoryInfo = async (req, res) => {
         const totalPages = Math.ceil(totalCategories / limit);
 
         res.render("category", {
-            adminName: req.session.adminName,
             categoryData,
             currentPage: page,
             totalPages,

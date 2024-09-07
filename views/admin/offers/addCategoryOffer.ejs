@@ -6,31 +6,38 @@
     </head>
 
     <body>
-    <div class="container">
-        <h1>Add Offer to Category</h1>
-        <form action="/admin/addcategoryOffer" method="POST">
-            <div class="form-group">
-                <label for="offerName">Offer Name:</label>
-                <input type="text" name="offerName" id="offerName" class="form-control shadow" required>
-            </div>
+        <div class="container">
+            <h1 class="d-flex justify-content-center align-content-center py-5">Add Offer to Category</h1>
+            <form action="/admin/addcategoryOffer" method="POST" class="d-block justify-content-center align-content-center p-5 mx-5">
+                <div class="form-group">
+                    <label for="offerName">Offer Name:</label>
+                    <input type="text" name="offerName" id="offerName" class="form-control shadow" required>
+                </div>
 
-            <div class="form-group">
-                <label for="categoryId">Select Category:</label>
-                <select name="categoryId" id="categoryId" class="form-select shadow border" required>
-                    <option value="">-- Select a Category --</option>
-                    <% category.forEach(category => { %>
-                        <option value="<%= category._id %>"><%= category.name %></option>
-                    <% }); %>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="categoryId">Select Category:</label>
+                    <select name="categoryId" id="categoryId" class="form-select shadow border" required>
+                        <option value="">-- Select a Category --</option>
+                            <% category.forEach(category => { %>
+                                <% if (category.isListed !==false) { %>
+                                    <% if (category.offerPercentage==0) { %>
+                                        <option name="categoryId" value="<%= category._id %>"><%= category.name %></option>
+                                      <% }else{ %>
+                                        <option name="categoryId" value="<%= category._id %>" class="bg-dark text-light" disabled><%= category.name %> (Offer Already Applied) </option>
+                                      <% } %>
+                                <% } %>
+                            <% }); %>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="offerPercentage">Offer Percentage:</label>
-                <input type="number" name="offerPercentage" id="offerPercentage" class="form-control shadow" min="0" max="100" required>
-            </div>
+                <div class="form-group">
+                    <label for="offerPercentage">Offer Percentage:</label>
+                    <input type="number" name="offerPercentage" id="offerPercentage" class="form-control shadow" min="0"
+                        max="100" required>
+                </div>
 
-            <button type="submit" class="btn btn-primary">Add Offer</button>
-        </form>
-    </div>
+                <button type="submit" class="btn btn-primary">Add Offer</button>
+            </form>
+        </div>
 
-    <%- include("../../views/partials/admin/footer") %>
+        <%- include("../../views/partials/admin/footer") %>

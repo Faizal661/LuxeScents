@@ -51,10 +51,15 @@ adminRouter.post('/updateOrderStatus', adminAuth, orderController.updateOrderSta
 adminRouter.get('/productOffers', adminAuth,offerController.loadProductOffers)
 adminRouter.get('/loadAddProductOfferPage', adminAuth,offerController.loadAddProductOfferPage)
 adminRouter.post('/addProductOffer', adminAuth, offerController.addProductOffer)
+adminRouter.post('/toggleProductOffer/:id', adminAuth, offerController.toggleProductOffer)
+adminRouter.delete('/deleteProductOffer/:id', adminAuth, offerController.deleteProductOffer)
 
 //category offers
 adminRouter.get('/categoryOffers', adminAuth,offerController.loadCategoryOffers)
-adminRouter.get('/loadAddPCategoryOfferPage', adminAuth,offerController.loadAddCategoryOfferPage)
+adminRouter.get('/loadAddCategoryOfferPage', adminAuth,offerController.loadAddCategoryOfferPage)
+adminRouter.post('/addCategoryOffer', adminAuth, offerController.addCategoryOffer)
+adminRouter.post('/toggleCategoryOffer/:id', adminAuth, offerController.toggleCategoryOffer)
+adminRouter.delete('/deleteCategoryOffer/:id', adminAuth, offerController.deleteCategoryOffer)
 
 //page error
 adminRouter.get('*', adminController.pageError)

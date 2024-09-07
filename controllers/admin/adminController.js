@@ -45,7 +45,7 @@ const adminLogin = async (req, res) => {
 const loadDashboard = async (req, res) => {
     try {
         if (req.session.admin) {
-            return res.render("dashboard", { adminName: req.session.adminName })
+            return res.render("dashboard")
         }
         res.render('admin-login', { message: null })
     } catch (error) {

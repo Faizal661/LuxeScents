@@ -8,18 +8,18 @@ const { successResponse, errorResponse } = require('../../helpers/responseHandle
 
 const loadProductOffers = async (req, res) => {
     try {
-        const productOffers = await ProductOffer.find({});
+        const productOffers = await ProductOffer.find({}).sort({ createdAt: -1 })
         res.render('offers/productOffers', { productOffers });
     } catch (err) {
         console.error('Error loading product offers:', err);
-        res.redirect("/admin/pageError")
+        res.redirect("/pageError")
     }
 };
 
 
 const loadAddProductOfferPage = async (req, res) => {
     try {
-        const products = await Product.find({}).sort({ productName: { $collations: { locale: 'en', strength: 1 } } });
+        const products = await Product.find({}).sort({ productName: 1 });
         res.render('offers/addProductOffer', { products });
     } catch (err) {
         console.error('Error loading add Product offer page:', err);
@@ -32,22 +32,22 @@ const addProductOffer = async (req, res) => {
 
     try {
         const product = await Product.findById(productId);
-        console.log('prdict', product)
         if (!product) {
             return res.status(404).send('Product not found');
         }
 
-        // Create a new product offer
         const newOffer = new ProductOffer({
             offerName,
             productId,
-            productName: product.productName, // Use the product name from the fetched product
+            productName: product.productName,
             offerPercentage
         });
-
-        // Save the offer to the database
         await newOffer.save();
-        res.redirect('/admin/productOffers'); // Redirect to the list of product offers (you can modify this as needed)
+
+        product.offerPercentage = offerPercentage
+        await product.save()
+
+        res.redirect('/admin/productOffers');
     } catch (err) {
         console.error('Error adding product offer:', err);
         res.redirect("/pageError")
@@ -64,11 +64,28 @@ const toggleProductOffer = async (req, res) => {
             return res.status(404).send('Offer not found');
         }
 
+        const productId = offer.productId
+        const product = await Product.findById(productId);
+        if (offer.isActive) {
+            product.offerPercentage = 0
+            await product.save()
+        } else {
+            product.offerPercentage = offer.offerPercentage
+            await product.save()
+            //acrivate -> deactivate ( other offers need to deactivate based on productId in productOFfers )
+            const otherOffers = await ProductOffer.find({ productId, _id: { $ne: offer._id } });
+
+            for (let offer of otherOffers) {
+                offer.isActive = false;
+                await offer.save()
+            }
+        }
+
         // Toggle isActive status
         offer.isActive = !offer.isActive;
         await offer.save();
 
-        res.redirect('/admin/productOffers'); // Redirect back to the product offers page
+        res.redirect('/admin/productOffers'); 
     } catch (err) {
         console.error('Error toggling offer status:', err);
         res.redirect("/pageError")
@@ -78,17 +95,22 @@ const toggleProductOffer = async (req, res) => {
 const deleteProductOffer = async (req, res) => {
     const offerId = req.params.id;
 
+
     try {
-        const offer = await ProductOffer.findById(offerId);
+        const offer = await ProductOffer.findByIdAndDelete(offerId);
+
+        const productId = offer.productId
+        const product = await Product.findById(productId);
+
+        product.offerPercentage = 0
+        await product.save()
 
         if (!offer) {
-            return res.status(404).send('Offer not found');
+            return errorResponse(res, err, 'Offer not found');
         }
+        successResponse(res, {}, "Product Offer deleted successfully")
 
-        // Delete the offer from the database
-        await offer.remove();
 
-        res.redirect('/admin/productOffers'); // Redirect back to the product offers page
     } catch (err) {
         console.error('Error deleting offer:', err);
         res.redirect("/pageError")
@@ -101,8 +123,8 @@ const deleteProductOffer = async (req, res) => {
 
 const loadCategoryOffers = async (req, res) => {
     try {
-        const category = await Category.find({})
-        res.render('offers/categoryOffers', { category });
+        const categoryOffer = await CategoryOffer.find({}).sort({ createdAt: -1 })
+        res.render('offers/categoryOffers', { categoryOffer });
     } catch (err) {
         console.error('Error loading categories offers:', err);
         res.redirect("/pageError")
@@ -112,13 +134,103 @@ const loadCategoryOffers = async (req, res) => {
 const loadAddCategoryOfferPage = async (req, res) => {
     try {
         const category = await Category.find({}).sort({ name: 1 })
-        console.log('asdff', category)
         res.render('offers/addCategoryOffer', { category });
     } catch (err) {
         console.error('Error loading add category offer page:', err);
         res.redirect("/pageError")
     }
 }
+
+const addCategoryOffer = async (req, res) => {
+    const { offerName, categoryId, offerPercentage } = req.body;
+
+    try {
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(404).send('Category not found');
+        }
+
+        const newOffer = new CategoryOffer({
+            offerName,
+            categoryId,
+            categoryName: category.name,
+            offerPercentage
+        });
+        await newOffer.save();
+
+        category.offerPercentage = offerPercentage
+        await category.save()
+
+        res.redirect('/admin/CategoryOffers');
+    } catch (err) {
+        console.error('Error adding category offer:', err);
+        res.redirect("/pageError")
+    }
+}
+
+const toggleCategoryOffer = async (req, res) => {
+    const offerId = req.params.id;
+
+    try {
+        const offer = await CategoryOffer.findById(offerId);
+
+        if (!offer) {
+            return res.status(404).send('Offer not found');
+        }
+
+        const categoryId = offer.categoryId
+        const category = await Category.findById(categoryId);
+        if (offer.isActive) {
+            category.offerPercentage = 0
+            await category.save()
+        } else {
+            category.offerPercentage = offer.offerPercentage
+            await category.save()
+            //acrivate -> deactivate ( other offers need to deactivate based on categoryId in CategoryOffers )
+            const otherOffers = await CategoryOffer.find({ categoryId, _id: { $ne: offer._id } });
+
+            for (let offer of otherOffers) {
+                offer.isActive = false;
+                await offer.save()
+            }
+        }
+
+        // Toggle isActive status
+        offer.isActive = !offer.isActive;
+        await offer.save();
+
+        res.redirect('/admin/CategoryOffers'); 
+    } catch (err) {
+        console.error('Error toggling offer status:', err);
+        res.redirect("/pageError")
+    }
+};
+
+const deleteCategoryOffer = async (req, res) => {
+    const offerId = req.params.id;
+
+
+    try {
+        const offer = await CategoryOffer.findByIdAndDelete(offerId);
+
+        const categoryId = offer.categoryId
+        const category = await Category.findById(categoryId);
+
+        category.offerPercentage = 0
+        await category.save()
+
+        if (!offer) {
+            return errorResponse(res, err, 'Offer not found');
+        }
+        successResponse(res, {}, "category Offer deleted successfully")
+
+
+    } catch (err) {
+        console.error('Error deleting offer:', err);
+        res.redirect("/pageError")
+    }
+};
+
 
 
 
@@ -132,5 +244,8 @@ module.exports = {
     deleteProductOffer,
 
     loadCategoryOffers,
-    loadAddCategoryOfferPage
+    loadAddCategoryOfferPage,
+    addCategoryOffer,
+    toggleCategoryOffer,
+    deleteCategoryOffer,
 }

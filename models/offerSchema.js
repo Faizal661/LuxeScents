@@ -21,7 +21,7 @@ const ProductOfferSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     }
-})
+}, { timestamps: true });
 
 
 const categoryOfferSchema = new mongoose.Schema({
@@ -46,7 +46,8 @@ const categoryOfferSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     }
-})
+}, { timestamps: true });
+
 
 const ProductOffer = mongoose.model('ProductOffer', ProductOfferSchema);
 const CategoryOffer = mongoose.model('CategoryOffer', categoryOfferSchema);

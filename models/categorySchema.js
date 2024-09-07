@@ -16,6 +16,10 @@ const categorySchema = new mongoose.Schema({
         default:true
 
     },
+    offerPercentage:{
+        type:Number,
+        default:0
+    },
 }, { timestamps: true });
 
 
