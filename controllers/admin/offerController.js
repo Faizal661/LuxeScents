@@ -85,7 +85,7 @@ const toggleProductOffer = async (req, res) => {
         offer.isActive = !offer.isActive;
         await offer.save();
 
-        res.redirect('/admin/productOffers'); 
+        res.redirect('/admin/productOffers');
     } catch (err) {
         console.error('Error toggling offer status:', err);
         res.redirect("/pageError")
@@ -161,6 +161,13 @@ const addCategoryOffer = async (req, res) => {
         category.offerPercentage = offerPercentage
         await category.save()
 
+        //change all the offer of products that comes under this categories offer in to this offer percentage
+        const productsInThisCategory = await Product.find({ category: categoryId })
+        for (let product of productsInThisCategory) {
+            product.offerPercentage = offerPercentage;
+            await product.save()
+        }
+
         res.redirect('/admin/CategoryOffers');
     } catch (err) {
         console.error('Error adding category offer:', err);
@@ -180,18 +187,31 @@ const toggleCategoryOffer = async (req, res) => {
 
         const categoryId = offer.categoryId
         const category = await Category.findById(categoryId);
+        const productsInThisCategory = await Product.find({ category: categoryId })
+
         if (offer.isActive) {
             category.offerPercentage = 0
-            await category.save()
+            await category.save();
+            //changing all the offer of products that comes under this categories offer in to zero when this is unlisted.
+            for (let product of productsInThisCategory) {
+                product.offerPercentage = 0
+                await product.save()
+            }
         } else {
             category.offerPercentage = offer.offerPercentage
             await category.save()
-            //acrivate -> deactivate ( other offers need to deactivate based on categoryId in CategoryOffers )
-            const otherOffers = await CategoryOffer.find({ categoryId, _id: { $ne: offer._id } });
 
+            //other category offers=> {acrivate -> deactivate} ( other offers need to deactivate based on categoryId in CategoryOffers )
+            const otherOffers = await CategoryOffer.find({ categoryId, _id: { $ne: offer._id } });
             for (let offer of otherOffers) {
                 offer.isActive = false;
                 await offer.save()
+            }
+
+            //change all the offer of products that comes under this categories offer in to this offer percentage
+            for (let product of productsInThisCategory) {
+                product.offerPercentage = offer.offerPercentage
+                await product.save()
             }
         }
 
@@ -199,7 +219,7 @@ const toggleCategoryOffer = async (req, res) => {
         offer.isActive = !offer.isActive;
         await offer.save();
 
-        res.redirect('/admin/CategoryOffers'); 
+        res.redirect('/admin/CategoryOffers');
     } catch (err) {
         console.error('Error toggling offer status:', err);
         res.redirect("/pageError")
@@ -208,20 +228,25 @@ const toggleCategoryOffer = async (req, res) => {
 
 const deleteCategoryOffer = async (req, res) => {
     const offerId = req.params.id;
-
-
     try {
         const offer = await CategoryOffer.findByIdAndDelete(offerId);
 
         const categoryId = offer.categoryId
         const category = await Category.findById(categoryId);
+        const productsInThisCategory = await Product.find({ category: categoryId })
 
         category.offerPercentage = 0
         await category.save()
+        //while deleting this offer this will change all the offer of products that comes under this category offer into zero.
+        for (let product of productsInThisCategory) {
+            product.offerPercentage = 0
+            await product.save()
+        }
 
         if (!offer) {
             return errorResponse(res, err, 'Offer not found');
         }
+
         successResponse(res, {}, "category Offer deleted successfully")
 
 

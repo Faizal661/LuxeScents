@@ -133,24 +133,30 @@
                             <p>
                                 <%= singleProduct.description %>
                             </p>
-                            <% if (singleProduct.quantity===0) { %>
+                            <% if (singleProduct.variations[0].quantity===0) { %>
                                 <h5 class="mb-3 text-danger">
                                     <%= singleProduct.status %>
                                 </h5>
-                                <% } else { %>
+                                <% } else if(singleProduct.variations[0].quantity <=10) { %>
                                     <h5 class="mb-3">
-                                        <%= singleProduct.status %> (<label id="stock">
+                                        <%= singleProduct.status %> ( Only <label id="stock">
                                                 <%= singleProduct.variations[0].quantity %>
-                                            </label> in Stock)
+                                            </label> Items left)
                                     </h5>
-                                    <% } %>
-                                        <p class="fw-lighter">Gender: <%= singleProduct.gender %>
-                                        </p>
-                                        <p class="fw-lighter">Brand: <%= singleProduct.brand.brandName %>
-                                        </p>
-                                        <p class="fw-lighter">Scent : <%= singleProduct.category.name %>
-                                        </p>
-                                        <br>
+                                    <% } else { %>
+                                        <h5 class="mb-3">
+                                            <%= singleProduct.status %><label id="stock" class="d-none">
+                                                    <%= singleProduct.variations[0].quantity %>
+                                                </label>
+                                        </h5>
+                                        <% } %>
+                                            <p class="fw-lighter">Gender: <%= singleProduct.gender %>
+                                            </p>
+                                            <p class="fw-lighter">Brand: <%= singleProduct.brand.brandName %>
+                                            </p>
+                                            <p class="fw-lighter">Scent : <%= singleProduct.category.name %>
+                                            </p>
+                                            <br>
                         </div>
 
                         <script>
@@ -163,21 +169,33 @@
                                 document.getElementById('quantity-<%= singleProduct._id %>').value = 1;
                                 document.getElementById('variation_id').textContent = selectedVariation._id;
                             }
+        
+                            document.addEventListener('DOMContentLoaded', () => {
+                                const defaultInput = document.querySelector('.product__details__option__size input[checked]');
+                                if (defaultInput) {
+                                    defaultInput.parentElement.classList.add('active');
+                                }
+                            });
+
                         </script>
+
                         <div class="product__details__option">
                             <div class="product__details__option__size">
                                 <span>Sizes: </span>
                                 <% singleProduct.variations.forEach((variation, index)=> { %>
-                                    <label for="size-<%= index %>">
+                                    <label for="size-<%= index %>" class="<%= index === 0 ? 'active' : '' %>">
                                         <%= variation.size %>
                                             <input type="radio" id="size-<%= index %>" name="size"
                                                 value="<%= variation.size %>"
-                                                onclick="updateSelectedVariation('<%= JSON.stringify(variation) %>')">
+                                                onclick="updateSelectedVariation('<%= JSON.stringify(variation) %>'); handleSizeSelection(this);"
+                                                <%=index===0 ? 'checked' : '' %> >
                                     </label>
                                     <% }) %>
                             </div>
                             <p id="variation_id" class="d-none"></p>
                         </div>
+
+
 
 
 
@@ -616,7 +634,7 @@
                             timer: 800,
                             timerProgressBar: true,
                             title: 'Failed!',
-                            text: 'Failed to add product to cart ',
+                            text: 'Please check if you are logged in or not ',
                             icon: 'error',
                             position: 'top-end',
                             showConfirmButton: false,
