@@ -34,7 +34,7 @@
                                 <th>Product Name</th>
                                 <th>Offer Percentage</th>
                                 <th>Status</th>
-                                <th colspan="2">Actions</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,17 +56,16 @@
                                                 <span class="badge bg-danger">Inactive</span>
                                                 <% } %>
                                     </td>
-                                    <td>
+                                    <td class=" d-flex justify-content-evenly ">
                                         <!-- Toggle isActive button -->
                                         <form action="/admin/toggleProductOffer/<%= productOffer._id %>" method="POST"
-                                            style="display:inline;">
+                                           >
                                             <button type="submit" class="btn btn-warning">
                                                 <% if (productOffer.isActive) { %>Deactivate<% } else { %>- Activate -  <% }
                                                             %>
                                             </button>
                                         </form>
-                                    </td>
-                                    <td>
+                                 
                                         <!-- Delete button -->
 
                                         <button type="button" onclick="deleteOffer('<%= productOffer._id %>')"

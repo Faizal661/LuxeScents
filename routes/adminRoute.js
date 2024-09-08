@@ -63,7 +63,8 @@ adminRouter.delete('/deleteCategoryOffer/:id', adminAuth, offerController.delete
 //coupon management
 adminRouter.get('/coupons', adminAuth, couponController.loadCouponListingPage)
 adminRouter.get('/addCoupon', adminAuth, couponController.loadAddCouponPage)
-adminRouter.post('/addCoupon', adminAuth, couponController.loadAddCouponPage)
+adminRouter.post('/addCoupon', adminAuth, couponController.addCoupon)
+adminRouter.patch('/toggleCoupon/:couponId', couponController.toggleCouponStatus);
 
 
 //page error

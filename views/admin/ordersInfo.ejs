@@ -1,4 +1,5 @@
 <%- include("../../views/partials/admin/header") %>
+<link rel="stylesheet" href="/admin-assets/css/productsCategory.css">
 
     <body>
         <section class="content-main">
@@ -17,55 +18,55 @@
             </div>
             </div>
 
-            <div class="right mt-5 mx-5 card p-3 shadow col-sm col-md col-lg ">
-                <table class="table table-striped border border-2 table-hover table-light ">
+            <div class="container card py-3 shadow">
+                <table class="table table-bordered">
                     <thead>
                         <% if(orders.length==0){ %>
                             <h1 class="text-center">No orders found</h1>
                             <% } else{%>
-                                <tr>
-                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                <tr class="text-center">
+                                    <th>
                                         Order ID</th>
-                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                    <th>
                                         Date of Order</th>
-                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                    <th>
                                         user name</th>
-                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                    <th>
                                         Payment Method</th>
-                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                    <th>
                                         final Price</th>
-                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                    <th>
                                         Status</th>
-                                    <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold">
+                                    <th>
                                         Action</th>
                                 </tr>
                     </thead>
                     <tbody>
                         <% orders.forEach(order=> { %>
                             <tr>
-                                <td class=" border border-2 text-center">
+                                <td>
 
                                     <%= order.orderId.slice(0,18) %>
                                 </td>
-                                <td class=" border border-2 text-center">
+                                <td>
 
                                     <%= new Date(order.createdAt).toLocaleString() %>
                                 </td>
-                                <td class=" border border-2 text-center">
+                                <td>
 
                                     <%= order.userId.name %>
                                 </td>
-                                <td class=" border border-2 text-center">
+                                <td>
 
                                     <%= order.paymentMethod %>
                                 </td>
-                                <td class=" border border-2 text-center">
+                                <td>
 
                                     <%= order.finalAmount %>
                                 </td>
-                                <td class=" border border-2 text-center">
+                                <td>
 
-                                    <select class="form-select shadow form-control"
+                                    <select class="form-select shadow-sm form-control"
                                         onchange="updateOrderStatus('<%= order._id %>', this.value)">
                                         <option value="Processing" <%=order.orderStatus==='Processing' ? 'selected' : ''
                                             %>>Processing</option>
@@ -81,9 +82,9 @@
                                             >Returned</option>
                                     </select>
                                 </td>
-                                <td class=" border border-2 text-center ">
+                                <td class="text-center">
                                     <a href="/admin/orderDetails?orderId=<%= order._id %>"
-                                        class="btn btn-info shadow">View</a>
+                                        class="btn btn-info text-white shadow-sm">View</a>
                                 </td>
                             </tr>
                             <% }); %>

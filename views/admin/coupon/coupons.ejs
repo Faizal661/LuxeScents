@@ -25,7 +25,7 @@
             </div>
 
             <div class="container card py-3 shadow">
-                <% if (coupons.length > 0) { %>
+                <% if (coupons.length> 0) { %>
                     <table class="table table-bordered">
                         <thead>
                             <tr class="text-center">
@@ -40,44 +40,93 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% coupons.forEach(coupon => { %>
+                            <% coupons.forEach(coupon=> { %>
                                 <tr id="coupon-<%= coupon._id %>">
-                                    <td><%= coupon.code %></td>
-                                    <td><%= coupon.offerPrice %></td>
-                                    <td><%= coupon.minimumPrice %></td>
-                                    <td><%= coupon.usageLimit %></td>
-                                    <td><%= coupon.usedCount %></td>
-                                    <td><%= new Date(coupon.expireOn).toLocaleDateString() %></td>
+                                    <td>
+                                        <%= coupon.code %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.offerPrice %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.minimumPrice %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.usageLimit %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.usedCount %>
+                                    </td>
+                                    <td>
+                                        <%= new Date(coupon.expireOn).toLocaleDateString() %>
+                                    </td>
                                     <td>
                                         <% if (coupon.isActive) { %>
                                             <span class="badge bg-success">Active</span>
-                                        <% } else { %>
-                                            <span class="badge bg-danger">Inactive</span>
-                                        <% } %>
+                                            <% } else { %>
+                                                <span class="badge bg-danger">Inactive</span>
+                                                <% } %>
                                     </td>
-                                    <td>
-                                        <!-- Toggle isActive button -->
-                                        <form action="/admin/toggleCoupon/<%= coupon._id %>" method="POST" style="display:inline;">
-                                            <button type="submit" class="btn btn-warning">
-                                                <% if (coupon.isActive) { %>Deactivate<% } else { %>Activate<% } %>
-                                            </button>
-                                        </form>
-            
-                                        <!-- Delete button -->
-                                        <button type="button" onclick="deleteCoupon('<%= coupon._id %>')" class="btn btn-danger">
-                                            Delete
+                                    <td class=" d-flex justify-content-evenly ">
+                                        <button type="submit" class="btn btn-warning"
+                                            onclick="event.preventDefault(); toggleCouponStatus('<%= coupon._id %>')">
+                                            <% if (coupon.isActive) { %>Deactivate<% } else { %>- Activate -<% } %>
                                         </button>
+
+                                        <!-- <button type="button" onclick="deleteCoupon('<%= coupon._id %>')"
+                                            class="btn btn-danger">
+                                            Delete
+                                        </button> -->
                                     </td>
                                 </tr>
-                            <% }); %>
+                                <% }); %>
                         </tbody>
                     </table>
-                <% } else { %>
-                    <h1 class="d-flex justify-content-center py-5">No Coupons Found</h1>
-                <% } %>
+                    <% } else { %>
+                        <h1 class="d-flex justify-content-center py-5">No Coupons Found</h1>
+                        <% } %>
             </div>
 
         </section>
-    
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            function toggleCouponStatus(couponId, isActive) {
+                axios.patch(`/admin/toggleCoupon/${couponId}`)
+                    .then(response => {
+                        if (response.data.success) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title:response.data.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            setTimeout(()=>{
+                                location.reload();
+                            },1000)
+                        } else {
+                            // Show error if the operation failed
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: response.data.message,
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while toggling the coupon status.',
+                        });
+                        console.error(error);
+                    });
+            }
+        </script>
+
 
         <%- include("../../views/partials/admin/footer") %>

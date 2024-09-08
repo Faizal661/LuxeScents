@@ -28,7 +28,7 @@
             <div class="container card py-3 shadow">
                 <% if (categoryOffer.length>0) { %>
                     <table class="table table-bordered">
-                        <thead>
+                        <thead class="text-center">
                             <tr>
                                 <th>Offer Name</th>
                                 <th>Category Name</th>
@@ -56,17 +56,16 @@
                                                 <span class="badge bg-danger">Inactive</span>
                                                 <% } %>
                                     </td>
-                                    <td>
+                                    <td class=" d-flex justify-content-evenly ">
                                         <!-- Toggle isActive button -->
                                         <form action="/admin/toggleCategoryOffer/<%= categoryOffer._id %>" method="POST"
                                             style="display:inline;">
                                             <button type="submit" class="btn btn-warning">
-                                                <% if (categoryOffer.isActive) { %>Deactivate<% } else { %>Activate<% }
+                                                <% if (categoryOffer.isActive) { %>Deactivate<% } else { %>- Activate -<% }
                                                             %>
                                             </button>
                                         </form>
-                                    </td>
-                                    <td>
+                               
                                         <!-- Delete button -->
 
                                         <button type="button" onclick="deleteOffer('<%= categoryOffer._id %>')"
