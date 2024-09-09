@@ -203,7 +203,6 @@
             const orderData = await gatherCheckoutData();
 
             const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.id.split('-')[1];
-            console.log('payment methoddd',paymentMethod)
 
             if (paymentMethod === 'RazorPay') {
                 const razorpayOrder = await axios.post('/create-razorpay-order', orderData);
@@ -288,12 +287,9 @@
                             razorpayOrderId,
                             orderId
                         });
-                        console.log("payment success returned")
 
                         if (response.data.success) {
                             window.location.href = `/orderSuccess?orderId=${response.data.data.orderId}`;
-
-                            // window.location.href = `/orderSuccess?orderId=${response.data.orderId}`;
                         } else {
                             Swal.fire('Payment Failed', response.data.message, 'error');
                         }

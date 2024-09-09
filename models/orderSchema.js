@@ -1,10 +1,15 @@
 const mongoose = require("mongoose")
-
 const { v4: uuidv4 } = require('uuid')
+
+const generateOrderId = () => {
+    const uuid = uuidv4().replace(/[^0-9]/g, '').slice(0, 16);
+    return `#OD${uuid}`;
+}
+
 const orderSchema = new mongoose.Schema({
     orderId: {
         type: String,
-        default: () => uuidv4(),
+        default: generateOrderId,
         unique: true
     },
     userId: {

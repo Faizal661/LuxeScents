@@ -8,6 +8,7 @@ const productController = require('../controllers/admin/productController')
 const orderController = require('../controllers/admin/orderController')
 const offerController = require('../controllers/admin/offerController')
 const couponController = require('../controllers/admin/couponController')
+const salesReportController= require('../controllers/admin/salesReportController')
 
 adminRouter.get('/pageError', adminAuth, adminController.pageError)
 adminRouter.get('/login', adminController.loadAdminLogin)
@@ -46,7 +47,6 @@ adminRouter.get('/orderDetails', adminAuth, orderController.orderDetails)
 adminRouter.post('/updateOrderStatus', adminAuth, orderController.updateOrderStatus)
 
 
-
 //product offers
 adminRouter.get('/productOffers', adminAuth, offerController.loadProductOffers)
 adminRouter.get('/loadAddProductOfferPage', adminAuth, offerController.loadAddProductOfferPage)
@@ -67,6 +67,11 @@ adminRouter.get('/addCoupon', adminAuth, couponController.loadAddCouponPage)
 adminRouter.post('/addCoupon', adminAuth, couponController.addCoupon)
 adminRouter.patch('/toggleCoupon/:couponId', couponController.toggleCouponStatus);
 
+
+//salesReport 
+adminRouter.get('/salesReport',adminAuth,salesReportController.loadSalesReportPage)
+adminRouter.get('/salesReport/excel',adminAuth, salesReportController.downloadSalesReportExcel);
+adminRouter.get('/salesReport/pdf',adminAuth, salesReportController.downloadSalesReportPDF);
 
 //page error
 adminRouter.get('*', adminController.pageError)

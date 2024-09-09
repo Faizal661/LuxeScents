@@ -209,11 +209,6 @@ const handlePaymentSuccess = async (req, res) => {
         console.log('orderID...',orderId)
         successResponse(res, { orderId: orderId}, 'Order placed successfully');
 
-        // res.status(200).json({
-        //     success: true,
-        //     orderId:orderId
-        // });
-
     } catch (error) {
         console.error('Error handling payment success:', error);
         res.status(500).json({
