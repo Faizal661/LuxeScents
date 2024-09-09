@@ -3,6 +3,15 @@ const Product = require('../../models/productSchema')
 const Cart = require('../../models/cartSchema')
 const Address = require('../../models/addressSchema')
 const Order = require('../../models/orderSchema')
+const Razorpay = require('razorpay');
+require('dotenv').config();
+
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_ID_KEY,
+    key_secret: process.env.RAZORPAY_SECRET_KEY
+
+});
+
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
 
@@ -46,7 +55,6 @@ const loadCheckoutPage = async (req, res) => {
                 };
             });
 
-
             res.render('checkout', {
                 products,
                 cart,
@@ -54,16 +62,16 @@ const loadCheckoutPage = async (req, res) => {
                 grandTotal,
                 addresses: addresses ? addresses : []
             });
-
         } else {
             res.redirect("/login")
         }
-
     } catch (error) {
         console.error('Error while loading checkout page:', error);
         res.redirect("/pageNotfound")
     }
 }
+
+
 
 const placeOrder = async (req, res) => {
     try {
@@ -84,11 +92,11 @@ const placeOrder = async (req, res) => {
         }
 
         const newOrder = new Order({
-            userId:req.session.user,
+            userId: req.session.user,
             orderedItems: orderedItems.map(item => ({
                 product: item.productId,
                 quantity: item.quantity,
-                size:item.productSize,
+                size: item.productSize,
                 price: item.price,
                 variationID: item.variationID
             })),
@@ -113,7 +121,7 @@ const placeOrder = async (req, res) => {
         });
 
         await newOrder.save();
-
+        console.log(newOrder)
         for (const item of orderedItems) {
             const product = await Product.findById(item.productId);
 
@@ -138,7 +146,6 @@ const placeOrder = async (req, res) => {
         await Cart.deleteOne({ userId: req.session.user });
 
 
-
         successResponse(res, { orderId: newOrder._id }, 'Order placed successfully');
     } catch (error) {
         console.error('Error placing order:', error);
@@ -147,11 +154,79 @@ const placeOrder = async (req, res) => {
 }
 
 
+const createRazorpayOrder = async (req, res) => {
+    try {
+        const { totalPrice } = req.body;
+
+        const orderOptions = {
+            amount: totalPrice * 100, // Amount in paise (multiply by 100)
+            currency: 'INR',
+            receipt: `receipt_order_${Date.now()}`,
+            payment_capture: 1, // Auto capture the payment
+        };
 
 
+        const razorpayOrder = await razorpay.orders.create(orderOptions);
+        res.status(200).json({
+            success: true,
+            order: razorpayOrder,
+            key_id: process.env.RAZORPAY_ID_KEY,
+            user: req.session.userName, // Pass user details if needed for prefill
+        });
+    } catch (error) {
+        console.error('Error creating Razorpay order:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to create Razorpay order',
+        });
+    }
+};
+
+
+const handlePaymentSuccess = async (req, res) => {
+    try {
+
+        const { paymentId, razorpayOrderId,orderId } = req.body;
+        console.log('here 1...',req.body)
+        const order = await Order.findOne({ _id:orderId });
+        console.log('order in payment success', order)
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found',
+            });
+        }
+        console.log('here 2...')
+
+
+        // Update the order status to 'Paid'
+        order.paymentStatus = 'Paid';
+        order.razorpay = {
+            paymentId,
+            orderId: razorpayOrderId
+        };
+        await order.save();
+        console.log('orderID...',orderId)
+        successResponse(res, { orderId: orderId}, 'Order placed successfully');
+
+        // res.status(200).json({
+        //     success: true,
+        //     orderId:orderId
+        // });
+
+    } catch (error) {
+        console.error('Error handling payment success:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to process payment',
+        });
+    }
+};
 
 module.exports = {
     loadCheckoutPage,
-    placeOrder
+    placeOrder,
+    createRazorpayOrder,
+    handlePaymentSuccess
 
 }

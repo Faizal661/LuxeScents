@@ -41,7 +41,7 @@ const addCoupon = async (req, res) => {
     }
 };
 
-
+ 
 const toggleCouponStatus = async (req, res) => {
     try {
         const { couponId } = req.params;

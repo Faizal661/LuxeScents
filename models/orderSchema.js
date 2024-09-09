@@ -1,58 +1,58 @@
-const mongoose= require("mongoose")
+const mongoose = require("mongoose")
 
-const {v4:uuidv4} = require('uuid')
-const orderSchema= new mongoose.Schema({
-    orderId:{
-        type:String,
-        default: ()=>uuidv4(),
-        unique:true
+const { v4: uuidv4 } = require('uuid')
+const orderSchema = new mongoose.Schema({
+    orderId: {
+        type: String,
+        default: () => uuidv4(),
+        unique: true
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
-    orderedItems:[{
-        product:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"Product",
-            required:true
+    orderedItems: [{
+        product: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
+            required: true
         },
-        quantity:{
-            type:Number,
-            required:true
+        quantity: {
+            type: Number,
+            required: true
         },
         size: {
             type: String,
             enum: ["25ml", "50ml", "75ml", "100ml", "150ml"],
             required: true,
         },
-        price:{
-            type:Number,
-            default:0
+        price: {
+            type: Number,
+            default: 0
         },
-        variationID:{
-            type:String,
-            required:true
+        variationID: {
+            type: String,
+            required: true
         }
     }],
-    subtotal:{
-        type:Number,
-        required:true
+    subtotal: {
+        type: Number,
+        required: true
     },
-    tax:{
-        type:Number,
-        required:true
+    tax: {
+        type: Number,
+        required: true
     },
-    discount:{
-        type:Number,
-        default:0
+    discount: {
+        type: Number,
+        default: 0
     },
-    finalAmount:{
-        type:Number,
-        required:true
+    finalAmount: {
+        type: Number,
+        required: true
     },
-    address:{
+    address: {
         addressType: {
             type: String,
             required: true
@@ -91,19 +91,28 @@ const orderSchema= new mongoose.Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ['COD', 'Wallet', 'Card', 'UPI'],
+        enum: ['COD', 'Wallet', 'Card', 'RazorPay'],
         required: true
     },
-    orderStatus:{
-        type:String,
-        required:true,
-        default:'Processing',
-        enum:['Processing','Shipped','Delivered','Cancelled','Return Request','Returned']
+    paymentStatus: {
+        type: String,
+        enum: ['Paid', 'Pending'],
+        default: 'Pending'
     },
-    couponApplied:{
-        type:Boolean,
-        default:false
+    razorpay: {
+        paymentId: { type: String },
+        orderId: { type: String }
+    },
+    orderStatus: {
+        type: String,
+        required: true,
+        default: 'Processing',
+        enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Returned']
+    },
+    couponApplied: {
+        type: Boolean,
+        default: false
     }
-},{timestamps:true})
+}, { timestamps: true })
 
-module.exports= mongoose.model("Order",orderSchema)
+module.exports = mongoose.model("Order", orderSchema)

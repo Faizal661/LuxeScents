@@ -91,12 +91,18 @@
                         <ul class="checkout__total__products">
                             <% products.forEach((product,id)=> { %>
                                 <li>
-                                    <%= id+1 %> . <%= product.productName %> ( <label id="product-size"><%= product.size %></label> ) * <label id="product-quantity">
+                                    <%= id+1 %> . <%= product.productName %> ( <label id="product-size">
+                                                <%= product.size %>
+                                            </label> ) * <label id="product-quantity">
                                                 <%= product.quantity %>
                                             </label>
                                             <span id="total-price-<%= product._id %>">₹<%= product.totalPrice %>
-                                                <span class="d-none" id="variationID"><%= product.variationID %></span>
-                                                <span class="d-none" id="productID"><%= product.productId %></span>
+                                                    <span class="d-none" id="variationID">
+                                                        <%= product.variationID %>
+                                                    </span>
+                                                    <span class="d-none" id="productID">
+                                                        <%= product.productId %>
+                                                    </span>
                                             </span>
                                 </li>
                                 <% }); %>
@@ -125,9 +131,9 @@
                             </label>
                         </div>
                         <div class="checkout__input__checkbox">
-                            <label for="payment-Online">
+                            <label for="payment-RazorPay">
                                 Online
-                                <input type="radio" id="payment-Online" name="payment-method">
+                                <input type="radio" id="payment-RazorPay" name="payment-method">
                                 <span class="checkmark"></span>
                             </label>
                         </div>
@@ -159,7 +165,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script>
 
@@ -168,15 +174,15 @@
         function gatherCheckoutData() {
             const orderedItems = [];
             document.querySelectorAll('.checkout__total__products li').forEach(item => {
-                const productId = item.querySelector('#productID')?.textContent // Extract product ID from span id
+                const productId = item.querySelector('#productID')?.textContent.trim() // Extract product ID from span id
                 const quantity = parseInt(item.querySelector('#product-quantity')?.textContent || 1, 10); // Default to 1 if not found
                 const price = parseFloat(item.querySelector('span').innerText.replace('₹', ''));
-                const variationID = item.querySelector('#variationID')?.textContent
-                const productSize = item.querySelector('#product-size')?.textContent
-                orderedItems.push({ productId, quantity, price,productSize, variationID });
+                const variationID = item.querySelector('#variationID')?.textContent.trim()
+                const productSize = item.querySelector('#product-size')?.textContent.trim()
+                orderedItems.push({ productId, quantity, price, productSize, variationID });
             });
-            
-            
+
+
             const subtotal = parseFloat(document.querySelector('#cart-subtotal').innerText.replace('₹', ''));
             const tax = parseFloat(document.querySelector('#cart-tax').innerText.replace('₹', ''));
             const totalPrice = parseFloat(document.querySelector('#cart-total').innerText.replace('₹', ''));
@@ -193,44 +199,120 @@
             };
         }
 
-        function placeOrder() {
+        async function placeOrder() {
+            const orderData = await gatherCheckoutData();
 
-            const orderData = gatherCheckoutData();
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.id.split('-')[1];
+            console.log('payment methoddd',paymentMethod)
 
-            
-            axios.post('/placeOrder', orderData)
-                .then(response => {
-                    if (response.data.success) {
+            if (paymentMethod === 'RazorPay') {
+                const razorpayOrder = await axios.post('/create-razorpay-order', orderData);
+
+                if (razorpayOrder.data.success) {
+                    const options = {
+                        key: razorpayOrder.data.key_id, // Replace with your Razorpay key
+                        amount: razorpayOrder.data.order.amount, // Amount in paise
+                        currency: "INR",
+                        name: "Luxe Scents",
+                        image: "/img/favicon.png",
+                        description: "Order Payment",
+                        order_id: razorpayOrder.data.order.id, // Razorpay Order ID
+                        handler: function (response) {
+                            handlePaymentSuccess(response.razorpay_payment_id, razorpayOrder.data.order.id,orderData);
+                        },
+                        prefill: {
+                            name: razorpayOrder.data.user,
+                            // email: razorpayOrder.data.user.email,
+                            // contact: razorpayOrder.data.user.phone
+                        },
+                        theme: {
+                            color: "#3399cc"
+                        }
+                    };
+
+                    const rzp = new Razorpay(options);
+                    rzp.on('payment failed', function (response) {
                         Swal.fire({
-                            title: 'Order Success!',
-                            text: 'Your order has been placed successfully!',
-                            icon: 'success',
-                            timer: 2000,
-                            showConfirmButton: false,
-                        }).then(()=>{
-                            window.location.href = `/orderSuccess?orderId=${response.data.data.orderId}`;
+                                title: 'Error!',
+                                text: 'Payment Failed . Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                    })
+                    rzp.open();
+                }
+            } else if(paymentMethod === 'COD'){
+                axios.post('/placeOrder', orderData)
+                    .then(response => {
+                        if (response.data.success) {
+                            Swal.fire({
+                                title: 'Order Success!',
+                                text: 'Your order has been placed successfully!',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false,
+                            }).then(() => {
+                                window.location.href = `/orderSuccess?orderId=${response.data.data.orderId}`;
 
-                        })
-                    } else {
+                            })
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Failed to place order. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error placing order:', error);
                         Swal.fire({
-                            title: 'Error!',
-                            text: 'Failed to place order. Please try again.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error placing order:', error);
-                    Swal.fire({
                             title: 'Error!',
                             text: 'An error occurred while placing your order. Please try again.',
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
-                });
-
+                    });
+            }
         }
+
+
+
+        async function handlePaymentSuccess(paymentId, razorpayOrderId,orderData) {
+            try {
+                axios.post('/placeOrder', orderData)
+                    .then (async res => {
+                        const orderId=res.data.data.orderId
+                        const response = await axios.post('/payment-success', {
+                            paymentId,
+                            razorpayOrderId,
+                            orderId
+                        });
+                        console.log("payment success returned")
+
+                        if (response.data.success) {
+                            window.location.href = `/orderSuccess?orderId=${response.data.data.orderId}`;
+
+                            // window.location.href = `/orderSuccess?orderId=${response.data.orderId}`;
+                        } else {
+                            Swal.fire('Payment Failed', response.data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error placing order:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred while placing your order. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+            } catch (error) {
+                console.error('Payment handling error:', error);
+                Swal.fire('Error', 'There was an error processing the payment.', 'error');
+            }
+        }
+
 
     </script>
 

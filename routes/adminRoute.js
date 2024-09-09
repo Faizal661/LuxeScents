@@ -46,6 +46,7 @@ adminRouter.get('/orderDetails', adminAuth, orderController.orderDetails)
 adminRouter.post('/updateOrderStatus', adminAuth, orderController.updateOrderStatus)
 
 
+
 //product offers
 adminRouter.get('/productOffers', adminAuth, offerController.loadProductOffers)
 adminRouter.get('/loadAddProductOfferPage', adminAuth, offerController.loadAddProductOfferPage)
