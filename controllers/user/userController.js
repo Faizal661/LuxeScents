@@ -378,11 +378,10 @@ const loadSingleProduct = async (req, res) => {
         const cartProductIds = cart ? cart.products.map(item => item.productId.toString()) : [];
 
         let productQuantityInCart = 0;
-        if (cart) {
-            // Find the product in the cart
+        if (cart) {  
             const cartProduct = cart.products.find(item => item.productId.toString() === ProductID);
             if (cartProduct) {
-                productQuantityInCart = cartProduct.quantity; // Get the quantity of the product if it exists
+                productQuantityInCart = cartProduct.quantity; 
             }
         }
 

@@ -62,7 +62,7 @@
                             <% order.orderedItems.forEach((item,index)=> { %>
                                 <li class="list-group-item d-flex cursor-pointer ms-3">
                                     <div class="">
-                                        <%= index+1 %>. 
+                                        <%= index+1 %>.
                                     </div>
                                     <div class="col-6 ps-2">
                                         <strong>Product:</strong>
@@ -74,7 +74,7 @@
                                                     <strong>Price:</strong> ₹<%= item.price %><br>
                                     </div>
                                     <div class="col-6">
-                                        
+
                                     </div>
 
                                 </li>
@@ -119,28 +119,48 @@
                 </div>
 
                 <div class="row my-4 ">
-                     <!-- Order Summary Section -->
-                     <div class="col-md-6 order-summary">
+                    <!-- Order Summary Section -->
+                    <div class="col-md-6 order-summary">
                         <h3 class="text-center mb-3">Order Summary</h3>
                         <div class="card p-3 shadow">
-                            <p><strong>Subtotal:</strong> ₹<%= order.subtotal %>
-                            </p>
-                            <p><strong>Tax:</strong> ₹<%= order.tax %>
-                            </p>
-                            <p><strong>Total Price:</strong> ₹<%= order.finalAmount %>
-                            </p>
-                            <p><strong>Payment Method:</strong>
+                            <h5><strong>Price Details:</strong>
+                            </h5>
+                            <div class="pl-5 py-3 ">
+                                <p><strong>Subtotal:</strong> ₹<%= order.subtotal+order.discount %>
+                                </p>
+                                <p><strong>Offer Discount:</strong> ₹<%= order.discount %>
+                                </p>
+
+                                <p><strong>Tax:</strong> ₹<%= order.tax.toFixed(2) %>
+                                </p>
+                                <% if (order.couponApplied) { %>
+                                 <p><strong>Coupon:</strong> ₹<%= order.couponId.offerPrice %>
+                                </p>
+                                <% } %>
+                                <hr>
+                                <h6><strong>Total Price: ₹<%= order.finalAmount.toFixed(2) %></strong>
+                                </p>
+                            </div>
+                            <hr>
+
+                            <p><strong>Payment Method: </strong>
                                 <%= order.paymentMethod %>
                             </p>
-                            <p><strong>Status:</strong>
+                            <p><strong>Order Status: </strong>
                                 <%= order.orderStatus %>
                             </p>
                             <p><strong>Ordered Date:</strong>
                                 <%= order.createdAt.toLocaleString() %>
                             </p>
+                            <p><strong>Delivery Date:</strong>
+                                <%= order.expectedDeliveryDate.toLocaleDateString() %> 11:00 am
+                            </p>
                         </div>
+
+
+
                     </div>
-                    
+
                     <div class="col-md-6 ">
                         <h3 class="text-center mb-3">Change Order Status</h3>
                         <select class="form-select shadow card form-control border border-2"
@@ -159,7 +179,7 @@
                                 >Returned</option>
                         </select>
                     </div>
-                   
+
 
                 </div>
         </div>

@@ -114,14 +114,22 @@
                                             <% } %>
                                                 <span> - <%= singleProduct.reviews.length %> Reviews</span>
                             </div>
+                            <% if (singleProduct.offerPercentage!==0 && singleProduct.variations[0].quantity!==0) { %>
+                                <div>
+                                    <h4 class="offer-overlay text-success cursor-pointer my-3 ">Extra <%=
+                                            singleProduct.offerPercentage %> Offer</h4>
+                                </div>
+                                <% } %>
 
-                            <h3>₹<label id="salePrice">
-                                    <%= singleProduct.variations[0].salePrice %>
-                                </label>
-                                <span>₹<span id="regularPrice">
-                                        <%= singleProduct.variations[0].regularPrice %>
-                                    </span></span>
-                            </h3>
+                                    <h3>₹<label id="salePrice">
+                                            <%= singleProduct.variations[0].salePrice %>
+                                        </label>
+                                        <span>₹<span id="regularPrice">
+                                                <%= singleProduct.variations[0].regularPrice %>
+                                            </span></span>
+
+                                    </h3>
+
 
                         </div>
                     </div>
@@ -169,7 +177,7 @@
                                 document.getElementById('quantity-<%= singleProduct._id %>').value = 1;
                                 document.getElementById('variation_id').textContent = selectedVariation._id;
                             }
-        
+
                             document.addEventListener('DOMContentLoaded', () => {
                                 const defaultInput = document.querySelector('.product__details__option__size input[checked]');
                                 if (defaultInput) {
@@ -214,7 +222,8 @@
                             </div>
 
                             <button type="button" class="primary-btn rounded"
-                                onclick="addToCart('<%= singleProduct._id %>')" <% if (singleProduct.variations[0].quantity===0) { %>
+                                onclick="addToCart('<%= singleProduct._id %>')" <% if
+                                (singleProduct.variations[0].quantity===0) { %>
                                 disabled style="background-color: grey ; cursor: not-allowed;" <% } %> >
                                     Add to Cart
                             </button>

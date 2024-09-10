@@ -32,14 +32,14 @@ const loadCheckoutPage = async (req, res) => {
                 return res.render('checkout', { products: [], addresses: addresses ? addresses : [] });
             }
 
-            //calculating subtotal,tax and grandtotal to display in the price details.
-            const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-            const tax = (subtotal * 10) / 100;
-            const grandTotal = subtotal + tax;
+            let totalOfferDiscount = 0;
 
             const products = cart.products.map(item => {
                 const product = item.productId;
                 const variation = product.variations.filter((vari) => vari._id.toString() === item.variationID.toString())
+
+                const offerDiscount = (product.offerPercentage * variation[0].salePrice / 100) * item.quantity;
+                totalOfferDiscount += offerDiscount;
 
                 return {
                     _id: item._id,//object id of objects in cart
@@ -51,16 +51,25 @@ const loadCheckoutPage = async (req, res) => {
                     totalPrice: item.totalPrice,
                     productImages: product.productImages,
                     stock: variation[0].quantity,
-                    size: variation[0].size
+                    size: variation[0].size,
+                    offerDiscount: offerDiscount
                 };
             });
+
+            //calculating subtotal,tax and grandtotal to display in the price details.
+            const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0) - totalOfferDiscount;
+            const tax = (subtotal * 10) / 100;
+            const grandTotal = subtotal + tax;
 
             res.render('checkout', {
                 products,
                 cart,
                 tax,
+                subtotal,
                 grandTotal,
-                addresses: addresses ? addresses : []
+                addresses: addresses ? addresses : [],
+                totalOfferDiscount
+
             });
         } else {
             res.redirect("/login")
@@ -81,9 +90,11 @@ const placeOrder = async (req, res) => {
             tax,
             totalPrice,
             selectedAddressId,
-            paymentMethod
+            paymentMethod,
+            discount
         } = req.body;
 
+        console.log(discount)
 
         const address = await Address.findById(selectedAddressId);
 
@@ -117,7 +128,8 @@ const placeOrder = async (req, res) => {
             },
             paymentMethod,
             orderStatus: 'Processing',
-            couponApplied: false
+            couponApplied: false,
+            discount:discount
         });
 
         await newOrder.save();
@@ -186,9 +198,9 @@ const createRazorpayOrder = async (req, res) => {
 const handlePaymentSuccess = async (req, res) => {
     try {
 
-        const { paymentId, razorpayOrderId,orderId } = req.body;
-        console.log('here 1...',req.body)
-        const order = await Order.findOne({ _id:orderId });
+        const { paymentId, razorpayOrderId, orderId } = req.body;
+        console.log('here 1...', req.body)
+        const order = await Order.findOne({ _id: orderId });
         console.log('order in payment success', order)
         if (!order) {
             return res.status(404).json({
@@ -206,8 +218,8 @@ const handlePaymentSuccess = async (req, res) => {
             orderId: razorpayOrderId
         };
         await order.save();
-        console.log('orderID...',orderId)
-        successResponse(res, { orderId: orderId}, 'Order placed successfully');
+        console.log('orderID...', orderId)
+        successResponse(res, { orderId: orderId }, 'Order placed successfully');
 
     } catch (error) {
         console.error('Error handling payment success:', error);

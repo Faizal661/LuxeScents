@@ -90,13 +90,13 @@ userRouter.get('/cartTotal',userAuth,cartController.cartTotal )
 userRouter.get('/checkoutPage',userAuth,checkoutController.loadCheckoutPage)
 userRouter.post('/placeOrder',userAuth,checkoutController.placeOrder)
 userRouter.post('/create-razorpay-order',userAuth, checkoutController.createRazorpayOrder);
-// Route to handle successful payments
-userRouter.post('/payment-success', checkoutController.handlePaymentSuccess);
+userRouter.post('/payment-success', checkoutController.handlePaymentSuccess);//razorpay successfull payment handling
 
 //order 
 userRouter.get('/orderSuccess',userAuth,OrderController.orderSuccess)
 userRouter.get('/orderDetails',userAuth,OrderController.orderDetails)
 userRouter.post('/cancelOrder',userAuth,OrderController.cancelOrder)
+userRouter.post('/returnRequest',userAuth,OrderController.returnRequest)
 userRouter.get('/loadOrders',userAuth,OrderController.loadOrders)
 
 

@@ -19,37 +19,51 @@ const loadCartPage = async (req, res) => {
             return res.render('cart', { products: [] });
         }
 
-        //calculating subtotal,tax and grandtotal to display in the price details.
-        const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-        const tax = (subtotal * 10) / 100;
-        const grandTotal = subtotal + tax;
+        let totalOfferDiscount = 0;
 
         const products = cart.products.map(item => {
             const product = item.productId;
-            const variation=product.variations.filter((vari) => vari._id.toString() === item.variationID.toString())
-            
+            const variation = product.variations.filter((vari) => vari._id.toString() === item.variationID.toString())
+            // console.log('variation',variation)
+
+            const offerDiscount = (product.offerPercentage * variation[0].salePrice / 100) * item.quantity;
+            // console.log('product.offerPercentage',product.offerPercentage)
+            // console.log('variation.salePrice',variation[0].salePrice)
+            // console.log('item.quantity',item.quantity)
+
+            totalOfferDiscount += offerDiscount;
+            // console.log('offerdiscount',offerDiscount)
+            // console.log('totalOfferDiscount',totalOfferDiscount)
+
             return {
-        
-                _id: item._id,//object id of objects in cart
-                productId: item.productId._id,//object id of product in cart
+                _id: item._id,// _id of objects in cart
+                productId: item.productId._id,// _id of product in cart
                 productName: product.productName,
                 salePrice: variation[0].salePrice,
                 quantity: item.quantity,//cart added quantity of that product
                 totalPrice: item.totalPrice,
                 productImages: product.productImages,
                 stock: variation[0].quantity,
-                size:variation[0].size
+                size: variation[0].size,
+                offerDiscount: offerDiscount
 
             };
         });
+        
+        //calculating subtotal,tax and grandtotal to display in the price details.
+        const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0)-totalOfferDiscount;
+        const tax = (subtotal * 10) / 100;
 
+        const grandTotal = subtotal + tax;
 
 
         res.render('cart', {
             products,
             cart,
+            subtotal,
             tax,
-            grandTotal
+            grandTotal,
+            totalOfferDiscount
         });
 
 
@@ -74,14 +88,14 @@ const addProductToCart = async (req, res) => {
         // console.log(product);
         let price = 0
         let variationID = variation_id;
-        
+
         if (variation_id) {
             let selectedVariation = product.variations.filter((variation) => variation._id.toString() == variation_id.toString())
             // console.log('variasdfas', selectedVariation);
             price = selectedVariation[0].salePrice
             variationID = selectedVariation[0]._id//in this case it take the id of filtered variation.it is filter like an array  so we need to gave an index.
         } else {
-             price = product.variations[0].salePrice//In shop page, defaultly add first product into the cart
+            price = product.variations[0].salePrice//In shop page, defaultly add first product into the cart
             variationID = product.variations[0]._id
         }
         // console.log(price, variationID);
@@ -96,7 +110,7 @@ const addProductToCart = async (req, res) => {
         } else {
             // const productIndex = cart.products.findIndex(p => p.productId.equals(productId));//check this product is in user cart
             const variationIndex = cart.products.findIndex(v => v.variationID.equals(variationID))
-            if (variationIndex === -1 ) { //if product is not in cart this will add to the cart array
+            if (variationIndex === -1) { //if product is not in cart this will add to the cart array
                 cart.products.push({
                     productId,
                     quantity: quantityNumber,//quantity of this product in cart

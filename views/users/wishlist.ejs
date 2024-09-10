@@ -44,7 +44,8 @@
                                 <p class="mb-1"><strong>Scent:</strong>
                                     <%= product.category.name %>
                                 </p>
-                                <p class="mb-1 text-primary"><strong>Price:</strong> ₹<%= product.variations[0].salePrice %>
+                                <p class="mb-1 text-primary"><strong>Price:</strong> ₹<%=
+                                        product.variations[0].salePrice %>
                                 </p>
                             </div>
                             <!-- Stock and Status -->
@@ -91,8 +92,13 @@
 
                             <% } else { %>
                                 <div class="container text-center">
-                                    <div class="alert alert-info h4 text-center" role="alert">
+                                    <div class="alert alert-info h4" role="alert">
                                         Your wishlist is empty! Start adding products you love.
+                                    </div>
+                                    <div class="d-flex justify-content-center pt-5">
+                                        <div class="continue__btn">
+                                            <a href="/shoppage">Continue Shopping</a>
+                                        </div>
                                     </div>
                                 </div>
                                 <% } %>
@@ -125,7 +131,7 @@
                             position: 'top-end',
                             showConfirmButton: false,
                             customClass: {
-                                popup: 'custom-toast'  
+                                popup: 'custom-toast'
                             }
                         })
                     }
@@ -141,8 +147,8 @@
                         position: 'top-end',
                         showConfirmButton: false,
                         customClass: {
-                                popup: 'custom-toast' 
-                            }
+                            popup: 'custom-toast'
+                        }
                     });
                     console.error(error);
                 });

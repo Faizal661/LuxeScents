@@ -1,68 +1,81 @@
 <%- include('../partials/users/userHeader') %>
-<body>
-    <!-- Breadcrumb Section Begin -->
-    <section class="breadcrumb-option">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="breadcrumb__text">
-                        <h4>Orders List</h4>
-                        <div class="breadcrumb__links">
-                            <a href="/">Home</a>
-                            <span>Orders List</span>
+
+    <body>
+        <!-- Breadcrumb Section Begin -->
+        <section class="breadcrumb-option">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="breadcrumb__text">
+                            <h4>Orders List</h4>
+                            <div class="breadcrumb__links">
+                                <a href="/">Home</a>
+                                <span>Orders List</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-    <!-- Breadcrumb Section End -->
-    
-    <div class="container mt-5">
-        <div class="row">
-            <% if (orders.length === 0) { %>
-                <div class="col-12 align-content-center h3" style="height: 30vh;">
-                    <div class="alert alert-info text-center">No orders found.</div>
-                </div>
-            <% } else { %>
-                <% orders.forEach(order => { %>
-                    <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <!-- Order Items -->
-                                <h5 class="card-title text-uppercase">
-                                    <%= order.orderedItems.length > 1 ? `${order.orderedItems[0].product.productName} ... + ${order.orderedItems.length-1}  more` : order.orderedItems[0].product.productName %>
-                                </h5>
-    
-                                <!-- Order Date -->
-                                <p class="card-text">
-                                    <strong>Date of Order:</strong> <%= new Date(order.createdAt).toLocaleDateString() %>
-                                </p>
-    
-                                <!-- Order Price -->
-                                <p class="card-text">
-                                    <strong>Price:</strong> ₹<%= order.finalAmount.toFixed(2) %>
-                                </p>
-    
-                                <!-- Payment Method -->
-                                <p class="card-text">
-                                    <strong>Payment Method:</strong> <%= order.paymentMethod %>
-                                </p>
-    
-                                <!-- Order Status -->
-                                <p class="card-text">
-                                    <strong>Status:</strong> <%= order.orderStatus %>
-                                </p>
-    
-                                <!-- Action Button -->
-                                <a href="/orderDetails?orderId=<%= order._id %>" class="btn btn-dark btn-sm">View Details</a>
+        </section>
+        <!-- Breadcrumb Section End -->
+
+        <div class="container mt-5">
+            <div class="row">
+                <% if (orders.length===0) { %>
+                    <div class="col-12 align-content-center h3" style="height: 30vh;">
+                        <div class="alert alert-info text-center">No orders found.</div>
+                        <div class="d-flex justify-content-center py-4">
+                            <div class="continue__btn">
+                                <a href="/shoppage">Continue Shopping</a>
                             </div>
                         </div>
                     </div>
-                <% }); %>
-            <% } %>
+                    <% } else { %>
+                        <% orders.forEach(order=> { %>
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <!-- Order Items -->
+                                        <h5 class="card-title text-uppercase">
+                                            <%= order.orderedItems.length> 1 ?
+                                                `${order.orderedItems[0].product.productName} ... +
+                                                ${order.orderedItems.length-1} more` :
+                                                order.orderedItems[0].product.productName %>
+                                        </h5>
+
+                                        <!-- Order Date -->
+                                        <p class="card-text">
+                                            <strong>Date of Order:</strong>
+                                            <%= new Date(order.createdAt).toLocaleDateString() %>
+                                        </p>
+
+                                        <!-- Order Price -->
+                                        <p class="card-text">
+                                            <strong>Price:</strong> ₹<%= order.finalAmount.toFixed(2) %>
+                                        </p>
+
+                                        <!-- Payment Method -->
+                                        <p class="card-text">
+                                            <strong>Payment Method:</strong>
+                                            <%= order.paymentMethod %>
+                                        </p>
+
+                                        <!-- Order Status -->
+                                        <p class="card-text">
+                                            <strong>Status:</strong>
+                                            <%= order.orderStatus %>
+                                        </p>
+
+                                        <!-- Action Button -->
+                                        <a href="/orderDetails?orderId=<%= order._id %>"
+                                            class="btn btn-dark btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } %>
+            </div>
         </div>
-    </div>
-    
-    
-    <%- include('../partials/users/userFooter') %>
+
+
+        <%- include('../partials/users/userFooter') %>

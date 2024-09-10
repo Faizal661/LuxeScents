@@ -38,9 +38,9 @@
                             </p>
                         </div>
                         <div class="col-lg-6  ">
-                            <button class="btn btn-primary "
+                            <button class="btn btn-primary rounded-0"
                                 onclick="window.location.href='/loadEditUserProfilePage'">Edit Details</button>
-                            <button class="btn  btn-warning"
+                            <button class="btn  btn-warning rounded-0"
                                 onclick="window.location.href='/loadChangePassword'">Change Password</button>
                         </div>
                     </div>
@@ -73,14 +73,14 @@
                                                         <%= address.state %> , <%= address.pincode %>
                                         </p>
                                         <div class="address__actions d-flex justify-content-end">
-                                            <button class="btn btn-secondary mx-2"
+                                            <button class="btn btn-primary mx-2 rounded-0"
                                                 onclick="window.location.href='/loadEditAddressPage?id=<%= address._id %>'">Edit</button>
-                                            <button class="btn btn-danger" id="delete-btn"
+                                            <button class="btn btn-danger rounded-0" id="delete-btn"
                                                 data-id="<%= address._id %>">Delete</button>
                                         </div>
                                     </div>
                                     <% }); %>
-                                        <button class=" btn btn-success shadow"
+                                        <button class=" btn btn-success shadow rounded-0"
                                             onclick="window.location.href='/loadAddAddressPage'">Add Another
                                             Address</button>
                                         <% } %>

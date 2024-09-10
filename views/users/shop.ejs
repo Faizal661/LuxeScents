@@ -10,6 +10,14 @@
             left: 0;
             background: rgba(255, 255, 255, 0.75);
         }
+
+        .offer-overlay {
+            top: 0;
+            left: 60px;
+            font-size: large;
+            position: absolute;
+            font-weight: 700;
+        }
     </style>
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-option">
@@ -232,60 +240,66 @@
                     </style>
 
                     <div class="row">
-                         <% products.forEach(product=> { %>
+                        <% products.forEach(product=> { %>
                             <div class="col-lg-4 col-md-6 col-sm-6  ">
                                 <div class="product__item border border-3 rounded rounded-3 p-2">
                                     <div class="product__item__pic ">
                                         <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
                                             alt="<%= product.productName %> "
                                             onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
+                                       
+                                                <% if (product.variations[0].quantity===0) { %>
+                                                    <div onclick="window.location.href='/singleProduct?id=<%= product._id %>';"
+                                                        class="out-of-stock-overlay cursor-pointer d-flex align-items-center justify-content-center position-absolute w-100 h-100">
+                                                        <h4 class="text-danger fw-bold">Out of Stock</h4>
+                                                    </div>
+                                                    <% } %>
 
-                                        <% if (product.variations[0].quantity===0) { %>
-                                            <div onclick="window.location.href='/singleProduct?id=<%= product._id %>';"
-                                                class="out-of-stock-overlay cursor-pointer d-flex align-items-center justify-content-center position-absolute w-100 h-100">
-                                                <h4 class="text-danger fw-bold">Out of Stock</h4>
-                                            </div>
-                                            <% } %>
-
-                                                <ul class="product__hover">
-                                                    <li>
-                                                        <a href="#" onclick="toggleWishlist('<%= product._id %>')">
-                                                            <img src="img/icon/<%= wishlistProductIds.includes(product._id.toString()) ? 'heartFill.png' : 'heart.png' %>"
-                                                                class="rounded rounded-5 "
-                                                                data-product-id="<%= product._id %>" alt="wishlist">
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <% if(product.variations[0].quantity!==0){ %>
-                                                            <% if (cartProductIds.includes(product._id.toString())) { %>
-                                                                <a href="/loadCartPage">
-                                                                    <img src="img/icon/inCart.png"
-                                                                        class="rounded rounded-5" alt="Go to Cart"
-                                                                        title="Go to Cart">
+                                                        <ul class="product__hover">
+                                                            <li>
+                                                                <a href="#"
+                                                                    onclick="toggleWishlist('<%= product._id %>')">
+                                                                    <img src="img/icon/<%= wishlistProductIds.includes(product._id.toString()) ? 'heartFill.png' : 'heart.png' %>"
+                                                                        class="rounded rounded-5 "
+                                                                        data-product-id="<%= product._id %>"
+                                                                        alt="wishlist">
                                                                 </a>
-                                                                <%}else { %>
-                                                                    <a href="#"
-                                                                        onclick="addToCart('<%= product._id %>')">
-                                                                        <img src="img/icon/cart.png"
-                                                                            class="rounded rounded-5 " alt="cart"
-                                                                            title="Add to Cart">
-                                                                    </a>
-                                                                    <% } %>
+                                                            </li>
+                                                            <li>
+                                                                <% if(product.variations[0].quantity!==0){ %>
+                                                                    <% if
+                                                                        (cartProductIds.includes(product._id.toString()))
+                                                                        { %>
+                                                                        <a href="/loadCartPage">
+                                                                            <img src="img/icon/inCart.png"
+                                                                                class="rounded rounded-5"
+                                                                                alt="Go to Cart" title="Go to Cart">
+                                                                        </a>
                                                                         <%}else { %>
-                                                                            <a onclick="outOfStock()">
-                                                                                <img src="img/icon/out-of-stock.png"
-                                                                                    class="rounded rounded-5"
-                                                                                    alt="out-of-stock"
-                                                                                    title="out-of-stock">
+                                                                            <a href="#"
+                                                                                onclick="addToCart('<%= product._id %>')">
+                                                                                <img src="img/icon/cart.png"
+                                                                                    class="rounded rounded-5 "
+                                                                                    alt="cart" title="Add to Cart">
                                                                             </a>
                                                                             <% } %>
-
-
-                                                    </li>
-                                                </ul>
+                                                                                <%}else { %>
+                                                                                    <a onclick="outOfStock()">
+                                                                                        <img src="img/icon/out-of-stock.png"
+                                                                                            class="rounded rounded-5"
+                                                                                            alt="out-of-stock"
+                                                                                            title="out-of-stock">
+                                                                                    </a>
+                                                                                    <% } %>
+                                                            </li>
+                                                        </ul>
                                     </div>
-                                    <div class="product__item__text">
 
+                                    <div class="product__item__text">
+                                        <% if (product.offerPercentage!==0 && product.variations[0].quantity!==0) { %>
+                                            <h4 class="offer-overlay text-success cursor-pointer my-1">Extra <%=
+                                                    product.offerPercentage %> Offer</h4>
+                                            <% } %>
                                         <h5>
                                             <%= product.productName %>
                                         </h5>

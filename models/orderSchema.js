@@ -117,7 +117,22 @@ const orderSchema = new mongoose.Schema({
     couponApplied: {
         type: Boolean,
         default: false
+    },
+    couponId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Coupon",
+    },
+    expectedDeliveryDate: {
+        type: Date, 
     }
 }, { timestamps: true })
+
+orderSchema.pre('save', function (next) {
+    const deliveryDays = 7; 
+    if (!this.expectedDeliveryDate) {
+        this.expectedDeliveryDate = new Date(this.createdAt.getTime() + deliveryDays * 24 * 60 * 60 * 1000);
+    }
+    next();
+});
 
 module.exports = mongoose.model("Order", orderSchema)

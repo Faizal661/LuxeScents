@@ -20,144 +20,168 @@
     <!-- Breadcrumb Section End -->
 
     <!-- Checkout Section Begin -->
+
     <section class="checkout spad">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-6">
-
-                    <div class="cart__discount col-9">
-                        <h6>Discount codes</h6>
-                        <form action="#">
-                            <input type="text" placeholder="Coupon code">
-                            <button type="submit">Apply</button>
-                        </form>
+            <% if (products.length===0) { %>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="continue__btn">
+                            <h3 class="mb-5">There is nothing in this page.</h3>
+                            <a href="/shoppage">Continue Shopping</a>
+                        </div>
                     </div>
-                    <!-- Address Selection Section -->
-                    <div class=" p-4 rounded mt-5 col-10">
-                        <% if (addresses.length===0) { %>
-                            <p>No addresses found. Please add one to place an order.</p>
-                            <button class="btn btn-success" onclick="window.location.href='/loadAddAddressPage'">Add
-                                Address</button>
-                            <% } else { %>
-                                <button class="btn btn-dark rounded-0 py-2 "
-                                    onclick="window.location.href='/loadAddAddressPage'">Add Another
-                                    Address</button>
-                                <% addresses.forEach((address, index)=> { %>
-                                    <div
-                                        class="address_item border my-3 p-3 rounded-0 <%= address.isActive ? 'border-success' : 'border-dark' %> d-flex justify-content-between align-items-start">
-                                        <div class="address_info w-100">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <input type="radio" name="selectedAddress" id="address-<%= index %>"
-                                                        value="<%= address._id %>" <%=address.isActive ? 'checked' : ''
-                                                        %> onchange="selectAddress('<%= address._id %>')">
-                                                        <label for="address-<%= index %>"
-                                                            class="<%= address.isActive ? 'text-success h6' : '' %>">
-                                                            <%= address.addressType %>
-                                                                <%= address.isActive ? ' (Primary Address)' : '' %>
-                                                        </label>
+                </div>
+                <% }else{ %>
+                    <div class="row">
+                        <div class="col-lg-6">
+
+                            <div class="cart__discount col-9">
+                                <h6>Discount codes</h6>
+                                <form action="#">
+                                    <input type="text" placeholder="Coupon code">
+                                    <button type="submit">Apply</button>
+                                </form>
+                            </div>
+                            <!-- Address Selection Section -->
+                            <div class=" p-4 rounded mt-5 col-10">
+                                <% if (addresses.length===0) { %>
+                                    <p>No addresses found. Please add one to place an order.</p>
+                                    <button class="btn btn-success"
+                                        onclick="window.location.href='/loadAddAddressPage'">Add
+                                        Address</button>
+                                    <% } else { %>
+                                        <button class="btn btn-dark rounded-0 py-2 "
+                                            onclick="window.location.href='/loadAddAddressPage'">Add Another
+                                            Address</button>
+                                        <% addresses.forEach((address, index)=> { %>
+                                            <div
+                                                class="address_item border my-3 p-3 rounded-0 <%= address.isActive ? 'border-success' : 'border-dark' %> d-flex justify-content-between align-items-start">
+                                                <div class="address_info w-100">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <input type="radio" name="selectedAddress"
+                                                                id="address-<%= index %>" value="<%= address._id %>"
+                                                                <%=address.isActive ? 'checked' : '' %>
+                                                            onchange="selectAddress('<%= address._id %>')">
+                                                                <label for="address-<%= index %>"
+                                                                    class="<%= address.isActive ? 'text-success h6' : '' %>">
+                                                                    <%= address.addressType %>
+                                                                        <%= address.isActive ? ' (Primary Address)' : ''
+                                                                            %>
+                                                                </label>
+                                                        </div>
+                                                        <button class="btn btn-dark rounded-0 mb-1 btn-sm"
+                                                            onclick="window.location.href='/loadEditAddressPage?id=<%= address._id %>'">Edit</button>
+                                                    </div>
+                                                    <p class="mb-1"><strong>Name:</strong>
+                                                        <%= address.name %> &nbsp; <strong>Phone:</strong>
+                                                            <%= address.phone %> , <%= address.altPhone %>
+                                                    </p>
+                                                    <p class="mb-1">
+                                                        <%= address.locality %>, <%= address.city %>, <%=
+                                                                    address.landMark %>,
+                                                                    <%= address.state %>, <%= address.pincode %>
+                                                    </p>
                                                 </div>
-                                                <button class="btn btn-dark rounded-0 mb-1 btn-sm"
-                                                    onclick="window.location.href='/loadEditAddressPage?id=<%= address._id %>'">Edit</button>
                                             </div>
-                                            <p class="mb-1"><strong>Name:</strong>
-                                                <%= address.name %> &nbsp; <strong>Phone:</strong>
-                                                    <%= address.phone %> , <%= address.altPhone %>
-                                            </p>
-                                            <p class="mb-1">
-                                                <%= address.locality %>, <%= address.city %>, <%= address.landMark %>,
-                                                            <%= address.state %>, <%= address.pincode %>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <% }); %>
+                                            <% }); %>
 
-                                        <% } %>
-                    </div>
-                    <hr>
-                    <!-- End Address Selection Section -->
-
-
-                </div>
-
-                <div class="col-lg-6 col-md-6">
-
-
-
-
-                    <div class="checkout__order">
-                        <h4 class="order__title">Your order</h4>
-                        <div class="checkout__order__products">Product <span>Total</span></div>
-                        <ul class="checkout__total__products">
-                            <% products.forEach((product,id)=> { %>
-                                <li>
-                                    <%= id+1 %> . <%= product.productName %> ( <label id="product-size">
-                                                <%= product.size %>
-                                            </label> ) * <label id="product-quantity">
-                                                <%= product.quantity %>
-                                            </label>
-                                            <span id="total-price-<%= product._id %>">₹<%= product.totalPrice %>
-                                                    <span class="d-none" id="variationID">
-                                                        <%= product.variationID %>
-                                                    </span>
-                                                    <span class="d-none" id="productID">
-                                                        <%= product.productId %>
-                                                    </span>
-                                            </span>
-                                </li>
-                                <% }); %>
-                        </ul>
-                        <ul class="checkout__total__all">
-                            <li>Coupon Applied <span>- ₹ 0</span></li>
-                            <li>Discount Price <span>- ₹ 0</span></li>
-                            <li>Delivery Charges <span>Free Delivery</span></li>
+                                                <% } %>
+                            </div>
                             <hr>
-                            <li>Subtotal <span id="cart-subtotal">₹<%= (products.reduce((total, product)=> total
-                                        +
-                                        product.totalPrice, 0)).toFixed(2) %></span></li>
-
-                            <li>Tax (10%) <span id="cart-tax">₹ <%= tax %></span></li>
-                            <hr>
-                            <li>Total <span id="cart-total">₹<%= (products.reduce((total, product)=> total +
-                                        product.totalPrice, tax)).toFixed(2) %></span></li>
-                        </ul>
+                            <!-- End Address Selection Section -->
 
 
-                        <div class="checkout__input__checkbox">
-                            <label for="payment-COD">
-                                Cash On Delivery
-                                <input type="radio" id="payment-COD" name="payment-method" checked>
-                                <span class="checkmark"></span>
-                            </label>
                         </div>
-                        <div class="checkout__input__checkbox">
-                            <label for="payment-RazorPay">
-                                Online
-                                <input type="radio" id="payment-RazorPay" name="payment-method">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                        <div class="checkout__input__checkbox">
-                            <label for="payment-wallet">
-                                Wallet
-                                <input type="radio" id="payment-wallet" name="payment-method">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                        <div class="checkout__input__checkbox">
-                            <label for="payment-card">
-                                Credit/Debit cards
-                                <input type="radio" id="payment-card" name="payment-method">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                        <button type="button" class="site-btn" onclick="placeOrder()" id="placeOrderButton">PLACE
-                            ORDER</button>
 
+                        <div class="col-lg-6 col-md-6">
+
+
+
+
+                            <div class="checkout__order">
+
+                                <h4 class="order__title">Your order</h4>
+                                <div class="checkout__order__products">Product <span>Total</span></div>
+                                <ul class="checkout__total__products">
+
+
+
+                                    <% products.forEach((product,id)=> { %>
+                                        <li>
+                                            <%= id+1 %> . <%= product.productName %> ( <label id="product-size">
+                                                        <%= product.size %>
+                                                    </label> ) * <label id="product-quantity">
+                                                        <%= product.quantity %>
+                                                    </label>
+                                                    <span id="total-price-<%= product._id %>">₹<%= product.totalPrice %>
+                                                            <span class="d-none" id="variationID">
+                                                                <%= product.variationID %>
+                                                            </span>
+                                                            <span class="d-none" id="productID">
+                                                                <%= product.productId %>
+                                                            </span>
+                                                    </span>
+                                        </li>
+                                        <% }); %>
+                                </ul>
+                                <ul class="checkout__total__all">
+                                    <li>Coupon Applied <span>-₹ 0</span></li>
+                                    <li>Discount Price <span id="offerDiscount">-₹ <%= totalOfferDiscount %></span>
+                                    </li>
+                                    <li>Delivery Charges <span>Free Delivery</span></li>
+                                    <hr>
+                                    <li>Subtotal <span id="cart-subtotal">₹<%= (products.reduce((total, product)=>
+                                                total
+                                                +
+                                                product.totalPrice, -totalOfferDiscount)).toFixed(2) %></span></li>
+
+                                    <li>Tax (10%) <span id="cart-tax">₹ <%= tax %></span></li>
+                                    <hr>
+                                    <li>Total <span id="cart-total">₹<%= (products.reduce((total, product)=> total +
+                                                product.totalPrice, tax -totalOfferDiscount)).toFixed(2) %></span></li>
+                                </ul>
+
+
+                                <div class="checkout__input__checkbox">
+                                    <label for="payment-COD">
+                                        Cash On Delivery
+                                        <input type="radio" id="payment-COD" name="payment-method" checked>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <div class="checkout__input__checkbox">
+                                    <label for="payment-RazorPay">
+                                        Online
+                                        <input type="radio" id="payment-RazorPay" name="payment-method">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <div class="checkout__input__checkbox">
+                                    <label for="payment-wallet">
+                                        Wallet
+                                        <input type="radio" id="payment-wallet" name="payment-method">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <div class="checkout__input__checkbox">
+                                    <label for="payment-card">
+                                        Credit/Debit cards
+                                        <input type="radio" id="payment-card" name="payment-method">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <button type="button" class="site-btn" onclick="placeOrder()"
+                                    id="placeOrderButton">PLACE
+                                    ORDER</button>
+
+                                <% } %>
+
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            </form>
+                    </form>
         </div>
         </div>
     </section>
@@ -187,6 +211,14 @@
             const tax = parseFloat(document.querySelector('#cart-tax').innerText.replace('₹', ''));
             const totalPrice = parseFloat(document.querySelector('#cart-total').innerText.replace('₹', ''));
             const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked')?.value;
+            const discount = parseFloat('<%= totalOfferDiscount %>')
+            if (selectedAddressId == undefined) {
+                return Swal.fire({
+                    title: 'Select an address!!!',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                }).then(() => location.reload())
+            }
             const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.id.split('-')[1];
             // const paymentMethod = "COD"
             return {
@@ -195,7 +227,8 @@
                 tax,
                 totalPrice,
                 selectedAddressId,
-                paymentMethod//
+                paymentMethod,//
+                discount
             };
         }
 
@@ -217,7 +250,7 @@
                         description: "Order Payment",
                         order_id: razorpayOrder.data.order.id, // Razorpay Order ID
                         handler: function (response) {
-                            handlePaymentSuccess(response.razorpay_payment_id, razorpayOrder.data.order.id,orderData);
+                            handlePaymentSuccess(response.razorpay_payment_id, razorpayOrder.data.order.id, orderData);
                         },
                         prefill: {
                             name: razorpayOrder.data.user,
@@ -232,15 +265,15 @@
                     const rzp = new Razorpay(options);
                     rzp.on('payment failed', function (response) {
                         Swal.fire({
-                                title: 'Error!',
-                                text: 'Payment Failed . Please try again.',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
+                            title: 'Error!',
+                            text: 'Payment Failed . Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     })
                     rzp.open();
                 }
-            } else if(paymentMethod === 'COD'){
+            } else if (paymentMethod === 'COD') {
                 axios.post('/placeOrder', orderData)
                     .then(response => {
                         if (response.data.success) {
@@ -277,11 +310,11 @@
 
 
 
-        async function handlePaymentSuccess(paymentId, razorpayOrderId,orderData) {
+        async function handlePaymentSuccess(paymentId, razorpayOrderId, orderData) {
             try {
                 axios.post('/placeOrder', orderData)
-                    .then (async res => {
-                        const orderId=res.data.data.orderId
+                    .then(async res => {
+                        const orderId = res.data.data.orderId
                         const response = await axios.post('/payment-success', {
                             paymentId,
                             razorpayOrderId,

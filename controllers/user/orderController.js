@@ -67,6 +67,30 @@ const cancelOrder = async (req, res) => {
     }
 };
 
+const returnRequest = async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        const order = await Order.findById(orderId);
+
+        if (!order) {
+            return errorResponse(res, error, 'Order not found', 404);
+        }
+
+        if (order.orderStatus === 'Returned') {
+            return errorResponse(res, error, 'Order is already returned', 400);
+        }
+
+        order.orderStatus = 'Return Request';
+        await order.save();
+
+    
+        return successResponse(res, {}, 'Order return requested successfully');
+    } catch (error) {
+        console.error('Error while cancelling order:', error);
+        return errorResponse(res, error, 'Failed to cancel order', 500);
+    }
+};
+
 
 const loadOrders=async(req,res)=>{
     try {
@@ -88,5 +112,6 @@ module.exports = {
     orderSuccess,
     orderDetails,
     cancelOrder,
+    returnRequest,
     loadOrders
 }
