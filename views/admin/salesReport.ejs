@@ -1,40 +1,40 @@
 <%- include("../../views/partials/admin/header") %>
-<link rel="stylesheet" href="/admin-assets/css/productsCategory.css">
+    <link rel="stylesheet" href="/admin-assets/css/productsCategory.css">
 
     <style>
-    .stats-card {
-        transition: box-shadow 0.3s ease;
-    }
+        .stats-card {
+            transition: box-shadow 0.3s ease;
+        }
 
-    .stats-card:hover {
-        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-    }
+        .stats-card:hover {
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+        }
 
-    .card-body p {
-        font-size: 1.2rem;
-        font-weight: 600;
-    }
+        .card-body p {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
 
-    .icon-wrapper {
-        font-size: 1.8rem;
-        color: #fff;
-        padding: 10px;
-        background-color: #007bff;
-        border-radius: 50%;
-    }
+        .icon-wrapper {
+            font-size: 1.8rem;
+            color: #fff;
+            padding: 10px;
+            background-color: #007bff;
+            border-radius: 50%;
+        }
 
-    .bg-sales {
-        background-color: #17a2b8 !important;
-    }
+        .bg-sales {
+            background-color: #17a2b8 !important;
+        }
 
-    .bg-order {
-        background-color: #28a745 !important;
-    }
+        .bg-order {
+            background-color: #28a745 !important;
+        }
 
-    .bg-discount {
-        background-color: #ffc107 !important;
-    }
-</style>
+        .bg-discount {
+            background-color: #ffc107 !important;
+        }
+    </style>
     <section class="content-main">
         <div class="content-header d-flex shadow">
             <header class="card-header d-flex  justify-content-between">
@@ -103,7 +103,7 @@
 
         <div class="container card py-3 shadow">
             <!-- Display sales report if there are any orders -->
-            <% if (salesReport.length > 0) { %>
+            <% if (salesReport.length> 0) { %>
                 <table class="table table-bordered">
                     <thead>
                         <tr class="text-center h6">
@@ -118,7 +118,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% salesReport.forEach(order => { %>
+                        <% salesReport.forEach(order=> { %>
                             <tr id="order-<%= order._id %>" class="text-center">
                                 <td>
                                     <%= order.orderId %>
@@ -129,13 +129,18 @@
                                 <td>
                                     <!-- Display all product names from orderedItems -->
                                     <ul class="list-unstyled">
-                                        <% order.orderedItems.forEach(item => { %>
-                                            <li><%= item.product.productName %> (Qty: <%= item.quantity %> , Size: <%= item.size %>)</li>
-                                        <% }); %>
+                                        <% order.orderedItems.forEach(item=> { %>
+                                            <li>
+                                                <%= item.product.productName %> (Qty: <%= item.quantity %> , Size: <%=
+                                                            item.size %>)
+                                            </li>
+                                            <% }); %>
                                     </ul>
                                 </td>
-                                <td>₹<%= order.finalAmount.toFixed(2) %></td>
-                                <td>₹<%= order.discount.toFixed(2) %></td>
+                                <td>₹<%= order.finalAmount.toFixed(2) %>
+                                </td>
+                                <td>₹<%= order.discount.toFixed(2) %>
+                                </td>
                                 <td>
                                     <%= order.couponApplied ? 'Yes' : 'No' %>
                                 </td>
@@ -146,14 +151,38 @@
                                     <%= order.orderStatus %>
                                 </td>
                             </tr>
-                        <% }); %>
+                            <% }); %>
                     </tbody>
                 </table>
-            <% } else { %>
-                <h1 class="d-flex justify-content-center py-5">No sales report found.</h1>
-            <% } %>
+                <% } else { %>
+                    <h1 class="d-flex justify-content-center py-5">No sales report found.</h1>
+                    <% } %>
         </div>
-        
+
+
+        <div class="pagination-container ">
+            <% if (currentPage> 1) { %>
+                <a href="?page=<%= currentPage - 1 %>" class="border border-1 rounded-pill  py-1 me-1">&laquo;
+                    Previous</a>
+                <% } %>
+                    <% for (let i=1; i <=totalPages; i++) { %>
+                        <% if (i===currentPage) { %>
+                            <span class="current-page border border-1 rounded-pill py-1 me-1" style="  background-color: black;
+                            color: white;">
+                                <%= i %>
+                            </span>
+                            <% } else { %>
+                                <a href="?page=<%= i %>" class="border border-1 rounded-pill py-1 me-1">
+                                    <%= i %>
+                                </a>
+                                <% } %>
+                                    <% } %>
+                                        <% if (currentPage < totalPages) { %>
+                                            <a href="?page=<%= currentPage + 1 %>"
+                                                class="border border-1 rounded-pill py-1 ">Next &raquo;</a>
+                                            <% } %>
+        </div>
+
     </section>
 
 

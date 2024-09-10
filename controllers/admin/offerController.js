@@ -3,13 +3,32 @@ const Product = require('../../models/productSchema')
 const { ProductOffer, CategoryOffer } = require('../../models/offerSchema')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
+///////////////////////////////////////////////////////////////////////////
+/////////////         product offer management         ////////////////////
+///////////////////////////////////////////////////////////////////////////
 
-//product offer management 
 
 const loadProductOffers = async (req, res) => {
     try {
-        const productOffers = await ProductOffer.find({}).sort({ createdAt: -1 })
-        res.render('offers/productOffers', { productOffers });
+        let search = req.query.search || "";
+        const page = parseInt(req.query.page) || 1;
+        const limit = 5;
+        const skip = (page - 1) * limit;
+        const productOffers = await ProductOffer.find({ offerName: { $regex: ".*" + search + ".*", $options: "i" } }).sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const totalProductOffers = await ProductOffer.countDocuments({ offerName: { $regex: ".*" + search + ".*", $options: "i" } })
+        const totalPages = Math.ceil(totalProductOffers / limit);
+
+        res.render('offers/productOffers',
+            {
+                productOffers,
+                currentPage: page,
+                totalPages,
+                totalProductOffers,
+                limit
+            });
     } catch (err) {
         console.error('Error loading product offers:', err);
         res.redirect("/pageError")
@@ -81,7 +100,6 @@ const toggleProductOffer = async (req, res) => {
             }
         }
 
-        // Toggle isActive status
         offer.isActive = !offer.isActive;
         await offer.save();
 
@@ -118,13 +136,32 @@ const deleteProductOffer = async (req, res) => {
 };
 
 
+///////////////////////////////////////////////////////////////////////////
+/////////////         category offer management         ///////////////////
+///////////////////////////////////////////////////////////////////////////
 
-//category offer management 
 
 const loadCategoryOffers = async (req, res) => {
     try {
-        const categoryOffer = await CategoryOffer.find({}).sort({ createdAt: -1 })
-        res.render('offers/categoryOffers', { categoryOffer });
+        let search = req.query.search || "";
+        const page = parseInt(req.query.page) || 1;
+        const limit = 5;
+        const skip = (page - 1) * limit;
+        const categoryOffer = await CategoryOffer.find({ offerName: { $regex: ".*" + search + ".*", $options: "i" } }).sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const totalCategoryOffer = await CategoryOffer.countDocuments({ offerName: { $regex: ".*" + search + ".*", $options: "i" } })
+        const totalPages = Math.ceil(totalCategoryOffer / limit);
+
+        res.render('offers/categoryOffers',
+            {
+                categoryOffer,
+                currentPage: page,
+                totalPages,
+                totalCategoryOffer,
+                limit
+            });
     } catch (err) {
         console.error('Error loading categories offers:', err);
         res.redirect("/pageError")
@@ -215,7 +252,6 @@ const toggleCategoryOffer = async (req, res) => {
             }
         }
 
-        // Toggle isActive status
         offer.isActive = !offer.isActive;
         await offer.save();
 
@@ -242,13 +278,11 @@ const deleteCategoryOffer = async (req, res) => {
             product.offerPercentage = 0
             await product.save()
         }
-
         if (!offer) {
             return errorResponse(res, err, 'Offer not found');
         }
 
         successResponse(res, {}, "category Offer deleted successfully")
-
 
     } catch (err) {
         console.error('Error deleting offer:', err);

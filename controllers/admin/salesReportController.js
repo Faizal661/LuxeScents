@@ -8,7 +8,11 @@ const pdf = require('pdfkit'); // For PDF generation
 
 const loadSalesReportPage = async (req, res) => {
     try {
-        const salesCount = await Order.countDocuments();
+        let search = req.query.search || "";
+        const page = parseInt(req.query.page) || 1;
+        const limit = 5;
+        const skip = (page - 1) * limit;
+
         const overallOrderAmount = await Order.aggregate([
             { $group: { _id: null, totalAmount: { $sum: "$finalAmount" } } }
         ]);
@@ -19,16 +23,25 @@ const loadSalesReportPage = async (req, res) => {
         const totalAmount = overallOrderAmount.length > 0 ? overallOrderAmount[0].totalAmount : 0;
         const totalDiscount = overallDiscount.length > 0 ? overallDiscount[0].totalDiscount : 0;
 
-        const salesReport = await Order.find({})
+        const salesReport = await Order.find({}).sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
             .populate('userId', 'name email')
             .populate('orderedItems.product', 'productName category price')
-            .lean(); // Using .lean() to get plain JS objects
+            .lean();
+
+        const salesCount = await Order.countDocuments();
+        const totalPages = Math.ceil(salesCount / limit);
+
 
         res.render('salesReport', {
             salesCount,
             totalAmount,
             totalDiscount,
-            salesReport
+            salesReport,
+            currentPage: page,
+            totalPages,
+            limit
         });
     } catch (error) {
         console.log("Error loading sales report:", error);
@@ -63,14 +76,14 @@ const downloadSalesReportExcel = async (req, res) => {
 
         // Add data
         salesReport.forEach(order => {
-            const productDetails = order.orderedItems.map(item => 
+            const productDetails = order.orderedItems.map(item =>
                 `${item.product.productName} (${item.size}, Qty: ${item.quantity})`
-              ).join(', '); 
+            ).join(', ');
 
             worksheet.addRow({
                 orderId: order.orderId,
                 userName: order.userId ? order.userId.name : 'Guest',
-                Products:  productDetails,
+                Products: productDetails,
                 finalAmount: order.finalAmount,
                 discount: order.discount,
                 couponApplied: order.couponApplied ? 'Yes' : 'No',
@@ -136,7 +149,7 @@ const downloadSalesReportPDF = async (req, res) => {
 
         // Add data rows
         salesReport.forEach(order => {
-            const productDetails = order.orderedItems.map(item => 
+            const productDetails = order.orderedItems.map(item =>
                 `${item.product.productName} (${item.size}, Qty: ${item.quantity})`
             ).join(',\n');
 

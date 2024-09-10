@@ -12,7 +12,7 @@
                     <h2 class="content-title card-title col-lg-4"> Category Offers</h2>
                     <a href="/admin/loadAddCategoryOfferPage" class="btn  shadow border col-lg-2 rounded-0 btn-dark mb-3">Add New Offer</a>
                     <header class="card-header text-center bg-transparent  col-lg-4">
-                        <form action="/admin/category/" method="get">
+                        <form action="/admin/categoryOffers/" method="get">
                             <div class="input-group input-group-sm  border border-1 rounded-pill shadow">
                                 <input type="text" class="form-control border-0 bg-transparent pt-3 ps-3"
                                     placeholder="Search category offers by name...." name="search" />
@@ -81,7 +81,28 @@
             </div>
             
 
-
+            <div class="pagination-container ">
+                <% if (currentPage> 1) { %>
+                    <a href="?page=<%= currentPage - 1 %>" class="border border-1 rounded-pill  py-1 me-1">&laquo;
+                        Previous</a>
+                    <% } %>
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                            <% if (i===currentPage) { %>
+                                <span class="current-page border border-1 rounded-pill py-1 me-1" style="  background-color: black;
+                                color: white;">
+                                    <%= i %>
+                                </span>
+                                <% } else { %>
+                                    <a href="?page=<%= i %>" class="border border-1 rounded-pill py-1 me-1">
+                                        <%= i %>
+                                    </a>
+                                    <% } %>
+                                        <% } %>
+                                            <% if (currentPage < totalPages) { %>
+                                                <a href="?page=<%= currentPage + 1 %>"
+                                                    class="border border-1 rounded-pill py-1 ">Next &raquo;</a>
+                                                <% } %>
+            </div>
 
 
         </section>
