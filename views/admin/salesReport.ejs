@@ -41,9 +41,34 @@
                 <h2 class="content-title card-title">Sales Report</h2>
             </header>
             <div class="download-buttons justify-content-evenly row-gap-4">
-                <a href="/admin/salesReport/excel" class="btn btn-success rounded-0 py-2 me-3">Download Excel</a>
-                <a href="/admin/salesReport/pdf" class="btn btn-danger rounded-0 py-2 me-5">Download PDF</a>
+                <a href="/admin/salesReport/excel?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>"
+                    class="btn btn-success rounded-0 py-2 me-3">Download Excel</a>
+                <a href="/admin/salesReport/pdf?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>"
+                    class="btn btn-danger rounded-0 py-2 me-5">Download PDF</a>
             </div>
+        </div>
+
+
+        <!-- Filter by Date Range -->
+        <div class="row my-4">
+            <form action="/admin/salesReport" method="GET" class="d-flex align-items-center">
+                <select name="filterType" class="form-select me-3 rounded-0 border" style="width: 200px;">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="yearly">Yearly</option>
+                    <option value="custom">Custom Date</option>
+                </select>
+                <button type="submit" class="btn btn-success text-light rounded-0 border me-4">Filter</button>
+
+                <!-- Custom Date Range -->
+                <div id="custom-date" class="d-flex align-items-center mt-2">
+                    <label for="startDate" class="me-2">From:</label>
+                    <input type="date" name="startDate" id="startDate" class="form-control me-3 rounded-0 border">
+                    <label for="endDate" class="me-2">To:</label>
+                    <input type="date" name="endDate" id="endDate" class="form-control me-3 rounded-0 border">
+                </div>
+
+            </form>
         </div>
 
         <!-- Stats Row -->
@@ -184,6 +209,26 @@
         </div>
 
     </section>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterType = document.querySelector('[name="filterType"]');
+            const customDateSection = document.getElementById('custom-date');
+
+            const toggleCustomDate = () => {
+                if (filterType.value === 'custom') {
+                    customDateSection.style.display = 'flex';
+                } else {
+                    customDateSection.style.display = 'none';
+                }
+            };
+
+            filterType.addEventListener('change', toggleCustomDate);
+            toggleCustomDate(); // Initial toggle based on page load
+        });
+    </script>
 
 
     <%- include("../../views/partials/admin/footer") %>

@@ -1,36 +1,74 @@
-const Category = require("../../models/categorySchema")
-const Product = require('../../models/productSchema')
-const User = require('../../models/userSchema')
 const Order = require('../../models/orderSchema');
 const excel = require('exceljs');
-const pdf = require('pdfkit'); // For PDF generation
+// const pdf = require('pdfkit');
+const pdf = require('html-pdf');
+const puppeteer = require('puppeteer');
+
+const moment = require('moment');
 
 
 const loadSalesReportPage = async (req, res) => {
     try {
-        let search = req.query.search || "";
         const page = parseInt(req.query.page) || 1;
         const limit = 5;
         const skip = (page - 1) * limit;
 
+        let filter = {};
+        const filterType = req.query.filterType || 'yearly';
+        const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
+        const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
+
+        switch (filterType) {
+            case 'daily':
+                filter.createdAt = {
+                    $gte: moment().startOf('day').toDate(),
+                    $lt: moment().endOf('day').toDate(),
+                };
+                break;
+            case 'weekly':
+                filter.createdAt = {
+                    $gte: moment().startOf('week').toDate(),
+                    $lt: moment().endOf('week').toDate(),
+                };
+                break;
+            case 'yearly':
+                filter.createdAt = {
+                    $gte: moment().startOf('year').toDate(),
+                    $lt: moment().endOf('year').toDate(),
+                };
+                break;
+            case 'custom':
+                if (startDate && endDate) {
+                    filter.createdAt = {
+                        $gte: startDate,
+                        $lt: endDate,
+                    };
+                }
+                break;
+            default:
+                break;
+        }
+
         const overallOrderAmount = await Order.aggregate([
-            { $group: { _id: null, totalAmount: { $sum: "$finalAmount" } } }
+            { $match: filter }, { $group: { _id: null, totalAmount: { $sum: "$finalAmount" } } }
         ]);
+        // const totalOrderAmount = overallOrderAmount.length > 0 ? overallOrderAmount[0].totalAmount : 0;
+
         const overallDiscount = await Order.aggregate([
-            { $group: { _id: null, totalDiscount: { $sum: "$discount" } } }
+            { $match: filter }, { $group: { _id: null, totalDiscount: { $sum: "$discount" } } }
         ]);
 
         const totalAmount = overallOrderAmount.length > 0 ? overallOrderAmount[0].totalAmount : 0;
         const totalDiscount = overallDiscount.length > 0 ? overallDiscount[0].totalDiscount : 0;
 
-        const salesReport = await Order.find({}).sort({ createdAt: -1 })
+        const salesReport = await Order.find(filter)
             .skip(skip)
             .limit(limit)
             .populate('userId', 'name email')
-            .populate('orderedItems.product', 'productName category price')
+            .populate('orderedItems.product', 'productName category price').sort({ createdAt: -1 })
             .lean();
 
-        const salesCount = await Order.countDocuments();
+        const salesCount = await Order.countDocuments(filter);
         const totalPages = Math.ceil(salesCount / limit);
 
 
@@ -41,11 +79,15 @@ const loadSalesReportPage = async (req, res) => {
             salesReport,
             currentPage: page,
             totalPages,
-            limit
+            limit,
+            filterType,
+            startDate,
+            endDate
         });
     } catch (error) {
         console.log("Error loading sales report:", error);
-        res.status(500).send("Internal Server Error");
+        res.redirect("/pageError");
+
     }
 };
 
@@ -53,7 +95,44 @@ const loadSalesReportPage = async (req, res) => {
 
 const downloadSalesReportExcel = async (req, res) => {
     try {
-        const salesReport = await Order.find({})
+        let filter = {};
+        const filterType = req.query.filterType || 'yearly';
+        const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
+        const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
+
+
+        switch (filterType) {
+            case 'daily':
+                filter.createdAt = {
+                    $gte: moment().startOf('day').toDate(),
+                    $lt: moment().endOf('day').toDate(),
+                };
+                break;
+            case 'weekly':
+                filter.createdAt = {
+                    $gte: moment().startOf('week').toDate(),
+                    $lt: moment().endOf('week').toDate(),
+                };
+                break;
+            case 'yearly':
+                filter.createdAt = {
+                    $gte: moment().startOf('year').toDate(),
+                    $lt: moment().endOf('year').toDate(),
+                };
+                break;
+            case 'custom':
+                if (startDate && endDate) {
+                    filter.createdAt = {
+                        $gte: new Date(startDate),
+                        $lt: new Date(endDate),
+                    };
+                }
+                break;
+            default:
+                break;
+        }
+
+        const salesReport = await Order.find(filter)
             .populate('userId', 'name email')
             .populate('orderedItems.product', 'productName category price')
             .lean();
@@ -100,74 +179,150 @@ const downloadSalesReportExcel = async (req, res) => {
             res.status(200).end();
         });
     } catch (error) {
-        console.log("Error generating Excel:", error);
-        res.status(500).send("Internal Server Error");
+        console.log("Error generating Excel:", error);    
+            res.redirect("/pageError");
+
     }
 };
 
 
+
 const downloadSalesReportPDF = async (req, res) => {
     try {
-        const salesReport = await Order.find({})
+        let filter = {};
+        const filterType = req.query.filterType || 'yearly';
+        const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
+        const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
+
+        // Filter logic based on filterType
+        switch (filterType) {
+            case 'daily':
+                filter.createdAt = {
+                    $gte: moment().startOf('day').toDate(),
+                    $lt: moment().endOf('day').toDate(),
+                };
+                break;
+            case 'weekly':
+                filter.createdAt = {
+                    $gte: moment().startOf('week').toDate(),
+                    $lt: moment().endOf('week').toDate(),
+                };
+                break;
+            case 'yearly':
+                filter.createdAt = {
+                    $gte: moment().startOf('year').toDate(),
+                    $lt: moment().endOf('year').toDate(),
+                };
+                break;
+            case 'custom':
+                if (startDate && endDate) {
+                    filter.createdAt = {
+                        $gte: new Date(startDate),
+                        $lt: new Date(endDate),
+                    };
+                }
+                break;
+            default:
+                break;
+        }
+
+        const salesReport = await Order.find(filter)
             .populate('userId', 'name email')
             .populate('orderedItems.product', 'productName category price')
             .lean();
 
-        // Create PDF document
-        const doc = new pdf();
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
+        // HTML content for the PDF
+        let html = `
+        <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                    }
+                    h2 {
+                        text-align: center;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin: 20px 0;
+                    }
+                    th, td {
+                        border: 1px solid #dddddd;
+                        text-align: left;
+                        padding: 8px;
+                    }
+                    th {
+                        background-color: #f2f2f2;
+                    }
+                </style>
+            </head>
+            <body>
+                <h2>Sales Report</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>User Name</th>
+                            <th>Products</th>
+                            <th>Total Amount</th>
+                            <th>Discount</th>
+                            <th>Coupon Applied</th>
+                            <th>Payment Method</th>
+                            <th>Order Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
 
-        doc.pipe(res);
-
-        // Add title
-        doc.fontSize(18).text('Sales Report', { align: 'center' });
-        doc.moveDown();
-
-        // Define column widths
-        const columnWidths = {
-            orderId: 70,
-            userName: 50,
-            products: 100,
-            finalAmount: 60,
-            discount: 60,
-            couponApplied: 60,
-            paymentMethod: 100,
-            orderStatus: 100
-        };
-
-        // Add table headers
-        doc.fontSize(10).text('Order ID', 50, doc.y, { width: columnWidths.orderId });
-        doc.text('User Name', 50 + columnWidths.orderId, doc.y, { width: columnWidths.userName });
-        doc.text('Products', 50 + columnWidths.orderId + columnWidths.userName, doc.y, { width: columnWidths.products });
-        doc.text('Total Amount', 50 + columnWidths.orderId + columnWidths.userName + columnWidths.products, doc.y, { width: columnWidths.finalAmount });
-        doc.text('Discount', 50 + columnWidths.orderId + columnWidths.userName + columnWidths.products + columnWidths.finalAmount, doc.y, { width: columnWidths.discount });
-        doc.text('Coupon Applied', 50 + columnWidths.orderId + columnWidths.userName + columnWidths.products + columnWidths.finalAmount + columnWidths.discount, doc.y, { width: columnWidths.couponApplied });
-        doc.text('Payment Method', 50 + columnWidths.orderId + columnWidths.userName + columnWidths.products + columnWidths.finalAmount + columnWidths.discount + columnWidths.couponApplied, doc.y, { width: columnWidths.paymentMethod });
-        doc.text('Order Status', 50 + columnWidths.orderId + columnWidths.userName + columnWidths.products + columnWidths.finalAmount + columnWidths.discount + columnWidths.couponApplied + columnWidths.paymentMethod, doc.y, { width: columnWidths.orderStatus });
-        doc.moveDown();
-
-        // Add data rows
         salesReport.forEach(order => {
-            const productDetails = order.orderedItems.map(item =>
+            const productDetails = order.orderedItems.map(item => 
                 `${item.product.productName} (${item.size}, Qty: ${item.quantity})`
-            ).join(',\n');
+            ).join(', ');
 
-            doc.fontSize(9).text(order.orderId, 50, doc.y, { width: columnWidths.orderId });
-            doc.text(order.userId ? order.userId.name : 'Guest', 50 + columnWidths.orderId, doc.y, { width: columnWidths.userName });
-            doc.text(productDetails, 50 + columnWidths.orderId + columnWidths.userName, doc.y, { width: columnWidths.products });
-            doc.text(`₹${order.finalAmount.toFixed(2)}`, 50 + columnWidths.orderId + columnWidths.userName + columnWidths.products, doc.y, { width: columnWidths.finalAmount });
-            doc.text(`₹${order.discount.toFixed(2)}`, 50 + columnWidths.orderId + columnWidths.userName + columnWidths.products + columnWidths.finalAmount, doc.y, { width: columnWidths.discount });
-            doc.text(order.couponApplied ? 'Yes' : 'No', 50 + columnWidths.orderId + columnWidths.userName + columnWidths.products + columnWidths.finalAmount + columnWidths.discount, doc.y, { width: columnWidths.couponApplied });
-            doc.text(order.paymentMethod, 50 + columnWidths.orderId + columnWidths.userName + columnWidths.products + columnWidths.finalAmount + columnWidths.discount + columnWidths.couponApplied, doc.y, { width: columnWidths.paymentMethod });
-            doc.text(order.orderStatus, 50 + columnWidths.orderId + columnWidths.userName + columnWidths.products + columnWidths.finalAmount + columnWidths.discount + columnWidths.couponApplied + columnWidths.paymentMethod, doc.y, { width: columnWidths.orderStatus });
-            doc.moveDown();
+            html += `
+                <tr>
+                    <td>${order.orderId}</td>
+                    <td>${order.userId ? order.userId.name : 'Guest'}</td>
+                    <td>${productDetails}</td>
+                    <td>₹${order.finalAmount.toFixed(2)}</td>
+                    <td>₹${order.discount.toFixed(2)}</td>
+                    <td>${order.couponApplied ? 'Yes' : 'No'}</td>
+                    <td>${order.paymentMethod}</td>
+                    <td>${order.orderStatus}</td>
+                </tr>`;
         });
 
-        doc.end();
+        html += `
+                    </tbody>
+                </table>
+            </body>
+        </html>`;
+
+        // PDF options
+        const options = {
+            format: 'A4',
+            orientation: 'portrait',
+            border: {
+                top: '1cm',
+                right: '1cm',
+                bottom: '1cm',
+                left: '1cm'
+            }
+        };
+
+        pdf.create(html, options).toStream((err, stream) => {
+            if (err) {
+                console.error("Error generating PDF:", err);
+                return res.redirect("/pageError");
+            }
+            
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
+            stream.pipe(res);
+        });
     } catch (error) {
         console.log("Error generating PDF:", error);
-        res.status(500).send("Internal Server Error");
+        res.redirect("/pageError");
     }
 };
 
