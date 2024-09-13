@@ -38,11 +38,33 @@
 
                             <div class="cart__discount col-9">
                                 <h6>Discount codes</h6>
-                                <form action="#">
-                                    <input type="text" placeholder="Coupon code">
+                                <form action="/checkoutPage" method="get">
+                                    <input type="text" name="couponCode" placeholder="Coupon code">
                                     <button type="submit">Apply</button>
                                 </form>
                             </div>
+
+                            <!-- Display available coupons -->
+                            <div class="available-coupons ml-3">
+                                <h6>Available Coupons</h6>
+                                <% if (coupons && coupons.length> 0) { %>
+                                    <ul class="coupon-list">
+                                        <% coupons.forEach(coupon=> { %>
+                                            <li>
+                                                <strong>
+                                                    <%= coupon.code %>
+                                                </strong> - Save ₹<%= coupon.offerPrice %> on orders above ₹<%=
+                                                        coupon.minimumPrice %>
+                                                        (Expires on <%= new Date(coupon.expireOn).toLocaleDateString()
+                                                            %>)
+                                            </li>
+                                            <% }); %>
+                                    </ul>
+                                    <% } else { %>
+                                        <p>No available coupons.</p>
+                                        <% } %>
+                            </div>
+
                             <!-- Address Selection Section -->
                             <div class=" p-4 rounded mt-5 col-10">
                                 <% if (addresses.length===0) { %>
@@ -127,20 +149,29 @@
                                         <% }); %>
                                 </ul>
                                 <ul class="checkout__total__all">
-                                    <li>Coupon Applied <span>-₹ 0</span></li>
-                                    <li>Discount Price <span id="offerDiscount">-₹ <%= totalOfferDiscount %></span>
-                                    </li>
-                                    <li>Delivery Charges <span>Free Delivery</span></li>
-                                    <hr>
-                                    <li>Subtotal <span id="cart-subtotal">₹<%= (products.reduce((total, product)=>
-                                                total
-                                                +
-                                                product.totalPrice, -totalOfferDiscount)).toFixed(2) %></span></li>
+                                    <% if (discountApplied) { %>
+                                        <li>Coupon Applied <span>-₹<%= discountApplied %></span></li>
+                                        <% } else { %>
+                                            <li>Coupon Applied <span>-₹ 0</span></li>
+                                            <% } %>
+                                                <li>Discount Price <span id="offerDiscount">-₹ <%= totalOfferDiscount %>
+                                                            </span>
+                                                </li>
+                                                <li>Delivery Charges <span>Free Delivery</span></li>
+                                                <hr>
+                                                <li>Subtotal <span id="cart-subtotal">₹<%= (products.reduce((total,
+                                                            product)=>
+                                                            total
+                                                            +
+                                                            product.totalPrice, -totalOfferDiscount)).toFixed(2)
+                                                            %></span></li>
 
-                                    <li>Tax (10%) <span id="cart-tax">₹ <%= tax %></span></li>
-                                    <hr>
-                                    <li>Total <span id="cart-total">₹<%= (products.reduce((total, product)=> total +
-                                                product.totalPrice, tax -totalOfferDiscount)).toFixed(2) %></span></li>
+                                                <li>Tax (10%) <span id="cart-tax">₹ <%= tax %></span></li>
+                                                <hr>
+                                                <li>Total <span id="cart-total">₹<%= (products.reduce((total, product)=>
+                                                            total +
+                                                            product.totalPrice, tax -totalOfferDiscount)).toFixed(2)
+                                                            %></span></li>
                                 </ul>
 
 

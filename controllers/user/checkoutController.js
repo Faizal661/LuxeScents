@@ -3,6 +3,7 @@ const Product = require('../../models/productSchema')
 const Cart = require('../../models/cartSchema')
 const Address = require('../../models/addressSchema')
 const Order = require('../../models/orderSchema')
+const Coupon = require('../../models/couponSchema')
 const Razorpay = require('razorpay');
 require('dotenv').config();
 
@@ -11,7 +12,6 @@ const razorpay = new Razorpay({
     key_secret: process.env.RAZORPAY_SECRET_KEY
 
 });
-
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
 
@@ -19,6 +19,22 @@ const loadCheckoutPage = async (req, res) => {
     try {
         if (req.session.user) {
             const userId = req.session.user;
+
+            let { couponCode } = req.body;
+            
+            // Find the coupon by code
+            if (couponCode) {
+                const coupon = await Coupon.findOne({
+                    code: couponCode,
+                    expireOn: { $gte: new Date() },
+                    isActive: true,
+                    usedBy: { $ne: userId },
+                });
+                if (!coupon) {
+                    return res.redirect('/checkoutPage?error=Invalid or expired coupon');
+                }
+            }
+
 
             const addresses = await Address.find({ userId: userId })
 
@@ -60,15 +76,51 @@ const loadCheckoutPage = async (req, res) => {
             const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0) - totalOfferDiscount;
             const tax = (subtotal * 10) / 100;
             const grandTotal = subtotal + tax;
+            let newGrandTotal=grandTotal
+            let discountApplied=false
+            if (couponCode) {
+                const coupon = await Coupon.findOne({
+                    code: couponCode,
+                    expireOn: { $gte: new Date() },
+                    isActive: true,
+                    usedBy: { $ne: userId },
+                });
+                if (!coupon) {
+                    return res.redirect('/checkoutPage?error=Invalid or expired coupon');
+                }
+                
+                if (grandTotal < coupon.minimumPrice) {
+                    return res.redirect('/checkoutPage?error=Grand total is less than coupon minimum price');
+                }
+                const couponDiscount = coupon.offerPrice;
+                newGrandTotal = grandTotal - couponDiscount;
+
+                coupon.usedBy.push(userId);
+                coupon.usedCount += 1;
+                await coupon.save();
+                 discountApplied=true
+            }
+
+
+            const coupons = await Coupon.find({
+                expireOn: { $gte: new Date() },
+                // usageLimit: { $gt: usedCount }, 
+                minimumPrice: { $lte: grandTotal },
+                isActive: true,
+                usedBy: { $ne: userId }
+            });
 
             res.render('checkout', {
                 products,
                 cart,
                 tax,
                 subtotal,
-                grandTotal,
+                grandTotal: newGrandTotal,
                 addresses: addresses ? addresses : [],
-                totalOfferDiscount
+                totalOfferDiscount,
+                coupons,
+                couponCode: couponCode,
+                discountApplied
 
             });
         } else {
@@ -94,7 +146,7 @@ const placeOrder = async (req, res) => {
             discount
         } = req.body;
 
-        console.log(discount)
+        // console.log(discount)
 
         const address = await Address.findById(selectedAddressId);
 
@@ -129,11 +181,11 @@ const placeOrder = async (req, res) => {
             paymentMethod,
             orderStatus: 'Processing',
             couponApplied: false,
-            discount:discount
+            discount: discount
         });
 
         await newOrder.save();
-        console.log(newOrder)
+        // console.log(newOrder)
         for (const item of orderedItems) {
             const product = await Product.findById(item.productId);
 
@@ -199,16 +251,13 @@ const handlePaymentSuccess = async (req, res) => {
     try {
 
         const { paymentId, razorpayOrderId, orderId } = req.body;
-        console.log('here 1...', req.body)
         const order = await Order.findOne({ _id: orderId });
-        console.log('order in payment success', order)
         if (!order) {
             return res.status(404).json({
                 success: false,
                 message: 'Order not found',
             });
         }
-        console.log('here 2...')
 
 
         // Update the order status to 'Paid'
@@ -218,7 +267,6 @@ const handlePaymentSuccess = async (req, res) => {
             orderId: razorpayOrderId
         };
         await order.save();
-        console.log('orderID...', orderId)
         successResponse(res, { orderId: orderId }, 'Order placed successfully');
 
     } catch (error) {

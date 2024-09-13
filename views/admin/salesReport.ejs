@@ -34,17 +34,53 @@
         .bg-discount {
             background-color: #ffc107 !important;
         }
+
+        /* Spinner Styles */
+        #loadingSpinner {
+            position: relative;
+            top: 15px;
+            left: 10px;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+
+        .spinner {
+            border: 5px solid #dbdbdb;
+            /* Light grey */
+            border-top: 5px solid black;
+            /* Blue */
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(1080deg);
+            }
+        }
     </style>
     <section class="content-main">
         <div class="content-header d-flex shadow">
             <header class="card-header d-flex  justify-content-between">
                 <h2 class="content-title card-title">Sales Report</h2>
-            </header>
+            </header>   
+            <div id="loadingSpinner" style="display: none;">
+                <div class="spinner"></div>
+            </div>
             <div class="download-buttons justify-content-evenly row-gap-4">
                 <a href="/admin/salesReport/excel?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>"
-                    class="btn btn-success rounded-0 py-2 me-3">Download Excel</a>
+                    class="btn btn-success rounded-0 py-2 me-3 downloadButton">Download Excel</a>
+
                 <a href="/admin/salesReport/pdf?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>"
-                    class="btn btn-danger rounded-0 py-2 me-5">Download PDF</a>
+                    class="btn btn-danger rounded-0 py-2 me-5 downloadButton">Download PDF</a>
+
+
             </div>
         </div>
 
@@ -58,8 +94,6 @@
                     <option value="yearly">Yearly</option>
                     <option value="custom">Custom Date</option>
                 </select>
-                <button type="submit" class="btn btn-success text-light rounded-0 border me-4">Filter</button>
-
                 <!-- Custom Date Range -->
                 <div id="custom-date" class="d-flex align-items-center mt-2">
                     <label for="startDate" class="me-2">From:</label>
@@ -67,6 +101,9 @@
                     <label for="endDate" class="me-2">To:</label>
                     <input type="date" name="endDate" id="endDate" class="form-control me-3 rounded-0 border">
                 </div>
+                <button type="submit" class="btn btn-success text-light rounded-0 border me-4">Filter</button>
+
+
 
             </form>
         </div>
@@ -219,14 +256,29 @@
 
             const toggleCustomDate = () => {
                 if (filterType.value === 'custom') {
-                    customDateSection.style.display = 'flex';
+                    customDateSection.classList.remove('d-none');
+                    customDateSection.classList.add('d-flex');
+
                 } else {
-                    customDateSection.style.display = 'none';
+                    customDateSection.classList.remove('d-flex');
+                    customDateSection.classList.add('d-none');
                 }
             };
 
             filterType.addEventListener('change', toggleCustomDate);
             toggleCustomDate(); // Initial toggle based on page load
+        });
+    </script>
+
+    <script>
+        const downloadButtons = document.querySelectorAll('.downloadButton');
+        downloadButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                document.getElementById('loadingSpinner').style.display = 'block';
+                setTimeout(function () {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                }, 2000);
+            })
         });
     </script>
 

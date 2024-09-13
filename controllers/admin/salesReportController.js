@@ -1,8 +1,6 @@
 const Order = require('../../models/orderSchema');
 const excel = require('exceljs');
-// const pdf = require('pdfkit');
 const pdf = require('html-pdf');
-const puppeteer = require('puppeteer');
 
 const moment = require('moment');
 
@@ -90,7 +88,6 @@ const loadSalesReportPage = async (req, res) => {
 
     }
 };
-
 
 
 const downloadSalesReportExcel = async (req, res) => {
@@ -231,7 +228,6 @@ const downloadSalesReportPDF = async (req, res) => {
             .populate('orderedItems.product', 'productName category price')
             .lean();
 
-        // HTML content for the PDF
         let html = `
         <html>
             <head>

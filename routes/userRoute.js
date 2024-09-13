@@ -13,26 +13,18 @@ const passport=require('passport')
 const User = require('../models/userSchema')
 var url = require('url')
 
-
-userRouter.get('/',userController.loadHomepage) 
-
-userRouter.get('/login',userController.loadLogin)
-userRouter.post('/login',userController.userLogin );
-
 userRouter.get('/forgotPassword',userController.loadForgotPassword)
 userRouter.post('/sendOtpToChangePassword',userController.sendOtpToChangePassword)
-
 userRouter.get('/loadChangePasswordPage',userController.loadChangePasswordPage)
 
-
-
+//user authentication
+userRouter.get('/login',userController.loadLogin)
+userRouter.post('/login',userController.userLogin );
 userRouter.get('/signup',userController.loadSignup)
 userRouter.post('/register_new', userController.registerNew);
 userRouter.post('/verify-otp',userController.verifyOtp)
 userRouter.post('/resend-otp',userController.resendOtp)
-
  
-
 //goole authenticaion routes
 userRouter.get('/auth/google/',passport.authenticate('google',{scope:['profile','email']}));
 function storeUserIdInSession(req, res) {
@@ -45,16 +37,15 @@ userRouter.get('/auth/google/callback', passport.authenticate('google', { failur
 
 
 //user pages
+userRouter.get('/',userController.loadHomepage) 
 userRouter.get('/homepage',userController.loadHomepage )
 userRouter.get('/shoppage',userController.loadShopPage )
 userRouter.get('/singleProduct',userController.loadSingleProduct )
- 
 
 //userProfile
 userRouter.get('/userProfile',userAuth,userProfileController.loadUserProfilePage)
 userRouter.get('/loadEditUserProfilePage',userAuth,userProfileController.loadEditUserProfilePage)
 userRouter.post('/editUserProfile/:id',userAuth,userProfileController.editUserProfile)
-
 
 //address management
 userRouter.get('/loadAddAddressPage',userAuth,userProfileController.loadAddAddressPage)
@@ -98,7 +89,6 @@ userRouter.get('/orderDetails',userAuth,OrderController.orderDetails)
 userRouter.post('/cancelOrder',userAuth,OrderController.cancelOrder)
 userRouter.post('/returnRequest',userAuth,OrderController.returnRequest)
 userRouter.get('/loadOrders',userAuth,OrderController.loadOrders)
-
 
 userRouter.get('/logout',userAuth,userController.userLogout)
 userRouter.get("/pageNotfound",userController.pageNotfound)

@@ -1,5 +1,5 @@
-const express = require('express')
-const adminRouter = express.Router();
+var express = require('express')
+var adminRouter = express.Router();
 const { adminAuth } = require('../middlewares/authentication');
 const adminController = require('../controllers/admin/adminController')
 const customerController = require('../controllers/admin/customerController')
@@ -10,13 +10,20 @@ const offerController = require('../controllers/admin/offerController')
 const couponController = require('../controllers/admin/couponController')
 const salesReportController= require('../controllers/admin/salesReportController')
 
-adminRouter.get('/pageError', adminAuth, adminController.pageError)
+
+//authentication
 adminRouter.get('/login', adminController.loadAdminLogin)
 adminRouter.post('/admin-login', adminController.adminLogin)
-adminRouter.get('/dashboard', adminAuth, adminController.loadDashboard)
-adminRouter.get('/', adminAuth, adminController.loadDashboard)
 adminRouter.get('/logoutadmin', adminAuth, adminController.adminLogout)
 
+//Dashboard
+adminRouter.get('/dashboard', adminAuth, adminController.loadDashboard)
+adminRouter.get('/', adminAuth, adminController.loadDashboard)
+
+//salesReport 
+adminRouter.get('/salesReport',adminAuth,salesReportController.loadSalesReportPage)
+adminRouter.get('/salesReport/excel',adminAuth, salesReportController.downloadSalesReportExcel);
+adminRouter.get('/salesReport/pdf',adminAuth, salesReportController.downloadSalesReportPDF);
 
 //users
 adminRouter.get('/users', adminAuth, customerController.customerInfo)
@@ -30,7 +37,6 @@ adminRouter.get('/editCategory', adminAuth, categoryController.getEditCategory)
 adminRouter.post('/editCategory/:id', adminAuth, categoryController.EditCategory)
 adminRouter.get('/unlistCategory', adminAuth, categoryController.toggleCategoryListing)
 adminRouter.get('/listCategory', adminAuth, categoryController.toggleCategoryListing)
-
 
 //product
 adminRouter.get('/products', adminAuth, productController.productInfo)
@@ -46,20 +52,19 @@ adminRouter.get('/orders', adminAuth, orderController.orderInfo)
 adminRouter.get('/orderDetails', adminAuth, orderController.orderDetails)
 adminRouter.post('/updateOrderStatus', adminAuth, orderController.updateOrderStatus)
 
-
 //product offers
 adminRouter.get('/productOffers', adminAuth, offerController.loadProductOffers)
 adminRouter.get('/loadAddProductOfferPage', adminAuth, offerController.loadAddProductOfferPage)
 adminRouter.post('/addProductOffer', adminAuth, offerController.addProductOffer)
 adminRouter.post('/toggleProductOffer/:id', adminAuth, offerController.toggleProductOffer)
 adminRouter.delete('/deleteProductOffer/:id', adminAuth, offerController.deleteProductOffer)
+
 //category offers
 adminRouter.get('/categoryOffers', adminAuth, offerController.loadCategoryOffers)
 adminRouter.get('/loadAddCategoryOfferPage', adminAuth, offerController.loadAddCategoryOfferPage)
 adminRouter.post('/addCategoryOffer', adminAuth, offerController.addCategoryOffer)
 adminRouter.post('/toggleCategoryOffer/:id', adminAuth, offerController.toggleCategoryOffer)
 adminRouter.delete('/deleteCategoryOffer/:id', adminAuth, offerController.deleteCategoryOffer)
-
 
 //coupon management
 adminRouter.get('/coupons', adminAuth, couponController.loadCouponListingPage)
@@ -68,12 +73,8 @@ adminRouter.post('/addCoupon', adminAuth, couponController.addCoupon)
 adminRouter.patch('/toggleCoupon/:couponId', couponController.toggleCouponStatus);
 
 
-//salesReport 
-adminRouter.get('/salesReport',adminAuth,salesReportController.loadSalesReportPage)
-adminRouter.get('/salesReport/excel',adminAuth, salesReportController.downloadSalesReportExcel);
-adminRouter.get('/salesReport/pdf',adminAuth, salesReportController.downloadSalesReportPDF);
-
 //page error
+adminRouter.get('/pageError', adminAuth, adminController.pageError)
 adminRouter.get('*', adminController.pageError)
 
 module.exports = adminRouter;  

@@ -1,11 +1,244 @@
-
 <%- include("../../views/partials/admin/header") %>
-<section class="content-main">
-    <div class="content-header">
-        <div>
-            <h2 class="content-title card-title"> Admin - dashboard </h2>
+    <link rel="stylesheet" href="/admin-assets/css/productsCategory.css">
+    <style>
+        .chart {
+            padding: 60px 0px;
+        }
+
+        .statuses h4 {
+            padding-top: 5px;
+        }
+    </style>
+
+
+    <section class="content-main">
+        <div class="content-header d-flex shadow">
+            <header class=" d-flex  justify-content-between">
+                <h2 class="content-title card-title">Dashboard</h2>
+            </header>
+            <!-- Filter by Date Range -->
+            <div class="row my-4">
+                <form action="/admin/dashboard" method="GET" class="d-flex align-items-center">
+                    <!-- Custom Date Range -->
+                    <div id="custom-date" class=" align-items-center mt-2 d-none">
+                        <label for="startDate" class="me-2">From:</label>
+                        <input type="date" name="startDate" id="startDate" class="form-control me-3 rounded-0 border">
+                        <label for="endDate" class="me-2">To:</label>
+                        <input type="date" name="endDate" id="endDate" class="form-control me-3 rounded-0 border">
+                    </div>
+                    <select name="filterType" class="form-select me-3 rounded-0 border" style="width: 200px;">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="yearly">Yearly</option>
+                        <option value="custom">Custom Date</option>
+                    </select>
+
+                    <button type="submit" class="btn btn-success text-light rounded-0 border me-4">Filter</button>
+                </form>
+            </div>
         </div>
-       
-    </div>
-</section>
-<%- include("../../views/partials/admin/footer") %>
+
+        <!-- Charts Section -->
+        <div class="charts-container">
+            <div class="chart col-lg-12 d-flex">
+                <div class="col-lg-7">
+                    <canvas id="lineChart"></canvas>
+                </div>
+                <div class="col-lg-5 py-5 ps-5 ">
+                    <h3 class="mx-5 my-3">Total Sales : <%= filterType %>
+                    </h3>
+                    <h3>Total orders : <%= salesCount %>
+                    </h3>
+                    <h3>Total Revenue : <%= totalAmount.toFixed(2) %>
+                    </h3>
+                    <h3></h3>
+                </div>
+            </div>
+            <div class="d-flex">
+                <div class="chart col-lg-6 d-block">
+                    <div class="col-lg-12 pb-5 ps-5 align-content-center ms-5">
+                        <div class="col-8 my-5">
+                            <canvas id="doughnut"></canvas>
+                        </div>
+                        <h3 class="mx-5 mb-3">Profit & Sales : <%= filterType %>
+                        </h3>
+                        <h3>Total orders : <%= salesCount %>
+                        </h3>
+                        <h3>Total Revenue : <%= totalAmount.toFixed(2) %>
+                        </h3>
+                        <h3>Total Discount : <%= totalDiscount.toFixed(2) %>
+                        </h3>
+                        <h3></h3>
+                    </div>
+                </div>
+                <div class="chart col-lg-6 d-block">
+                    <div class="col-lg-12 pb-5 ps-5 align-content-center ms-5">
+                        <div class="col-8 my-5">
+                            <canvas id="polarArea"></canvas>
+                        </div>
+                        <h3 class="mx-5 mb-3">Order Statuses : <%= filterType %>
+                        </h3>
+                        <h3>Total orders : <%= salesCount %>
+                        </h3>
+                        <div class="ps-5 statuses">
+                            <h4>Total Processing : <%= orderStatusMap.Processing %>
+                            </h4>
+                            <h4>Total Shipped : <%= orderStatusMap.Shipped %>
+                            </h4>
+                            <h4>Total Delivered : <%= orderStatusMap.Delivered %>
+                            </h4>
+                            <h4>Total Cancelled : <%= orderStatusMap.Cancelled %>
+                            </h4>
+                            <h4>Total ReturnRequest : <%= orderStatusMap.ReturnRequest %>
+                            </h4>
+                            <h4>Total Returned : <%= orderStatusMap.Returned %>
+                            </h4>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+
+        <div class="container mt-5">
+            <h3 class="text-center">Top 5 Best-Selling Products</h3>
+            <ul class="list-group">
+              <% topProducts.forEach(product => { %>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <%= product.productName %>
+                  <span class="badge bg-primary rounded-pill"><%= product.totalSold %> sold</span>
+                </li>
+              <% }) %>
+            </ul>
+          
+            <h3 class="text-center mt-4">Top 5 Best-Selling Categories</h3>
+            <ul class="list-group">
+              <% topCategories.forEach(category => { %>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <%= category.categoryName %>
+                  <span class="badge bg-success rounded-pill"><%= category.totalSold %> sold</span>
+                </li>
+              <% }) %>
+            </ul>
+          
+            <h3 class="text-center mt-4">Top 5 Best-Selling Brands</h3>
+            <ul class="list-group">
+              <% topBrands.forEach(brand => { %>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <%= brand.brandName %>
+                  <span class="badge bg-warning rounded-pill"><%= brand.totalSold %> sold</span>
+                </li>
+              <% }) %>
+            </ul>
+          </div>
+            
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterType = document.querySelector('[name="filterType"]');
+            const customDateSection = document.getElementById('custom-date');
+
+            const toggleCustomDate = () => {
+                if (filterType.value === 'custom') {
+                    customDateSection.classList.remove('d-none');
+                    customDateSection.classList.add('d-flex');
+
+                } else {
+                    customDateSection.classList.remove('d-flex');
+                    customDateSection.classList.add('d-none');
+                }
+            };
+            filterType.addEventListener('change', toggleCustomDate);
+            toggleCustomDate(); // Initial toggle based on page load
+        });
+    </script>
+    <script>
+
+        const totalAmount = '<%= totalAmount %>';
+        const totalDiscount = '<%= totalDiscount %>';
+        const salesReport = <%- JSON.stringify(salesReport) %>;
+        const orderLabels = salesReport.map(order => new Date(order.createdAt).toLocaleDateString());
+        const orderAmounts = salesReport.map(order => order.finalAmount);
+        const discountAmounts = salesReport.map(order => order.discount);
+
+        const doughnut = new Chart(document.getElementById('doughnut'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Total Sales', 'Total Discount'],
+                datasets: [{
+                    data: [totalAmount, totalDiscount],
+                    backgroundColor: ['#36a2eb', '#ff6384']
+                }]
+            }
+        });
+
+        const orderStatusMap = {
+            Processing: '<%= orderStatusMap.Processing %>',
+            Shipped: '<%= orderStatusMap.Shipped %>',
+            Delivered: '<%= orderStatusMap.Delivered %>',
+            Cancelled: '<%= orderStatusMap.Cancelled %>',
+            ReturnRequest: '<%= orderStatusMap["Return Request"] %>',
+            Returned: '<%= orderStatusMap.Returned %>'
+        };
+
+
+        const polarArea = new Chart(document.getElementById('polarArea'), {
+            type: 'polarArea',
+            data: {
+                labels: ['Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Returned'],
+                datasets: [{
+                    data: [
+                        orderStatusMap.Processing,
+                        orderStatusMap.Shipped,
+                        orderStatusMap.Delivered,
+                        orderStatusMap.Cancelled,
+                        orderStatusMap.ReturnRequest,
+                        orderStatusMap.Returned
+                    ],
+                    backgroundColor: [
+                        '#36a2eb', // Processing
+                        '#ff6384', // Shipped
+                        '#4bc0c0', // Delivered
+                        '#ffcd56', // Cancelled
+                        '#9966ff', // Return Request
+                        '#ff9f40'  // Returned
+                    ]
+                }]
+            }
+        });
+
+
+
+        // Line Chart: Shows total sales over the selected period
+        const lineChart = new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: orderLabels,
+                datasets: [{
+                    label: 'Total Sales',
+                    data: orderAmounts,
+                    borderColor: '#ffcd56',
+                    fill: false,
+                    tension: .3
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+
+
+    <%- include("../../views/partials/admin/footer") %>
