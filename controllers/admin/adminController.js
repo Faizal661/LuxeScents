@@ -1,5 +1,6 @@
 const User = require('../../models/userSchema')
 const Order = require('../../models/orderSchema')
+const Product=require('../../models/productSchema')
 const bcrypt = require("bcrypt")
 const moment = require('moment')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
@@ -24,7 +25,7 @@ const adminLogin = async (req, res) => {
         const { email, password } = req.body;
         const admin = await User.findOne({ email: email, isAdmin: true });
         if (admin) {
-            //await is neccessary, if await is removed only the admin email is validating, and it doesnt wait for passwordmatch
+            //* await is neccessary, if await is removed only the admin email is validating, and it doesnt wait for passwordmatch
             const passwordMatch = await bcrypt.compare(password, admin.password)
             if (passwordMatch) {
                 req.session.admin = true;
@@ -50,7 +51,6 @@ const loadDashboard = async (req, res) => {
         const filterType = req.query.filterType || 'yearly';
         const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
         const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
-
         switch (filterType) {
             case 'daily':
                 filter.createdAt = {
@@ -81,32 +81,20 @@ const loadDashboard = async (req, res) => {
             default:
                 break;
         }
-
+        //~~~~~~~~~    graph data for pie,single line ,poalr Area graphs   ~~~~~~~~~~~//
         const overallOrderAmount = await Order.aggregate([
-            { $match: filter }, { $group: { _id: null, totalAmount: { $sum: "$finalAmount" } } }
-        ]);
-
+            { $match: filter }, { $group: { _id: null, totalAmount: { $sum: "$finalAmount" } } }]);
         const overallDiscount = await Order.aggregate([
-            { $match: filter }, { $group: { _id: null, totalDiscount: { $sum: "$discount" } } }
-        ]);
-
+            { $match: filter }, { $group: { _id: null, totalDiscount: { $sum: "$discount" } } }]);
         const totalAmount = overallOrderAmount.length > 0 ? overallOrderAmount[0].totalAmount : 0;
         const totalDiscount = overallDiscount.length > 0 ? overallDiscount[0].totalDiscount : 0;
-
         const salesReport = await Order.find(filter)
         const salesCount = await Order.countDocuments(filter);
 
-
         const orderStatusCounts = await Order.aggregate([
             { $match: filter },
-            {
-                $group: {
-                    _id: "$orderStatus",
-                    count: { $sum: 1 }
-                }
-            }
+            { $group: { _id: "$orderStatus", count: { $sum: 1 } } }
         ]);
-
         const orderStatusMap = {
             Processing: 0,
             Shipped: 0,
@@ -115,109 +103,56 @@ const loadDashboard = async (req, res) => {
             'Return Request': 0,
             Returned: 0
         };
-
         orderStatusCounts.forEach(status => {
             orderStatusMap[status._id] = status.count;
         });
 
 
-        //top selling product ,category and brand
+        //~~~~~~~~~~~~     top selling product ,category and brand       ~~~~~~~~~~~//
         // top 5 best-selling products
         const topProducts = await Order.aggregate([
             { $match: filter },
             { $unwind: "$orderedItems" },
-            {
-                $group: {
-                    _id: "$orderedItems.product",
-                    totalSold: { $sum: "$orderedItems.quantity" }
-                }
-            },
+            { $group: { _id: "$orderedItems.product", totalSold: { $sum: "$orderedItems.quantity" } } },
             { $sort: { totalSold: -1 } },
             { $limit: 5 },
-            {
-                $lookup: {
-                    from: "products",
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "product"
-                }
-            },
+            { $lookup: { from: "products", localField: "_id", foreignField: "_id", as: "product" } },
             { $unwind: "$product" },
             { $project: { productName: "$product.productName", totalSold: 1 } }
         ]);
-        console.log(topProducts)
-
         // top 5 best-selling categories
         const topCategories = await Order.aggregate([
             { $match: filter },
             { $unwind: "$orderedItems" },
-            {
-                $lookup: {
-                    from: "products",
-                    localField: "orderedItems.product",
-                    foreignField: "_id",
-                    as: "productDetails"
-                }
-            },
+            { $lookup: { from: "products", localField: "orderedItems.product", foreignField: "_id", as: "productDetails" } },
             { $unwind: "$productDetails" },
-            {
-                $group: {
-                    _id: "$productDetails.category",
-                    totalSold: { $sum: "$orderedItems.quantity" }
-                }
-            },
+            { $group: { _id: "$productDetails.category", totalSold: { $sum: "$orderedItems.quantity" } } },
             { $sort: { totalSold: -1 } },
             { $limit: 5 },
-            {
-                $lookup: {
-                    from: "categories",
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "category"
-                }
-            },
+            { $lookup: { from: "categories", localField: "_id", foreignField: "_id", as: "category" } },
             { $unwind: "$category" },
             { $project: { categoryName: "$category.name", totalSold: 1 } }
         ]);
-        console.log(topCategories)
-
-
         //  top 5 best-selling brands
         const topBrands = await Order.aggregate([
             { $match: filter },
             { $unwind: "$orderedItems" },
-            {
-                $lookup: {
-                    from: "products",
-                    localField: "orderedItems.product",
-                    foreignField: "_id",
-                    as: "productDetails"
-                }
-            },
+            { $lookup: { from: "products", localField: "orderedItems.product", foreignField: "_id", as: "productDetails" } },
             { $unwind: "$productDetails" },
-            {
-                $group: {
-                    _id: "$productDetails.brand",
-                    totalSold: { $sum: "$orderedItems.quantity" }
-                }
-            },
+            { $group: { _id: "$productDetails.brand", totalSold: { $sum: "$orderedItems.quantity" } } },
             { $sort: { totalSold: -1 } },
             { $limit: 5 },
-            {
-                $lookup: {
-                    from: "brands",
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "brand"
-                }
-            },
+            { $lookup: { from: "brands", localField: "_id", foreignField: "_id", as: "brand" } },
             { $unwind: "$brand" },
             { $project: { brandName: "$brand.brandName", totalSold: 1 } }
         ]);
-        console.log(topBrands)
 
-
-
+        //~~~~~~~~~~~~~     Low stock productsss         ~~~~~~~~~~~~~~~~~~~//
+        const lowStockProducts = await Product.aggregate([
+            { $unwind: "$variations" },
+            { $match: { "variations.quantity": { $lt: 20 } } },
+            { $project: { productName: 1, "variations.size": 1, "variations.quantity": 1 } }
+        ]).sort({"variations.quantity": 1});
 
         res.render('dashboard', {
             salesCount,
@@ -230,16 +165,14 @@ const loadDashboard = async (req, res) => {
             orderStatusMap,
             topProducts,
             topBrands,
-            topCategories
+            topCategories,
+            lowStockProducts
         });
     } catch (error) {
         console.log("Error loading Dashboard", error);
         res.redirect("/pageError");
     }
 };
-
-
-
 
 
 const adminLogout = async (req, res) => {

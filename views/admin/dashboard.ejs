@@ -101,38 +101,76 @@
         </div>
         <hr>
 
-        <div class="container mt-5">
-            <h3 class="text-center">Top 5 Best-Selling Products</h3>
-            <ul class="list-group">
-              <% topProducts.forEach(product => { %>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <%= product.productName %>
-                  <span class="badge bg-primary rounded-pill"><%= product.totalSold %> sold</span>
-                </li>
-              <% }) %>
-            </ul>
-          
-            <h3 class="text-center mt-4">Top 5 Best-Selling Categories</h3>
-            <ul class="list-group">
-              <% topCategories.forEach(category => { %>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <%= category.categoryName %>
-                  <span class="badge bg-success rounded-pill"><%= category.totalSold %> sold</span>
-                </li>
-              <% }) %>
-            </ul>
-          
-            <h3 class="text-center mt-4">Top 5 Best-Selling Brands</h3>
-            <ul class="list-group">
-              <% topBrands.forEach(brand => { %>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <%= brand.brandName %>
-                  <span class="badge bg-warning rounded-pill"><%= brand.totalSold %> sold</span>
-                </li>
-              <% }) %>
-            </ul>
-          </div>
-            
+        <h1 class="text-center mb-4 h2">Best-Selling ( <%= filterType %> )</h1>
+        <div class="container mt-5 d-flex">
+            <div class="col-lg-4 px-2">
+                <h3 class="text-center my-3">Best-Selling Products</h3>
+                <ul class="list-group">
+                    <% topProducts.forEach(product=> { %>
+                        <li class="list-group-item d-flex justify-content-center gap-5 align-items-center h6">
+                            <div class="col-lg-6">
+                            <%= product.productName %>
+                            </div>
+                            <div class="badge bg-primary rounded-pill col-lg-3 ">
+                                <%= product.totalSold %> sold
+                            </div>
+                        </li>
+                        <% }) %>
+                </ul>
+            </div>
+            <div class="col-lg-4 px-2">
+                <h3 class="text-center my-3">Best-Selling Categories</h3>
+                <ul class="list-group">
+                    <% topCategories.forEach(category=> { %>
+                        <li class="list-group-item d-flex justify-content-center gap-5 align-items-center h6">
+                            <div class="col-lg-6">
+                            <%= category.categoryName %>
+                            </div>
+                            <div class="badge bg-success rounded-pill col-lg-3">
+                                <%= category.totalSold %> sold
+                            </div>
+                        </li>
+                        <% }) %>
+                </ul>
+            </div>
+            <div class="col-lg-4 px-2">
+                <h3 class="text-center my-3">Best-Selling Brands</h3>
+                <ul class="list-group">
+                    <% topBrands.forEach(brand=> { %>
+                        <li class="list-group-item d-flex justify-content-center gap-5 align-items-center h6">
+                            <div class="col-lg-6">
+                            <%= brand.brandName %>
+                            </div>
+                                <div class="badge bg-warning rounded-pill col-lg-3">
+                                    <%= brand.totalSold %> sold
+                                </div>
+                        </li>
+                        <% }) %>
+                </ul>
+            </div>
+        </div>
+        <hr>
+
+        <h1 class="text-center my-4 h2">Low Stock Products</h1>
+        <div class="container mt-5 d-flex justify-content-center">
+            <div class="col-lg-6 px-2 ">
+                <ul class="list-group">
+                    <% lowStockProducts.forEach(product=> { %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center h6">
+                            <div class="col-lg-6">
+                                <%= product.productName %> - <%= product.variations.size %>
+                            </div>
+                            <div class="badge bg-danger rounded-pill col-lg-3">
+                                Stock : <%= product.variations.quantity %>
+                            </div>
+                        </li>
+                        <% }) %>
+                </ul>
+            </div>
+        </div>
+        <hr>
+
+
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -152,7 +190,7 @@
                 }
             };
             filterType.addEventListener('change', toggleCustomDate);
-            toggleCustomDate(); // Initial toggle based on page load
+            toggleCustomDate();
         });
     </script>
     <script>
@@ -183,8 +221,6 @@
             ReturnRequest: '<%= orderStatusMap["Return Request"] %>',
             Returned: '<%= orderStatusMap.Returned %>'
         };
-
-
         const polarArea = new Chart(document.getElementById('polarArea'), {
             type: 'polarArea',
             data: {
@@ -209,8 +245,6 @@
                 }]
             }
         });
-
-
 
         // Line Chart: Shows total sales over the selected period
         const lineChart = new Chart(document.getElementById('lineChart'), {

@@ -35,7 +35,7 @@ body {
 .logo {
     font-family: "Berkshire Swash", serif;
     font-weight: 400;
-    font-style: normal;
+    font-size:23px ;
 }
 
 .content-title {
@@ -4445,4 +4445,8 @@ body {
 .dropdown-item:hover {
     background-color: #33053d;
     color: #ffffff;
+}
+
+h1,h2,h3,h4,h5,h6,body,p{
+    font-family: 'Material Icons Round';
 }
