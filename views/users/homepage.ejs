@@ -1,5 +1,23 @@
 <%- include('../partials/users/userHeader') -%>
+    <style>
+        .product__item:hover {
+            cursor: pointer;
+        }
 
+        .out-of-stock-overlay {
+            top: 0;
+            left: 0;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .offer-overlay {
+            top: 0;
+            left: 60px;
+            font-size: large;
+            position: absolute;
+            font-weight: 700;
+        }
+    </style>
 
     <!-- Hero Section Begin -->
     <section class="hero">
@@ -12,7 +30,7 @@
                                 <h6>Summer Collection</h6>
                                 <h2>Discover the perfect scent for every occasion</h2>
                                 <p>A specialist label creating luxury essentials. Ethically crafted with an unwavering
-                                commitment to exceptional quality.</p>
+                                    commitment to exceptional quality.</p>
                                 <a href="#" class="primary-btn">Shop now <span class="arrow_right"></span></a>
                                 <div class="hero__social">
                                     <a href="#"><i class="fa fa-facebook"></i></a>
@@ -33,7 +51,7 @@
                                 <h6>Winter Collection</h6>
                                 <h2>Discover the perfect scent for every occasion</h2>
                                 <p>A specialist label creating luxury essentials. Ethically crafted with an unwavering
-                                commitment to exceptional quality.</p>
+                                    commitment to exceptional quality.</p>
                                 <a href="#" class="primary-btn">Shop now <span class="arrow_right"></span></a>
                                 <div class="hero__social">
                                     <a href="#"><i class="fa fa-facebook"></i></a>
@@ -55,11 +73,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-7 offset-lg-4">
-                    <div class="banner__item" >
+                    <div class="banner__item">
                         <div class="banner__item__pic ">
                             <img src="img/banner/banner-1.jpg" alt="" width="400px" class="rounded rounded-5">
                         </div>
-                        <div class="banner__item__text" >
+                        <div class="banner__item__text">
                             <h2>Colognes Collections for mens</h2>
                             <a href="/shoppage?gender=Men&sort=createdAt&order=asc&stock=">Shop now</a>
                         </div>
@@ -99,39 +117,82 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h4 class="filter__controls"><strong>Best Sellers</strong></h2>
-                     
+
                 </div>
             </div>
 
             <div class="row">
-                <%for (let i=0; i < 8 && i < bestSellers.length; i++) { const product=bestSellers[i]; %>
-                    <div class="col-lg-3 col-md-6 col-sm-6  " onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
-                        <div class="product__item border border-3 rounded rounded-3 p-2 pb-3">
-                            <div class="product__item__pic set-bg ">
+                <% bestSellers.forEach(product=> { %>
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-6">
+                        <div class="product__item border border-3 rounded rounded-3 p-2">
+                            <div class="product__item__pic ">
                                 <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
-                                alt="<%= product.productName %> ">
-                                <ul class="product__hover">
-                                    <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                                    <li><a href="#"><img src="img/icon/cart.png" alt=""></a></li>
-                                </ul>
+                                    alt="<%= product.productName %> "
+                                    onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
+
+                                <% if (product.variations[0].quantity===0) { %>
+                                    <div onclick="window.location.href='/singleProduct?id=<%= product._id %>';"
+                                        class="out-of-stock-overlay cursor-pointer d-flex align-items-center justify-content-center position-absolute w-100 h-100">
+                                        <h4 class="text-danger fw-bold">Out of Stock</h4>
+                                    </div>
+                                    <% } %>
+
+                                        <ul class="product__hover">
+                                            <li>
+                                                <a href="#" onclick="toggleWishlist('<%= product._id %>')">
+                                                    <img src="img/icon/<%= wishlistProductIds.includes(product._id.toString()) ? 'heartFill.png' : 'heart.png' %>"
+                                                        class="rounded rounded-5 " data-product-id="<%= product._id %>"
+                                                        alt="wishlist">
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <% if(product.variations[0].quantity!==0){ %>
+                                                    <% if (cartProductIds.includes(product._id.toString())) { %>
+                                                        <a href="/loadCartPage">
+                                                            <img src="img/icon/inCart.png" class="rounded rounded-5"
+                                                                alt="Go to Cart" title="Go to Cart">
+                                                        </a>
+                                                        <%}else { %>
+                                                            <a href="#" onclick="addToCart('<%= product._id %>')">
+                                                                <img src="img/icon/cart.png" class="rounded rounded-5 "
+                                                                    alt="cart" title="Add to Cart">
+                                                            </a>
+                                                            <% } %>
+                                                                <%}else { %>
+                                                                    <a onclick="outOfStock()">
+                                                                        <img src="img/icon/out-of-stock.png"
+                                                                            class="rounded rounded-5" alt="out-of-stock"
+                                                                            title="out-of-stock">
+                                                                    </a>
+                                                                    <% } %>
+                                            </li>
+                                        </ul>
                             </div>
                             <div class="product__item__text">
-                                <h5><%= product.productName %></h5>
-                                <div class="d-block">
-                                    <p class="h6 fw-lighter"> Brand : <%= product.brand.brandName %></p>
-                                    <p class="h6 fw-lighter"> Note : <%= product.category.name %></p>
-
-                                </div>
-                                <div class="d-flex ">
-                                    <h5 >₹<%= product.variations[0].salePrice %></h5>
-                                    <h5 class="pl-4 text-muted  " style="text-decoration: line-through;">₹<%= product.variations[0].regularPrice %></h5>
-                                </div>
-
+                                <% if (product.offerPercentage!==0 && product.variations[0].quantity!==0) { %>
+                                    <h4 class="offer-overlay text-success cursor-pointer my-1">Extra <%=
+                                            product.offerPercentage %> Offer</h4>
+                                    <% } %>
+                                        <h5>
+                                            <%= product.productName %>
+                                        </h5>
+                                        <div class="d-block">
+                                            <p class="h6 fw-lighter">Brand: <%= product.brand %>
+                                            </p>
+                                            <p class="h6 fw-lighter">Scent: <%= product.category %>
+                                            </p>
+                                        </div>
+                                        <div class="d-flex">
+                                            <h5>₹<%= product.variations[0].salePrice %>
+                                            </h5>
+                                            <h5 class="pl-4 text-muted" style="text-decoration: line-through;">₹<%=
+                                                    product.variations[0].regularPrice %>
+                                            </h5>
+                                        </div>
                             </div>
                         </div>
-
                     </div>
-                    <% } %>
+                    <% }) %>
             </div>
         </div>
     </section>
@@ -143,30 +204,76 @@
                     <h4 class="filter__controls"><strong> New Arrivals</strong></h2>
                 </div>
             </div>
-            
+
             <div class="row">
                 <%for (let i=0; i < 8 && i < newArrivals.length; i++) { const product=newArrivals[i]; %>
-                    <div class="col-lg-3 col-md-6 col-sm-6  " onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
-                        <div class="product__item border border-3 rounded rounded-3 p-2 pb-3">
-                            <div class="product__item__pic set-bg">
+                     <div class="col-lg-3 col-md-4 col-sm-6 col-6">
+                        <div class="product__item border border-3 rounded rounded-3 p-2">
+                            <div class="product__item__pic ">
                                 <img src="<%= product.productImages[0].replace(/\\/g, '/') %>"
-                                alt="<%= product.productName %> ">
-                                <ul class="product__hover">
-                                    <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                                    <li><a href="#"><img src="img/icon/cart.png" alt=""></a></li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h5><%= product.productName %></h5>
-                                <div class="d-block">
-                                    <p class="h6 fw-lighter"> Brand : <%= product.brand.brandName %></p>
-                                    <p class="h6 fw-lighter"> Note : <%= product.category.name %></p>
+                                alt="<%= product.productName %> "
+                                onclick="window.location.href='/singleProduct?id=<%= product._id %>';">
 
+                            <% if (product.variations[0].quantity===0) { %>
+                                <div onclick="window.location.href='/singleProduct?id=<%= product._id %>';"
+                                    class="out-of-stock-overlay cursor-pointer d-flex align-items-center justify-content-center position-absolute w-100 h-100">
+                                    <h4 class="text-danger fw-bold">Out of Stock</h4>
                                 </div>
-                                <div class="d-flex ">
-                                    <h5 >₹<%= product.variations[0].salePrice %></h5>
-                                    <h5 class="pl-4 text-muted  " style="text-decoration: line-through;">₹<%= product.variations[0].regularPrice %></h5>
-                                </div>
+                                <% } %>
+
+                                    <ul class="product__hover">
+                                        <li>
+                                            <a href="#" onclick="toggleWishlist('<%= product._id %>')">
+                                                <img src="img/icon/<%= wishlistProductIds.includes(product._id.toString()) ? 'heartFill.png' : 'heart.png' %>"
+                                                    class="rounded rounded-5 " data-product-id="<%= product._id %>"
+                                                    alt="wishlist">
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <% if(product.variations[0].quantity!==0){ %>
+                                                <% if (cartProductIds.includes(product._id.toString())) { %>
+                                                    <a href="/loadCartPage">
+                                                        <img src="img/icon/inCart.png" class="rounded rounded-5"
+                                                            alt="Go to Cart" title="Go to Cart">
+                                                    </a>
+                                                    <%}else { %>
+                                                        <a href="#" onclick="addToCart('<%= product._id %>')">
+                                                            <img src="img/icon/cart.png" class="rounded rounded-5 "
+                                                                alt="cart" title="Add to Cart">
+                                                        </a>
+                                                        <% } %>
+                                                            <%}else { %>
+                                                                <a onclick="outOfStock()">
+                                                                    <img src="img/icon/out-of-stock.png"
+                                                                        class="rounded rounded-5" alt="out-of-stock"
+                                                                        title="out-of-stock">
+                                                                </a>
+                                                                <% } %>
+                                        </li>
+                                    </ul>
+                        </div>
+                            <div class="product__item__text">
+                                <% if (product.offerPercentage!==0 && product.variations[0].quantity!==0) { %>
+                                    <h4 class="offer-overlay text-success cursor-pointer my-1">Extra <%=
+                                            product.offerPercentage %> Offer</h4>
+                                    <% } %>
+                                        <h5>
+                                            <%= product.productName %>
+                                        </h5>
+                                        <div class="d-block">
+                                            <p class="h6 fw-lighter"> Brand : <%= product.brand.brandName %>
+                                            </p>
+                                            <p class="h6 fw-lighter"> Scent : <%= product.category.name %>
+                                            </p>
+
+                                        </div>
+                                        <div class="d-flex ">
+                                            <h5>₹<%= product.variations[0].salePrice %>
+                                            </h5>
+                                            <h5 class="pl-4 text-muted  " style="text-decoration: line-through;">₹<%=
+                                                    product.variations[0].regularPrice %>
+                                            </h5>
+                                        </div>
 
                             </div>
                         </div>
@@ -180,54 +287,6 @@
     </section>
 
     <!-- Product Section End -->
-
-    <!-- Categories Section Begin -->
-    <!-- <section class="categories spad">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="categories__text">
-                        <h2>Clothings Hot <br /> <span>Shoe Collection</span> <br /> Accessories</h2>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="categories__hot__deal">
-                        <img src="img/product-sale.png" alt="">
-                        <div class="hot__deal__sticker">
-                            <span>Sale Of</span>
-                            <h5>$29.99</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 offset-lg-1">
-                    <div class="categories__deal__countdown">
-                        <span>Deal Of The Week</span>
-                        <h2>Multi-pocket Chest Bag Black</h2>
-                        <div class="categories__deal__countdown__timer" id="countdown">
-                            <div class="cd-item">
-                                <span>3</span>
-                                <p>Days</p>
-                            </div>
-                            <div class="cd-item">
-                                <span>1</span>
-                                <p>Hours</p>
-                            </div>
-                            <div class="cd-item">
-                                <span>50</span>
-                                <p>Minutes</p>
-                            </div>
-                            <div class="cd-item">
-                                <span>18</span>
-                                <p>Seconds</p>
-                            </div>
-                        </div>
-                        <a href="#" class="primary-btn">Shop now</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> -->
-    <!-- Categories Section End -->
 
     <!-- Instagram Section Begin -->
 
@@ -253,6 +312,103 @@
             </div>
         </div>
     </section>
-    
 
-    <%-include('../partials/users/userFooter') -%>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function toggleWishlist(productId) {
+            event.preventDefault()
+            axios.post('/toggleWishlist', { productId })
+                .then(response => {
+                    if (response.data.success) {
+                        const icon = document.querySelector(`img[data-product-id="${productId}"]`);
+                        if (icon) {
+                            icon.src = `img/icon/${response.data.data.inWishlist ? 'heartFill.png' : 'heart.png'}`;
+                        }
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: 'Failed!',
+                            text: 'Could not update wishlist.',
+                            icon: 'error',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            // customClass: {
+                            //     popup: 'custom-toast'
+                            // }
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.error('There was an error adding the product to the wishlist:', error);
+                });
+        }
+
+        function addToCart(productId) {
+            event.preventDefault()
+            axios.post('/addProductToCart', { productId })
+                .then(response => {
+                    if (response.data.success) {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: response.data.message,
+                            // text: response.data.message,
+                            icon: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            // customClass: {
+                            //     popup: 'custom-toast'
+                            // }
+                        })
+                        const cartButton = document.querySelector(`a[onclick="addToCart('${productId}')"]`);
+                        if (cartButton) {
+                            cartButton.href = '/loadCartPage';
+                            const img = cartButton.querySelector('img');
+                            img.src = 'img/icon/inCart.png';
+                            img.alt = 'Go to Cart';
+                            img.title = 'Go to Cart';
+                            cartButton.setAttribute('onclick', '');
+                        }
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            timer: 800,
+                            timerProgressBar: true,
+                            title: 'Failed!',
+                            text: 'Failed to add product to cart',
+                            icon: 'error',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            // customClass: {
+                            //     popup: 'custom-toast'
+                            // }
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.error('There was an error adding the product to the cart:', error);
+                });
+        }
+
+        function outOfStock() {
+            Swal.fire({
+                toast: true,
+                timer: 1100,
+                timerProgressBar: true,
+                title: 'Out Of Stock',
+                // text: 'Failed to add product to cart',
+                icon: 'warning',
+                position: 'top-end',
+                showConfirmButton: false,
+                // customClass: {
+                //     popup: 'custom-toast'
+                // }
+            })
+        }
+    </script>
+
+
+    <%- include('../partials/users/userFooter') -%>

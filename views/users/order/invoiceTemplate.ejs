@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .section {
+            padding: 10px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .order-items,
+        .order-summary {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+        }
+
+        .total {
+            font-weight: bold;
+        }
+
+        /* Flexbox to replace Bootstrap's d-flex and col-6 */
+        .address-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .address-column {
+            flex: 1;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Invoice</h1>
+        </div>
+        <div class="section">
+            <p><strong>Order ID:</strong> <%= order.orderId %></p>
+            <p><strong>Order Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+            <p><strong>Invoice Date:</strong> <%= new Date().toLocaleString() %></p>
+        </div>
+
+        <div class="section address-row">
+            <div class="address-column">
+                <h2 class="section-title">Shipping Address</h2>
+                <p><strong>Name:</strong> <%= order.address.name %></p>
+                <p><strong>City:</strong> <%= order.address.city %></p>
+                <p><strong>State:</strong> <%= order.address.state %></p>
+                <p><strong>Pin Code:</strong> <%= order.address.pincode %></p>
+                <p><strong>Phone:</strong> <%= order.address.phone %></p>
+            </div>
+            <div class="address-column">
+                <h2 class="section-title">Billing Address</h2>
+                <p><strong>Name:</strong> <%= order.address.name %></p>
+                <p><strong>City:</strong> <%= order.address.city %></p>
+                <p><strong>State:</strong> <%= order.address.state %></p>
+                <p><strong>Pin Code:</strong> <%= order.address.pincode %></p>
+                <p><strong>Phone:</strong> <%= order.address.phone %></p>
+            </div>
+        </div>
+
+        <div class="section order-items">
+            <h2 class="section-title">Order Items</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% order.orderedItems.forEach(item=> { %>
+                    <tr>
+                        <td><%= item.product.productName %></td>
+                        <td><%= item.quantity %></td>
+                        <td>₹<%= item.price %></td>
+                        <td>₹<%= item.quantity * item.price %></td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section order-summary">
+            <h2 class="section-title">Order Summary</h2>
+            <p><strong>Subtotal:</strong> ₹<%= order.subtotal + order.discount %></p>
+            <p><strong>Discount:</strong> ₹<%= order.discount %></p>
+            <p><strong>Tax:</strong> ₹<%= order.tax.toFixed(2) %></p>
+            <% if (order.couponApplied) { %>
+            <p><strong>Coupon Discount:</strong> ₹<%= order.couponId.offerPrice %></p>
+            <% } %>
+            <p class="total"><strong>Total Price:</strong> ₹<%= order.finalAmount.toFixed(2) %></p>
+        </div>
+    </div>
+</body>
+
+</html>

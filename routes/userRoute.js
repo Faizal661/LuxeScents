@@ -6,6 +6,7 @@ const checkoutController=require('../controllers/user/checkoutController')
 const userProfileController=require('../controllers/user/userProfileController')
 const wishlistController=require('../controllers/user/wishlistController')
 const OrderController=require('../controllers/user/orderController')
+const walletController=require('../controllers/user/walletController')
 
 const { userAuth } = require('../middlewares/authentication');
 const upload=require('../middlewares/multer')
@@ -86,9 +87,13 @@ userRouter.post('/payment-success', checkoutController.handlePaymentSuccess);//r
 //order 
 userRouter.get('/orderSuccess',userAuth,OrderController.orderSuccess)
 userRouter.get('/orderDetails',userAuth,OrderController.orderDetails)
+userRouter.get('/downloadInvoice',userAuth,OrderController.downloadInvoice)
 userRouter.post('/cancelOrder',userAuth,OrderController.cancelOrder)
 userRouter.post('/returnRequest',userAuth,OrderController.returnRequest)
 userRouter.get('/loadOrders',userAuth,OrderController.loadOrders)
+
+//wallet
+userRouter.get('/loadWallet',userAuth,walletController.loadWalletPage)
 
 userRouter.get('/logout',userAuth,userController.userLogout)
 userRouter.get("/pageNotfound",userController.pageNotfound)

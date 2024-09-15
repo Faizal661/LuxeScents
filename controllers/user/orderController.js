@@ -1,6 +1,52 @@
 const Product = require('../../models/productSchema')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 const Order = require('../../models/orderSchema');
+const pdf = require('html-pdf');
+const path = require('path');
+const ejs = require('ejs');
+
+const downloadInvoice = async (req, res) => {
+    try {
+        const orderId = req.query.orderId;
+        const order = await Order.findById(orderId).populate('orderedItems.product');
+
+        if (!order) {
+            return res.redirect("/pageNotFound");
+        }
+
+        const html = await ejs.renderFile(path.join(__dirname, '../../views/users/order/invoiceTemplate.ejs'), { order });
+
+        // PDF options
+        const options = {
+            format: 'A4',
+            border: {
+                top: '1cm',
+                right: '1cm',
+                bottom: '1cm',
+                left: '1cm'
+            }
+        };
+
+        // Generate PDF from HTML
+        pdf.create(html, options).toStream((err, stream) => {
+            if (err) {
+                console.error('Error while generating PDF:', err);
+                return res.status(500).send('Error generating PDF');
+            }
+
+            // Set response headers for downloading the PDF
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename=Invoice_${order.orderId}.pdf`);
+
+            // Pipe the stream to the response
+            stream.pipe(res);
+        });
+
+    } catch (error) {
+        console.error('Error while downloading invoice:', error);
+        res.status(500).send('Unable to download invoice');
+    }
+};
 
 const orderSuccess = async (req, res) => {
     try {
@@ -17,7 +63,6 @@ const orderDetails = async (req, res) => {
         const orderId = req.query.orderId;
 
         const order = await Order.findById(orderId).populate('orderedItems.product'); 
-        // console.log('aaaaaaaa',order)
 
         if (!order) {
             return res.redirect("/pageNotFound");
@@ -111,6 +156,7 @@ const loadOrders=async(req,res)=>{
 module.exports = {
     orderSuccess,
     orderDetails,
+    downloadInvoice,
     cancelOrder,
     returnRequest,
     loadOrders

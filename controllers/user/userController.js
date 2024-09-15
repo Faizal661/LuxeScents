@@ -4,6 +4,7 @@ const Wishlist = require('../../models/wishlistSchema')
 const Cart = require('../../models/cartSchema')
 const Category = require('../../models/categorySchema')
 const Brand = require('../../models/brandSchema')
+const Order = require('../../models/orderSchema')
 const nodemailer = require("nodemailer")
 const bcrypt = require('bcrypt');
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
@@ -59,7 +60,7 @@ const loadForgotPassword = async (req, res) => {
         res.render('userProfile/forgotPassword', { title: 'forgot password' })
     } catch (error) {
         console.log(error, 'page not found');
-        errorResponse(res, error, "Internal server error");
+        res.redirect("/pageNotfound")
     }
 }
 
@@ -74,7 +75,7 @@ const sendOtpToChangePassword = async (req, res) => {
         }
     } catch (error) {
         console.log(error, 'page not found');
-        errorResponse(res, error, "Internal server error");
+        res.redirect("/pageNotfound")
     }
 }
 
@@ -84,7 +85,7 @@ const loadChangePasswordPage = async (req, res) => {
         res.render('authentication/changePassword', { title: 'change password' })
     } catch (error) {
         console.log(error, 'page not found');
-        errorResponse(res, error, "Internal server error");
+        res.redirect("/pageNotfound")
     }
 }
 
@@ -99,7 +100,7 @@ const loadSignup = async (req, res) => {
         }
     } catch (error) {
         console.log(error, 'Sign up page not found');
-        errorResponse(res, error, "Internal server error");
+        res.redirect("/pageNotfound")
     }
 }
 
@@ -133,16 +134,15 @@ async function sendVerificationEmail(email, otp) {
 
     } catch (error) {
         console.error("Error sending email", error);
-        return false;
+        res.redirect("/pageNotfound")
     }
 }
 
 const registerNew = async (req, res) => {
 
     try {
-        const { email, username, phone, password } = req.body
+        const { email, username, phone, password } = req.body;
 
-        //Checking the entered name and email is already is in db.
         const findUser = await User.findOne({ name: username });
         if (findUser) {
             return res.render("authentication/signup", { message: "User name already taken" })
@@ -171,7 +171,7 @@ const registerNew = async (req, res) => {
 
     } catch (error) {
         console.log('signup error', error);
-        res.render('404')
+        res.redirect("/pageNotfound")
     }
 }
 
@@ -181,7 +181,7 @@ const securePassword = async (password) => {
         return passwordHash;
     } catch (error) {
         console.log('password hashing error', error);
-        errorResponse(res, error.message, "Password hashing failed");
+        res.redirect("/pageNotfound")
     }
 }
 
@@ -213,7 +213,7 @@ const verifyOtp = async (req, res) => {
         }
     } catch (error) {
         console.error("Error Verifying OTP", error)
-        res.status(500).json({ success: false, message: "An error occured " })
+        res.redirect("/pageNotfound")
     }
 }
 
@@ -236,26 +236,44 @@ const resendOtp = async (req, res) => {
         }
     } catch (error) {
         console.error("Error resending otp", error)
-        res.status(500).json({ success: false, message: "Internal server error,Please try again" })
+        res.redirect("/pageNotfound")
     }
 }
 
 
 const loadHomepage = async (req, res) => {
     try {
-        //best seller filter need to change based on the higher ordered products .so it is pending now.
-        const bestSellers = await Product.find({ isBlocked: false }).populate({ path: 'category', match: { isListed: true } }).populate('brand');
+        const userId = req.session.user;
+        const bestSellers = await Order.aggregate([
+            { $unwind: "$orderedItems" },
+            { $group: { _id: "$orderedItems.product", totalSold: { $sum: "$orderedItems.quantity" } } },
+            { $sort: { totalSold: -1 } },
+            { $limit: 8 },
+            { $lookup: { from: "products", localField: "_id", foreignField: "_id", as: "product" } },
+            { $unwind: "$product" },
+            { $lookup: { from: "brands", localField: "product.brand", foreignField: "_id", as: "brand" } },
+            { $unwind: "$brand" },
+            { $lookup: { from: "categories", localField: "product.category", foreignField: "_id", as: "category" } },
+            { $unwind: "$category" },
+            { $project: { productName: "$product.productName", productImages: "$product.productImages", variations: "$product.variations", brand: "$brand.brandName", category: "$category.name", offerPercentage: "$product.offerPercentage" } }
+        ])
         const filteredBestSellers = bestSellers.filter(product => product.category);
         const newArrivals = await Product.find({ isBlocked: false }).sort({ createdAt: -1 }).populate({ path: 'category', match: { isListed: true } }).populate('brand');
         const filteredNewArrivals = newArrivals.filter(product => product.category);
-        if (req.session.userName) {
-            res.render('homepage', { bestSellers: filteredBestSellers, newArrivals: filteredNewArrivals })
-        } else {
-            return res.render('homepage', { bestSellers: filteredBestSellers, newArrivals: filteredNewArrivals })
-        }
+        const wishlist = await Wishlist.findOne({ userId })
+        const wishlistProductIds = wishlist ? wishlist.products.map(item => item.productId.toString()) : []
+        const cart = await Cart.findOne({ userId });
+        const cartProductIds = cart ? cart.products.map(item => item.productId.toString()) : [];
+
+            res.render('homepage', {
+                bestSellers: filteredBestSellers,
+                newArrivals: filteredNewArrivals,
+                wishlistProductIds,
+                cartProductIds
+            })
     } catch (error) {
         console.log(error, 'Homepage not loading');
-        errorResponse(res, error, "Internal server error");
+        res.redirect("/pageNotfound")
     }
 }
 
@@ -273,14 +291,14 @@ const loadShopPage = async (req, res) => {
         const skip = (page - 1) * limit;
 
         //sortingggg
-        let sort = req.query.sort || 'createdAt';//sorting criteria
-        let order = req.query.order === 'desc' ? -1 : 1;//sorting order asc and desc 
+        let sort = req.query.sort || 'createdAt';
+        let order = req.query.order === 'desc' ? -1 : 1
 
-        const searchQuery = req.query.search || ''; //search method in product
-        const stockFilter = req.query.stock || '';//stock based filter (out of stock,available ,all)
-        const categoryFilter = req.query.category || ''; // New category filter
-        const brandFilter = req.query.brand || ''; // New brand filter
-        const genderFilter = req.query.gender || ''; // New gender filter
+        const searchQuery = req.query.search || '';
+        const stockFilter = req.query.stock || '';
+        const categoryFilter = req.query.category || '';
+        const brandFilter = req.query.brand || '';
+        const genderFilter = req.query.gender || '';
 
         let query = { isBlocked: false };
 
@@ -303,13 +321,9 @@ const loadShopPage = async (req, res) => {
         const products = await Product.find(query).populate({ path: 'category', match: { isListed: true } }).populate('brand').sort({ [sort]: order }).skip(skip)
             .limit(limit);
 
-
-
         // Count total products matching the filters for pagination
         const totalProductsCount = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalProductsCount / limit);
-
-       
 
         // Calculate start and end product indexes for display
         const startProduct = skip + 1;
@@ -348,7 +362,7 @@ const loadShopPage = async (req, res) => {
         })
     } catch (error) {
         console.log(error, 'ShopPage not loading');
-        errorResponse(res, error, "Internal server error");
+        res.redirect("/pageNotfound")
     }
 }
 
@@ -363,8 +377,8 @@ const loadSingleProduct = async (req, res) => {
         const userId = req.session.user
         const ProductID = req.query.id
 
-        const isValidProduct=await Product.findById({_id:ProductID})
-        if(!isValidProduct){
+        const isValidProduct = await Product.findById({ _id: ProductID })
+        if (!isValidProduct) {
             res.redirect('/pageNotfound')
         }
 
@@ -378,17 +392,17 @@ const loadSingleProduct = async (req, res) => {
         const cartProductIds = cart ? cart.products.map(item => item.productId.toString()) : [];
 
         let productQuantityInCart = 0;
-        if (cart) {  
+        if (cart) {
             const cartProduct = cart.products.find(item => item.productId.toString() === ProductID);
             if (cartProduct) {
-                productQuantityInCart = cartProduct.quantity; 
+                productQuantityInCart = cartProduct.quantity;
             }
         }
 
-        res.render('singleProduct', { singleProduct, relatedProducts, wishlistProductIds,cartProductIds,  productQuantityInCart })
+        res.render('singleProduct', { singleProduct, relatedProducts, wishlistProductIds, cartProductIds, productQuantityInCart })
     } catch (error) {
         console.log(error, 'Product detailed page is not loading');
-        errorResponse(res, error, "Internal server error");
+        res.redirect("/pageNotfound")
     }
 }
 
