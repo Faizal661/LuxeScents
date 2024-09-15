@@ -10,61 +10,56 @@
         <h5 class="text-success text-center fw-bold" id="newuser">
             <span></span>
         </h5>
-        <div class="container w-25  rounded pt-5 mb-5 shadow-lg p-3">
+        <div class="container-fluid w-50 rounded pt-5 mb-5 shadow-lg p-3">
             <div class="title pb-5">
                 <h3 class="fw-semibold">Sign in</h3>
             </div>
             <div class="title pb-4 ">
                 <a href="/auth/google">
-
-                    <button class="font-weight-bold btn rounded-pill border border-2 w-100 text-dark shadow">
+                    <button class="font-weight-bold btn rounded-pill border border-2 w-75 text-dark shadow">
                         <img src="img/googleLogo.png" alt="" height="22">
                         Sign in with Google
                     </button></a>
             </div>
-            <div class="d-flex align-items-center">
-                <hr class="flex-grow-1">
-                <span class="mx-2">or sign in with email</span>
-                <hr class="flex-grow-1">
+            <div class="d-flex justify-content-center align-items-center px-5">
+                <hr class="flex-grow-1 ml-5">
+                <span class="mx-4">or sign in with email</span>
+                <hr class="flex-grow-1 mr-5 ">
+            </div>
+            <div class="px-5">
+                <form action="/login" method="post" class="px-5">
+                    <label for="" class="float-start fw-semibold pt-3 d-flex justify-content-start">Email</label>
+                    <div class="form-group">
+                        <input type="email" class="form-control mb-3 shadow" value="faisalt661@gmail.com" name="email"
+                            required>
+                    </div>
+                    <div class="pt-3 d-flex justify-content-between">
+                        <label for="" class="float-start fw-semibold ">Password</label>
+                        <a href="/forgotPassword"><span class="float-end text-primary cursor-pointer">Forgot
+                                password ?</span></a>
+                    </div>
+                    <div class="form-control shadow d-flex justify-content-between">
+                        <input type="password" class=" col-11 border border-0" value="1234567q" id="password"
+                            name="password" required>
+                        <span id="toggle-password"><i class="fas fa-eye cursor-pointer"></i></span>
+                    </div>
+
+
+
+                    <% if(locals.message && message.length>0 ) {%>
+                        <div class="alert alert-danger text-center mt-2">
+                            <%= message %>
+                        </div>
+                        <% } %>
+                            <div class="text-warning text-center mt-2" id="msg">
+                                <span></span>
+                            </div>
+                            <button type="submit" class="btn btn-dark rounded-pill w-100 shadow">Sign In</button>
+                </form>
             </div>
 
-            <form action="/login" method="post">
-                <label for="" class="float-start fw-semibold pt-3 d-flex justify-content-start">Email</label>
-                <div class="form-group">
-                    <input type="email" class="form-control mb-3 shadow" value="faisalt661@gmail.com" name="email"
-                        required>
-                </div>
-                <div class="pt-3 d-flex justify-content-between">
-                    <label for="" class="float-start fw-semibold ">Password</label>
-                    <a href="/forgotPassword"><span class="float-end text-decoration-underline text-black">Forgot
-                            password ?</span></a>
-                </div>
-
-
-                <!-- <div class="form-control shadow d-flex justify-content-between">
-                    <input type="password" value="1234567q" class="border border-0" id="password" name="password"
-                        required><span id="toggle-password"><i class="fas fa-eye cursor-pointer"></i></span>
-                </div> -->
-                <div class="form-control shadow d-flex justify-content-between">
-                    <input type="password" class=" col-11 border border-0" value="1234567q" id="password" name="password"
-                        required>
-                    <span id="toggle-password"><i class="fas fa-eye cursor-pointer"></i></span>
-                </div>
-
-
-
-                <% if(locals.message && message.length>0 ) {%>
-                    <div class="alert alert-danger text-center mt-2">
-                        <%= message %>
-                    </div>
-                    <% } %>
-                        <div class="text-warning text-center mt-2" id="msg">
-                            <span></span>
-                        </div>
-                        <button type="submit" class="btn btn-dark rounded-pill w-100 shadow">Sign In</button>
-            </form>
             <div class="mb-5 mt-4">
-                Don't have an account ? <a href="/signup" class=" text-black">Sign up</a>
+                Don't have an account ? <a href="/signup" class="text-primary">Sign up</a>
             </div>
         </div>
     </div>

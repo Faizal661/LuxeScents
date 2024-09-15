@@ -2,13 +2,13 @@
 
     <body class="">
 
-        <div class="text-center pt-4  mb-5 mx-5" id="login">
-            <div class="container w-25  rounded py-5 border border-5 shadow">
+        <div class="text-center pt-4 mb-5 mx-5" id="login">
+            <div class="container-fluid w-50 rounded py-5 px-5 shadow">
                 <div class="title pb-4">
                     <h3 class="fw-semibold">Sign Up</h3>
                 </div>
 
-                <form id="signform" action="/register_new" method="post">
+                <form id="signform" action="/register_new" method="post" class="px-5">
 
                     <div class="form-group">
                         <label for="" class="float-start fw-semibold pt-2 d-flex justify-content-start">Username</label>
@@ -61,12 +61,12 @@
 
                             <button type="submit" class="btn btn-dark rounded-pill w-100 shadow">Sign Up</button>
                 </form>
-                <div class="d-flex align-items-center pt-4">
-                    <hr class="flex-grow-1">
-                    <span class="mx-5"> or </span>
-                    <hr class="flex-grow-1">
+                <div class="d-flex justify-content-center align-items-center px-5 py-3">
+                    <hr class="flex-grow-1 ml-1">
+                    <span class="mx-4"> or </span>
+                    <hr class="flex-grow-1 mr-1">
                 </div>
-                <div class="title py-2">
+                <div class="title py-2 px-5">
                     <a href="/auth/google"
                         class="font-weight-bold btn rounded-pill border border-2 w-100 text-dark shadow">
                         <img src="img/googleLogo.png" alt="Google Logo" height="22">
@@ -76,7 +76,7 @@
 
 
                 <div class="mt-4">
-                    Already have an account ? <a href="/login" class=" text-black">Sign In</a>
+                    Already have an account ? <a href="/login" class=" text-primary">Sign In</a>
                 </div>
 
             </div>
@@ -94,7 +94,6 @@
                 if (type === 'password') {
                     icon.classList.remove('fa-eye')
                     icon.classList.add('fa-eye-slash')
-
                 } else {
                     icon.classList.remove('fa-eye-slash')
                     icon.classList.add('fa-eye')

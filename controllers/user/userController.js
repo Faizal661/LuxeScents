@@ -57,32 +57,24 @@ const userLogin = async (req, res) => {
 
 const loadForgotPassword = async (req, res) => {
     try {
-        res.render('userProfile/forgotPassword', { title: 'forgot password' })
+        res.render('userProfile/forgotPassword')
     } catch (error) {
         console.log(error, 'page not found');
         res.redirect("/pageNotfound")
     }
 }
-
-const sendOtpToChangePassword = async (req, res) => {
+    
+const verifyMail = async (req, res) => {
     const email = req.body.email;
     try {
         const user = await User.findOne({ email: email });
         if (user) {
-            res.redirect('/loadChangePasswordPage')
+            req.session.user=user._id
+            req.session.userName=user.name
+            res.redirect('/loadOtpVerify')
         } else {
             res.redirect('/forgotPassword?invalid')
         }
-    } catch (error) {
-        console.log(error, 'page not found');
-        res.redirect("/pageNotfound")
-    }
-}
-
-const loadChangePasswordPage = async (req, res) => {
-    try {
-        // res.send('dsafg')
-        res.render('authentication/changePassword', { title: 'change password' })
     } catch (error) {
         console.log(error, 'page not found');
         res.redirect("/pageNotfound")
@@ -278,8 +270,6 @@ const loadHomepage = async (req, res) => {
 }
 
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 const loadShopPage = async (req, res) => {
     try {
@@ -367,11 +357,6 @@ const loadShopPage = async (req, res) => {
 }
 
 
-
-
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-
 const loadSingleProduct = async (req, res) => {
     try {
         const userId = req.session.user
@@ -446,14 +431,10 @@ const pageNotfound = async (req, res) => {
 module.exports = {
     loadLogin,
     userLogin,
-
     loadForgotPassword,
-    sendOtpToChangePassword,
-    loadChangePasswordPage,
-
+    verifyMail,
     loadSignup,
     registerNew,
-    // loadSignUpOtpPage,
     verifyOtp,
     resendOtp,
 
@@ -463,7 +444,6 @@ module.exports = {
 
     userLogout,
     pageNotfound,
-
 
     generateOtp,
     sendVerificationEmail

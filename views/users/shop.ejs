@@ -18,6 +18,9 @@
             position: absolute;
             font-weight: 700;
         }
+        .fw-bold{
+            font-weight: 600;
+        }
     </style>
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-option">
@@ -300,15 +303,12 @@
                                             <h4 class="offer-overlay text-success cursor-pointer my-1">Extra <%=
                                                     product.offerPercentage %> Offer</h4>
                                             <% } %>
-                                        <h5>
-                                            <%= product.productName %>
-                                        </h5>
                                         <div class="d-block">
-                                            <p class="h6 fw-lighter"> Brand : <%= product.brand.brandName %>
-                                            </p>
-                                            <p class="h6 fw-lighter"> Scent : <%= product.category.name %>
-                                            </p>
-
+                                            <span class="logo "><%= product.productName %></span><br>
+                                            <span> Brand : <%= product.brand.brandName %>
+                                            </span><br>
+                                            <span> Scent : <%= product.category.name %>
+                                            </span>
                                         </div>
                                         <div class="d-flex ">
                                             <h5>₹<%= product.variations[0].salePrice %>

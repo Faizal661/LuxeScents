@@ -14,9 +14,7 @@ const passport=require('passport')
 const User = require('../models/userSchema')
 var url = require('url')
 
-userRouter.get('/forgotPassword',userController.loadForgotPassword)
-userRouter.post('/sendOtpToChangePassword',userController.sendOtpToChangePassword)
-userRouter.get('/loadChangePasswordPage',userController.loadChangePasswordPage)
+
 
 //user authentication
 userRouter.get('/login',userController.loadLogin)
@@ -25,6 +23,16 @@ userRouter.get('/signup',userController.loadSignup)
 userRouter.post('/register_new', userController.registerNew);
 userRouter.post('/verify-otp',userController.verifyOtp)
 userRouter.post('/resend-otp',userController.resendOtp)
+
+//forgot password
+userRouter.get('/forgotPassword',userController.loadForgotPassword)//login side forgot password
+userRouter.post('/verifyMail',userController.verifyMail)
+
+userRouter.get('/loadOtpVerify',userProfileController.loadOtpVerify)//user profile section forgot password
+userRouter.post('/verifyOtpForgotPassword',userProfileController.verifyOtp)
+userRouter.post('/resendOtpForgotPassword',userProfileController.resendOtp)
+userRouter.get('/loadNewPassword',userProfileController.loadNewPassword)
+userRouter.post('/resetPassword',userProfileController.resetPassword)
  
 //goole authenticaion routes
 userRouter.get('/auth/google/',passport.authenticate('google',{scope:['profile','email']}));
@@ -58,13 +66,6 @@ userRouter.delete('/deleteAddress/:id',userAuth,userProfileController.deleteAddr
 // change password
 userRouter.get('/loadChangePassword',userAuth,userProfileController.loadChangePassword)
 userRouter.post('/changePassword',userAuth,userProfileController.changePassword)
-
-//forgot password
-userRouter.get('/loadOtpVerify',userAuth,userProfileController.loadOtpVerify)
-userRouter.post('/verifyOtpForgotPassword',userAuth,userProfileController.verifyOtp)
-userRouter.post('/resendOtpForgotPassword',userAuth,userProfileController.resendOtp)
-userRouter.get('/loadNewPassword',userAuth,userProfileController.loadNewPassword)
-userRouter.post('/resetPassword',userAuth,userProfileController.resetPassword)
 
 //wishlist
 userRouter.get('/loadWishlistPage',userAuth,wishlistController.loadWishlist)

@@ -224,7 +224,6 @@ const changePassword = async (req, res) => {
 const loadOtpVerify = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.session.user })
-        // console.log(user)
         req.session.email = user.email
         const email = user.email
         const otp = generateOtp();
