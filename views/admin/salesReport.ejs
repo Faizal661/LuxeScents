@@ -79,8 +79,6 @@
 
                 <a href="/admin/salesReport/pdf?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>"
                     class="btn btn-danger rounded-0 py-2 me-5 downloadButton">Download PDF</a>
-
-
             </div>
         </div>
 
@@ -89,22 +87,19 @@
         <div class="row my-4">
             <form action="/admin/salesReport" method="GET" class="d-flex align-items-center">
                 <select name="filterType" class="form-select me-3 rounded-0 border" style="width: 200px;">
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="yearly">Yearly</option>
-                    <option value="custom">Custom Date</option>
+                    <option value="daily" <%= filterType === 'daily' ? 'selected' : '' %> >Daily</option>
+                    <option value="weekly" <%= filterType === 'weekly' ? 'selected' : '' %>>Weekly</option>
+                    <option value="yearly" <%= filterType === 'yearly' ? 'selected' : '' %>>Yearly</option>
+                    <option value="custom" <%= filterType === 'custom' ? 'selected' : '' %>>Custom Date</option>
                 </select>
                 <!-- Custom Date Range -->
-                <div id="custom-date" class="d-flex align-items-center mt-2">
+                <div id="custom-date" class=" align-items-center mt-2 d-none">
                     <label for="startDate" class="me-2">From:</label>
-                    <input type="date" name="startDate" id="startDate" class="form-control me-3 rounded-0 border">
+                    <input type="date" name="startDate" id="startDate" value="<%=startDate ? new Date(startDate).toLocaleDateString('en-CA') :'' %>" class="form-control me-3 rounded-0 border">
                     <label for="endDate" class="me-2">To:</label>
-                    <input type="date" name="endDate" id="endDate" class="form-control me-3 rounded-0 border">
+                    <input type="date" name="endDate" id="endDate" value="<%=endDate ? new Date(endDate).toLocaleDateString('en-CA') : '' %>" class="form-control me-3 rounded-0 border">
                 </div>
                 <button type="submit" class="btn btn-success text-light rounded-0 border me-4">Filter</button>
-
-
-
             </form>
         </div>
 
@@ -157,11 +152,6 @@
                 </div>
             </div>
         </div>
-
-
-
-
-
 
         <div class="container card py-3 shadow">
             <!-- Display sales report if there are any orders -->

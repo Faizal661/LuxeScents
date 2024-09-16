@@ -155,7 +155,7 @@
                                             <li>Coupon Applied <span>-₹ 0</span></li>
                                             <% } %>
                                                 <li>Discount Price <span id="offerDiscount">-₹ <%= totalOfferDiscount %>
-                                                            </span>
+                                                    </span>
                                                 </li>
                                                 <li>Delivery Charges <span>Free Delivery</span></li>
                                                 <hr>
@@ -292,7 +292,6 @@
                             color: "#3399cc"
                         }
                     };
-
                     const rzp = new Razorpay(options);
                     rzp.on('payment failed', function (response) {
                         Swal.fire({
@@ -305,7 +304,15 @@
                     rzp.open();
                 }
             } else if (paymentMethod === 'COD') {
-                axios.post('/placeOrder', orderData)
+                if (orderData.totalPrice > 1000) {
+                    return Swal.fire({
+                        text: 'Orders above ₹1000 cannot be placed using Cash on Delivery. Please choose a different payment method.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    })
+                }
+                
+                axios.post('/placeOrder',)
                     .then(response => {
                         if (response.data.success) {
                             Swal.fire({

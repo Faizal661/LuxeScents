@@ -16,7 +16,6 @@ const downloadInvoice = async (req, res) => {
 
         const html = await ejs.renderFile(path.join(__dirname, '../../views/users/order/invoiceTemplate.ejs'), { order });
 
-        // PDF options
         const options = {
             format: 'A4',
             border: {
@@ -27,24 +26,21 @@ const downloadInvoice = async (req, res) => {
             }
         };
 
-        // Generate PDF from HTML
         pdf.create(html, options).toStream((err, stream) => {
             if (err) {
                 console.error('Error while generating PDF:', err);
-                return res.status(500).send('Error generating PDF');
+                res.redirect("/pageNotfound")
             }
 
-            // Set response headers for downloading the PDF
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', `attachment; filename=Invoice_${order.orderId}.pdf`);
 
-            // Pipe the stream to the response
             stream.pipe(res);
         });
 
     } catch (error) {
         console.error('Error while downloading invoice:', error);
-        res.status(500).send('Unable to download invoice');
+        res.redirect("/pageNotfound")
     }
 };
 
