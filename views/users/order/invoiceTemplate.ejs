@@ -33,34 +33,32 @@
             margin-top: 20px;
         }
 
+        .order-summary {
+            float: inline-end;
+        }
+        
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
 
-        table,
+        order-items table,
         th,
         td {
             border: 1px solid #000;
             padding: 8px;
-        }
+        } 
 
         .total {
             font-weight: bold;
         }
 
-        /* Flexbox to replace Bootstrap's d-flex and col-6 */
-        .address-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
+        .address-row  table{
+            border:0 ;
         }
 
-        .address-column {
-            flex: 1;
-            padding: 10px;
-        }
     </style>
 </head>
 
@@ -76,39 +74,46 @@
         </div>
 
         <div class="section address-row">
-            <div class="address-column">
-                <h2 class="section-title">Shipping Address</h2>
-                <p><strong>Name:</strong> <%= order.address.name %></p>
-                <p><strong>City:</strong> <%= order.address.city %></p>
-                <p><strong>State:</strong> <%= order.address.state %></p>
-                <p><strong>Pin Code:</strong> <%= order.address.pincode %></p>
-                <p><strong>Phone:</strong> <%= order.address.phone %></p>
-            </div>
-            <div class="address-column">
-                <h2 class="section-title">Billing Address</h2>
-                <p><strong>Name:</strong> <%= order.address.name %></p>
-                <p><strong>City:</strong> <%= order.address.city %></p>
-                <p><strong>State:</strong> <%= order.address.state %></p>
-                <p><strong>Pin Code:</strong> <%= order.address.pincode %></p>
-                <p><strong>Phone:</strong> <%= order.address.phone %></p>
-            </div>
+            <table style="width: 100%;border:none;">
+                <tr>
+                    <td style="width: 50%; vertical-align: top; padding: 10px;">
+                        <h2 class="section-title"><u> Shipping Address</u></h2>
+                        <p><strong>Name:</strong> <%= order.address.name %></p>
+                        <p><strong>City:</strong> <%= order.address.city %></p>
+                        <p><strong>State:</strong> <%= order.address.state %></p>
+                        <p><strong>Pin Code:</strong> <%= order.address.pincode %></p>
+                        <p><strong>Phone:</strong> <%= order.address.phone %></p>
+                    </td>
+                    <td style="width: 50%; vertical-align: top; padding: 10px;">
+                        <h2 class="section-title"><u> Billing Address</u></h2>
+                        <p><strong>Name:</strong> <%= order.address.name %></p>
+                        <p><strong>City:</strong> <%= order.address.city %></p>
+                        <p><strong>State:</strong> <%= order.address.state %></p>
+                        <p><strong>Pin Code:</strong> <%= order.address.pincode %></p>
+                        <p><strong>Phone:</strong> <%= order.address.phone %></p>
+                    </td>
+                </tr>
+            </table>
         </div>
+        
 
         <div class="section order-items">
             <h2 class="section-title">Order Items</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Product</th>
+                        
+                        <th colspan="2">Product</th>
                         <th>Quantity</th>
                         <th>Price</th>
                         <th>Total</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% order.orderedItems.forEach(item=> { %>
+                    <% order.orderedItems.forEach((item,index)=> { %>
                     <tr>
-                        <td><%= item.product.productName %></td>
+                        <td><%= index+1 %></td>
+                        <td><%= item.product.productName %> (<%= item.size %>)</td>
                         <td><%= item.quantity %></td>
                         <td>₹<%= item.price %></td>
                         <td>₹<%= item.quantity * item.price %></td>
@@ -119,14 +124,17 @@
         </div>
 
         <div class="section order-summary">
-            <h2 class="section-title">Order Summary</h2>
+            <!-- <h2 class="section-title">Order Summary</h2> -->
             <p><strong>Subtotal:</strong> ₹<%= order.subtotal + order.discount %></p>
-            <p><strong>Discount:</strong> ₹<%= order.discount %></p>
+            <p><strong>Discount:</strong> -₹<%= order.discount %></p><hr>
+            <p><strong>After Discount:</strong> ₹<%= order.subtotal %></p>
             <p><strong>Tax:</strong> ₹<%= order.tax.toFixed(2) %></p>
             <% if (order.couponApplied) { %>
             <p><strong>Coupon Discount:</strong> ₹<%= order.couponId.offerPrice %></p>
             <% } %>
+            <hr>
             <p class="total"><strong>Total Price:</strong> ₹<%= order.finalAmount.toFixed(2) %></p>
+            <hr><hr>
         </div>
     </div>
 </body>

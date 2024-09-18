@@ -3,9 +3,9 @@ const Product = require('../../models/productSchema')
 const { ProductOffer, CategoryOffer } = require('../../models/offerSchema')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
-///////////////////////////////////////////////////////////////////////////
-/////////////         product offer management         ////////////////////
-///////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
+//---------------         product offer management      -----------------//
+//--------------------------------------------------------------------------
 
 
 const loadProductOffers = async (req, res) => {
@@ -31,7 +31,7 @@ const loadProductOffers = async (req, res) => {
             });
     } catch (err) {
         console.error('Error loading product offers:', err);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 };
 
@@ -69,7 +69,7 @@ const addProductOffer = async (req, res) => {
         res.redirect('/admin/productOffers');
     } catch (err) {
         console.error('Error adding product offer:', err);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 };
 
@@ -106,7 +106,7 @@ const toggleProductOffer = async (req, res) => {
         res.redirect('/admin/productOffers');
     } catch (err) {
         console.error('Error toggling offer status:', err);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 };
 
@@ -131,15 +131,14 @@ const deleteProductOffer = async (req, res) => {
 
     } catch (err) {
         console.error('Error deleting offer:', err);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 };
 
 
-///////////////////////////////////////////////////////////////////////////
-/////////////         category offer management         ///////////////////
-///////////////////////////////////////////////////////////////////////////
-
+//--------------------------------------------------------------------------
+//---------------         category offer management      -----------------//
+//--------------------------------------------------------------------------
 
 const loadCategoryOffers = async (req, res) => {
     try {
@@ -164,7 +163,7 @@ const loadCategoryOffers = async (req, res) => {
             });
     } catch (err) {
         console.error('Error loading categories offers:', err);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -174,7 +173,7 @@ const loadAddCategoryOfferPage = async (req, res) => {
         res.render('offers/addCategoryOffer', { category });
     } catch (err) {
         console.error('Error loading add category offer page:', err);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -208,7 +207,7 @@ const addCategoryOffer = async (req, res) => {
         res.redirect('/admin/CategoryOffers');
     } catch (err) {
         console.error('Error adding category offer:', err);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -258,7 +257,7 @@ const toggleCategoryOffer = async (req, res) => {
         res.redirect('/admin/CategoryOffers');
     } catch (err) {
         console.error('Error toggling offer status:', err);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 };
 
@@ -286,7 +285,7 @@ const deleteCategoryOffer = async (req, res) => {
 
     } catch (err) {
         console.error('Error deleting offer:', err);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 };
 

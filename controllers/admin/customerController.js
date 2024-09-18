@@ -47,7 +47,7 @@ const customerInfo= async(req,res)=>{
 
     } catch (error) {
         console.error(error);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -57,14 +57,14 @@ const toggleCustomerBlocking=async(req,res)=>{
 
          const customer=await User.findById(customerId);
          if(!customer){
-            return res.redirect("/pageError");
+            return res.redirect("/admin/pageError")
          }
          const newStatus= !customer.isBlocked
          await User.updateOne({_id:customerId},{$set:{isBlocked:newStatus}})
          res.redirect("/admin/users")
     } catch (error) {
         console.error(error, "Error while block/unblock customers.");
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 }
 

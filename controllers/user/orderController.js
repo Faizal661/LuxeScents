@@ -1,5 +1,6 @@
 const Product = require('../../models/productSchema')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
+const Wallet = require('../../models/walletSchema')
 const Order = require('../../models/orderSchema');
 const pdf = require('html-pdf');
 const path = require('path');
@@ -57,13 +58,10 @@ const orderSuccess = async (req, res) => {
 const orderDetails = async (req, res) => {
     try {
         const orderId = req.query.orderId;
-
-        const order = await Order.findById(orderId).populate('orderedItems.product'); 
-
+        const order = await Order.findById(orderId).populate('orderedItems.product');
         if (!order) {
             return res.redirect("/pageNotFound");
         }
-
         res.render('orderDetails', {
             order,
         });
@@ -101,6 +99,28 @@ const cancelOrder = async (req, res) => {
             }
         }
 
+        if (order.paymentStatus === 'Paid') {
+            let wallet = await Wallet.findOne({ userId: order.userId });
+
+            if (!wallet) {
+                wallet = new Wallet({
+                    userId: order.userId,
+                    balance: 0,
+                    transactions: []
+                });
+            }
+
+            wallet.balance += order.finalAmount;
+
+            wallet.transactions.push({
+                amount: order.finalAmount,
+                type: 'credit',
+                orderId:order._id,
+                description: `Cancelled order amount for Order ID: ${order.orderId}`
+            });
+            await wallet.save();
+        }
+
         return successResponse(res, {}, 'Order cancelled successfully');
     } catch (error) {
         console.error('Error while cancelling order:', error);
@@ -124,7 +144,7 @@ const returnRequest = async (req, res) => {
         order.orderStatus = 'Return Request';
         await order.save();
 
-    
+
         return successResponse(res, {}, 'Order return requested successfully');
     } catch (error) {
         console.error('Error while cancelling order:', error);
@@ -133,10 +153,10 @@ const returnRequest = async (req, res) => {
 };
 
 
-const loadOrders=async(req,res)=>{
+const loadOrders = async (req, res) => {
     try {
-        const userId = req.session.user; 
-        
+        const userId = req.session.user;
+
         const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate('orderedItems.product')
 
         res.render('orders', { orders });

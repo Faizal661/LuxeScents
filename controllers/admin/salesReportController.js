@@ -84,7 +84,7 @@ const loadSalesReportPage = async (req, res) => {
         });
     } catch (error) {
         console.log("Error loading sales report:", error);
-        res.redirect("/pageError");
+        res.redirect("/admin/pageError")
 
     }
 };
@@ -177,7 +177,7 @@ const downloadSalesReportExcel = async (req, res) => {
         });
     } catch (error) {
         console.log("Error generating Excel:", error);    
-            res.redirect("/pageError");
+        res.redirect("/admin/pageError")
 
     }
 };
@@ -309,7 +309,7 @@ const downloadSalesReportPDF = async (req, res) => {
         pdf.create(html, options).toStream((err, stream) => {
             if (err) {
                 console.error("Error generating PDF:", err);
-                return res.redirect("/pageError");
+                return res.redirect("/admin/pageError")
             }
             
             res.setHeader('Content-Type', 'application/pdf');
@@ -318,7 +318,7 @@ const downloadSalesReportPDF = async (req, res) => {
         });
     } catch (error) {
         console.log("Error generating PDF:", error);
-        res.redirect("/pageError");
+        res.redirect("/admin/pageError")
     }
 };
 

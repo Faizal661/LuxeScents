@@ -10,9 +10,6 @@ const bcrypt = require('bcrypt');
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
 
-
-
-
 //--------------------Log In 
 
 const loadLogin = async (req, res) => {
@@ -155,8 +152,7 @@ const registerNew = async (req, res) => {
         req.session.userData = { email, username, phone, password };
         req.session.userName = username
 
-
-        //render otp entering page
+        
         res.render('authentication/verify-otp')
         console.log('OTP Sent', otp);
 

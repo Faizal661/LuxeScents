@@ -16,7 +16,6 @@ const fetchCartCount = async (req, res, next) => {
     console.error('Error fetching cart count:', error);
     res.locals.cartCount = 0 ;
   }
-
   next();
 };
 

@@ -64,7 +64,7 @@ app.use('/admin', adminRouter)
 
 app.get('*', userController.pageNotfound)
 app.get('/admin/*', adminController.pageError)
-
+ 
 
 app.listen(port, () => {
     console.log(`http://localhost:${port}`)

@@ -1,6 +1,7 @@
 const User = require('../../models/userSchema')
 const Order = require('../../models/orderSchema')
 const Product = require('../../models/productSchema')
+const Wallet = require('../../models/walletSchema')
 
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
@@ -13,7 +14,7 @@ const orderInfo = async (req, res) => {
         const orders = await Order.find().sort({ createdAt: -1 }).populate('userId').skip(skip)
             .limit(limit);
 
-        const totalOrders=await Order.countDocuments({})    
+        const totalOrders = await Order.countDocuments({})
 
         const totalPages = Math.ceil(totalOrders / limit);
 
@@ -24,7 +25,7 @@ const orderInfo = async (req, res) => {
         })
     } catch (error) {
         console.error('Error while loading order listing page:', error);
-        res.redirect("/pageError");
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -33,15 +34,14 @@ const orderDetails = async (req, res) => {
         const orderId = req.query.orderId;
         const order = await Order.findById(orderId).populate('orderedItems.product');
         if (!order) {
-            return res.redirect("/pageError");
+            return res.redirect("/admin/pageError")
         }
-
         res.render('orderDetailed', {
             order,
         });
     } catch (error) {
         console.error('Error while loading order detail page', error);
-        res.redirect("/pageError");
+        res.redirect("/admin/pageError")
     }
 };
 
@@ -74,6 +74,28 @@ const updateOrderStatus = async (req, res) => {
                     await product.save();
                 }
             }
+
+            if (order.paymentStatus === 'Paid') {
+                let wallet = await Wallet.findOne({ userId: order.userId });
+                if (!wallet) {
+                    wallet = new Wallet({
+                        userId: order.userId,
+                        balance: 0,
+                        transactions: []
+                    });
+                }
+
+                wallet.balance += order.finalAmount;
+
+                wallet.transactions.push({
+                    amount: order.finalAmount,
+                    type: 'credit',
+                    orderId: order._id,
+                    description: `${newStatus} order amount for Order ID: ${order.orderId}`
+                });
+                await wallet.save();
+            }
+
         }
         await order.save();
 
@@ -81,7 +103,7 @@ const updateOrderStatus = async (req, res) => {
         return successResponse(res, 'Order status updated successfully');
     } catch (error) {
         console.error('Error updating order status:', error);
-        return errorResponse(res, 'Failed to update order status', 500);
+        res.redirect("/admin/pageError")
     }
 };
 

@@ -223,7 +223,7 @@ const createRazorpayOrder = async (req, res) => {
         const { totalPrice } = req.body;
 
         const orderOptions = {
-            amount: totalPrice * 100, // Amount in paise (multiply by 100)
+            amount: Math.round(totalPrice * 100), // Amount in paise (multiply by 100)
             currency: 'INR',
             receipt: `receipt_order_${Date.now()}`,
             payment_capture: 1, // Auto capture the payment

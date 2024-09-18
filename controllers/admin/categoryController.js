@@ -45,7 +45,7 @@ const categoryInfo = async (req, res) => {
         })
     } catch (error) {
         console.error(error, "Error while loading category page.");
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -64,7 +64,7 @@ const addCategory = async (req, res) => {
         res.json({ message: "Category added successfully" })
     } catch (error) {
         console.error(error, "Error while adding category.");
-        errorResponse(res, error, "Internal server error");
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -75,7 +75,7 @@ const getEditCategory = async (req, res) => {
         res.render("edit-category", { category: category })
     } catch (error) {
         console.error(error, "Error while loading edit Category page.");
-        res.redirect("/pagerror")
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -101,7 +101,7 @@ const EditCategory = async (req, res) => {
         }
     } catch (error) {
         console.error(error, "Error while updating category.");
-        errorResponse(res, error, "Internal server error");
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -112,14 +112,14 @@ const toggleCategoryListing = async (req, res) => {
 
         const category = await Category.findById(categoryId);
         if (!category) {
-            return res.redirect("/pageError");
+            return res.redirect("/admin/pageError")
         }
         const newIsListedValue = !category.isListed;
         await Category.updateOne({ _id: categoryId }, { $set: { isListed: newIsListedValue } });
         res.redirect("/admin/category");
     } catch (error) {
         console.error(error, "Error while isListed of category.");
-        res.redirect("/pageError");
+        res.redirect("/admin/pageError")
     }
 };
 

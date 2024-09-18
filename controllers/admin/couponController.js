@@ -26,8 +26,7 @@ const loadCouponListingPage = async (req, res) => {
         });
     } catch (error) {
         console.error('Error loading coupon listing page:', err);
-        res.redirect("/pageError")
-
+        res.redirect("/admin/pageError")
     }
 };
 
@@ -36,7 +35,7 @@ const loadAddCouponPage = async (req, res) => {
         res.render('coupon/addCouponPage', {});
     } catch (error) {
         console.error('Error loading addCoupon page:', err);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 };
 
@@ -55,8 +54,7 @@ const addCoupon = async (req, res) => {
         res.redirect('/admin/coupons');
     } catch (error) {
         console.error('Error adding coupon:', err);
-        res.redirect("/pageError")
-
+        res.redirect("/admin/pageError")
     }
 };
 
@@ -75,7 +73,7 @@ const toggleCouponStatus = async (req, res) => {
 
     } catch (err) {
         console.error('Error toggling coupon status:', err);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 };
 

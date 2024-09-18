@@ -1,6 +1,7 @@
 const Product = require('../../models/productSchema')
 const Category = require('../../models/categorySchema')
 const Brand = require('../../models/brandSchema')
+const Cart = require('../../models/cartSchema')
 const upload = require('../../middlewares/multer')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
@@ -57,7 +58,7 @@ const productInfo = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.redirect("/pageError");
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -68,16 +69,20 @@ const toggleProductListing = async (req, res) => {
         const productId = req.query.id;
         const product = await Product.findById(productId);
         if (!product) {
-            return res.redirect("/pageError");
+            return res.redirect("/admin/pageError")
         }
         const newStatus = !product.isBlocked;
-
         await Product.updateOne({ _id: productId }, { $set: { isBlocked: newStatus } });
 
+        // Remove unlisted product from user carts
+        await Cart.updateMany(
+            {}, 
+            { $pull: { products: { productId } } } 
+        );
         res.redirect("/admin/products");
     } catch (error) {
         console.error(error, "Error while toggling product listing status.");
-        res.redirect("/pageError");
+        res.redirect("/admin/pageError")
     }
 };
 
@@ -89,7 +94,7 @@ const getAddProduct = async (req, res) => {
         res.render('addProducts', { categories: categories, brands: brands })
     } catch (error) {
         console.error(error);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -142,7 +147,7 @@ const addProduct = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 };
 
@@ -153,10 +158,10 @@ const getEditProduct = async (req, res) => {
         const product = await Product.findById(productId)
         const categories = await Category.find({});
         const brands = await Brand.find({});
-        res.render('editProduct', {  categories: categories, brands: brands, product })
+        res.render('editProduct', { categories: categories, brands: brands, product })
     } catch (error) {
         console.error(error);
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -215,7 +220,7 @@ const editProduct = async (req, res) => {
                 status: req.body.status,
             }, { new: true });
 
-            console.log('new updated data',updateProduct)
+            console.log('new updated data', updateProduct)
 
             if (updateProduct) {
                 res.json({ message: "Product updated successfully" });
@@ -226,7 +231,7 @@ const editProduct = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: "Internal server error" });
+        res.redirect("/admin/pageError")
     }
 };
 

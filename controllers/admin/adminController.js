@@ -5,8 +5,6 @@ const bcrypt = require("bcrypt")
 const moment = require('moment')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 
-
-
 const loadAdminLogin = async (req, res) => {
     try {
         if (req.session.admin) {
@@ -15,7 +13,7 @@ const loadAdminLogin = async (req, res) => {
         res.render('admin-login', { message: null })
     } catch (error) {
         console.log(error, 'page not found');
-        errorResponse(res, error, "Internal server error");
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -40,7 +38,7 @@ const adminLogin = async (req, res) => {
         }
     } catch (error) {
         console.log(error, 'Admin login error');
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 }
 
@@ -107,7 +105,6 @@ const loadDashboard = async (req, res) => {
             orderStatusMap[status._id] = status.count;
         });
 
-
         //~~~~~~~~~~~~     top selling product ,category and brand       ~~~~~~~~~~~//
         // top 5 best-selling products
         const topProducts = await Order.aggregate([
@@ -170,10 +167,9 @@ const loadDashboard = async (req, res) => {
         });
     } catch (error) {
         console.log("Error loading Dashboard", error);
-        res.redirect("/pageError");
+        res.redirect("/admin/pageError")
     }
 };
-
 
 const adminLogout = async (req, res) => {
     try {
@@ -186,22 +182,20 @@ const adminLogout = async (req, res) => {
         })
     } catch (error) {
         console.log(error, 'Error at admin logout');
-        res.redirect("/pageError")
+        res.redirect("/admin/pageError")
     }
 }
-
-
 
 const pageError = async (req, res) => {
     try {
-        res.render('pageError')
+        // console.log('TRYPageNotFound')
+        res.render('pageError') 
     }
     catch (error) {
-        res.redirect("/pageError")
+        // console.log('CATCHPageNotFound')
+        res.redirect("/admin/pageError")
     }
 }
-
-
 
 module.exports = {
     loadAdminLogin,

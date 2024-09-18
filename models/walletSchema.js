@@ -17,27 +17,25 @@ const walletSchema = new mongoose.Schema({
                 type: Number,
                 required: true
             },
-            orderId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Order'
-            },
-            productId: {
-                type: mongoose.Schema.Types.Mixed
-            },
-            for: {
+            type: {
                 type: String,
-                default: "Return"
+                enum: ['credit', 'debit'],
+                required: true
             },
-            status: {
-                type: String,
-                default: "pending"
-            }, 
+            description: {
+                type: String
+            },
+            orderId:{
+                type:mongoose.Schema.Types.ObjectId,
+                ref:'Order',
+                required:false
+            },
             createdAt: {
                 type: Date,
                 default: Date.now
             }
         }
-    ],
-});
+    ]
+}, { timestamps: true });
 
 module.exports = mongoose.model('Wallet', walletSchema)
