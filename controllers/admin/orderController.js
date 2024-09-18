@@ -96,7 +96,10 @@ const updateOrderStatus = async (req, res) => {
                 await wallet.save();
             }
 
+        }else if(newStatus==='Delivered'){
+            order.paymentStatus='Paid'
         }
+
         await order.save();
 
 

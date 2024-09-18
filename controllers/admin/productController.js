@@ -113,9 +113,8 @@ const addProduct = async (req, res) => {
 
             const imagePaths = req.files.map(file => file.path);
             const imageURL = imagePaths.map(path => path.replace('public\\', ''));
-            console.log(imageURL);
-
-            const existingProduct = await Product.findOne({ productName: req.body.productName });
+            
+            const existingProduct = await Product.findOne({ productName:{ $regex: new RegExp(`^${req.body.productName}$`, 'i') }  });
             if (existingProduct) {
                 return res.status(400).json({ error: productAlreadyExists });
             }
@@ -179,6 +178,11 @@ const editProduct = async (req, res) => {
             const existingProduct = await Product.findById(productId);
             if (!existingProduct) {
                 return res.status(404).json({ error: "Product not found" });
+            }
+
+            const AlreadyTakenName = await Product.findOne({ productName:{ $regex: new RegExp(`^${req.body.productName}$`, 'i') }  });
+            if (AlreadyTakenName) {
+                return res.status(400).json({ error: productAlreadyExists });
             }
 
             let imageURL = [...existingProduct.productImages];

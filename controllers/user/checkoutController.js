@@ -4,6 +4,7 @@ const Cart = require('../../models/cartSchema')
 const Address = require('../../models/addressSchema')
 const Order = require('../../models/orderSchema')
 const Coupon = require('../../models/couponSchema')
+const Wallet = require('../../models/walletSchema')
 const Razorpay = require('razorpay');
 require('dotenv').config();
 
@@ -110,6 +111,9 @@ const loadCheckoutPage = async (req, res) => {
                 usedBy: { $ne: userId }
             });
 
+            const wallet = await Wallet.findOne({ userId: userId });
+            const walletBalance = wallet ? wallet.balance : 0;
+
             res.render('checkout', {
                 products,
                 cart,
@@ -120,7 +124,8 @@ const loadCheckoutPage = async (req, res) => {
                 totalOfferDiscount,
                 coupons,
                 couponCode: couponCode,
-                discountApplied
+                discountApplied,
+                walletBalance
 
             });
         } else {
@@ -146,7 +151,7 @@ const placeOrder = async (req, res) => {
             discount
         } = req.body;
 
-        // console.log(discount)
+        console.log(req.body)
 
         const address = await Address.findById(selectedAddressId);
 
@@ -183,6 +188,10 @@ const placeOrder = async (req, res) => {
             couponApplied: false,
             discount: discount
         });
+
+        if(paymentMethod==='Wallet' || paymentMethod==='RazorPay'){
+            newOrder.paymentStatus = 'Paid';
+        }
 
         await newOrder.save();
         // console.log(newOrder)

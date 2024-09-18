@@ -20,7 +20,6 @@
     <!-- Breadcrumb Section End -->
 
     <!-- Checkout Section Begin -->
-
     <section class="checkout spad">
         <div class="container">
             <% if (products.length===0) { %>
@@ -118,10 +117,6 @@
                         </div>
 
                         <div class="col-lg-6 col-md-6">
-
-
-
-
                             <div class="checkout__order">
 
                                 <h4 class="order__title">Your order</h4>
@@ -190,19 +185,19 @@
                                     </label>
                                 </div>
                                 <div class="checkout__input__checkbox">
-                                    <label for="payment-wallet">
-                                        Wallet
-                                        <input type="radio" id="payment-wallet" name="payment-method">
-                                        <span class="checkmark"></span>
+                                    <label for="payment-Wallet">
+                                        Wallet (Balance: ₹<%= walletBalance.toFixed(2) %>)
+                                            <input type="radio" id="payment-Wallet" name="payment-method">
+                                            <span class="checkmark"></span>
                                     </label>
                                 </div>
-                                <div class="checkout__input__checkbox">
+                                <!-- <div class="checkout__input__checkbox">
                                     <label for="payment-card">
                                         Credit/Debit cards
                                         <input type="radio" id="payment-card" name="payment-method">
                                         <span class="checkmark"></span>
                                     </label>
-                                </div>
+                                </div> -->
                                 <button type="button" class="site-btn" onclick="placeOrder()"
                                     id="placeOrderButton">PLACE
                                     ORDER</button>
@@ -251,7 +246,6 @@
                 }).then(() => location.reload())
             }
             const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.id.split('-')[1];
-            // const paymentMethod = "COD"
             return {
                 orderedItems,//
                 subtotal,
@@ -273,8 +267,8 @@
 
                 if (razorpayOrder.data.success) {
                     const options = {
-                        key: razorpayOrder.data.key_id, // Replace with your Razorpay key
-                        amount: razorpayOrder.data.order.amount, // Amount in paise
+                        key: razorpayOrder.data.key_id,
+                        amount: razorpayOrder.data.order.amount,
                         currency: "INR",
                         name: "Luxe Scents",
                         image: "/img/favicon.png",
@@ -311,8 +305,8 @@
                         confirmButtonText: 'OK'
                     })
                 }
-                
-                axios.post('/placeOrder',)
+
+                axios.post('/placeOrder', orderData)
                     .then(response => {
                         if (response.data.success) {
                             Swal.fire({
@@ -343,6 +337,63 @@
                             confirmButtonText: 'OK'
                         });
                     });
+            } else if (paymentMethod === 'Wallet') {
+                const walletBalance='<%= walletBalance.toFixed(2) %>'
+                if (orderData.totalPrice > walletBalance) {
+                    Swal.fire({
+                        text: 'Insufficient wallet balance. Please try another payment method.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Confirm Order',
+                        html: `<p>Your wallet balance: <strong>${walletBalance}</strong></p>
+                               <p>Total price: <strong>${orderData.totalPrice}</strong></p>
+                               <p>Remaining balance after order: <strong>${(walletBalance - orderData.totalPrice)}</strong></p>
+                               <p>Do you want to proceed with the payment using your wallet?</p>`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, place order',
+                        cancelButtonText: 'No, cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            axios.post('/placeOrder', orderData)
+                                .then(response => {
+                                    if (response.data.success) {
+                                        Swal.fire({
+                                            title: 'Order Success!',
+                                            text: 'Your order has been placed successfully!',
+                                            icon: 'success',
+                                            timer: 2000,
+                                            showConfirmButton: false,
+                                        }).then(() => {
+                                            window.location.href = `/orderSuccess?orderId=${response.data.data.orderId}`;
+
+                                        })
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error!',
+                                            text: 'Failed to place order. Please try again.',
+                                            icon: 'error',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error placing order:', error);
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: 'An error occurred while placing your order. Please try again.',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                });
+                        }
+                    });
+
+                }
+
             }
         }
 
