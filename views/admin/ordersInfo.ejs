@@ -1,5 +1,5 @@
 <%- include("../../views/partials/admin/header") %>
-<link rel="stylesheet" href="/admin-assets/css/productsCategory.css">
+    <link rel="stylesheet" href="/admin-assets/css/productsCategory.css">
 
     <body>
         <section class="content-main">
@@ -65,21 +65,14 @@
                                     <%= order.finalAmount %>
                                 </td>
                                 <td>
-
                                     <select class="form-select shadow-sm form-control rounded-0"
-                                        onchange="updateOrderStatus('<%= order._id %>', this.value)">
-                                        <option value="Processing" <%=order.orderStatus==='Processing' ? 'selected' : ''
-                                            %>>Processing</option>
-                                        <option value="Shipped" <%=order.orderStatus==='Shipped' ? 'selected' : '' %>
-                                            >Shipped</option>
-                                        <option value="Delivered" <%=order.orderStatus==='Delivered' ? 'selected' : ''
-                                            %>>Delivered</option>
-                                        <option value="Cancelled" <%=order.orderStatus==='Cancelled' ? 'selected' : ''
-                                            %>>Cancelled</option>
-                                        <option value="Return Request" <%=order.orderStatus==='Return Request'
-                                            ? 'selected' : '' %>>Return Request</option>
-                                        <option value="Returned" <%=order.orderStatus==='Returned' ? 'selected' : '' %>
-                                            >Returned</option>
+                                        onchange="handleStatusChange(this, '<%= order._id %>')">
+                                        <option value="Processing" <%= order.orderStatus === 'Processing' ? 'selected' : (order.orderStatus !== 'Processing' ? 'disabled' : '') %>>Processing</option>
+                                        <option value="Shipped" <%= order.orderStatus === 'Shipped' ? 'selected' : (order.orderStatus === 'Processing' ? '' : 'disabled') %>>Shipped</option>
+                                        <option value="Cancelled" <%= order.orderStatus === 'Cancelled' ? 'selected' : (['Processing', 'Shipped'].includes(order.orderStatus) ? '' : 'disabled') %>>Cancelled</option>
+                                        <option value="Delivered" <%= order.orderStatus === 'Delivered' ? 'selected' : (['Processing', 'Shipped'].includes(order.orderStatus) ? '' : 'disabled') %>>Delivered</option>
+                                        <option value="Return Request" <%= order.orderStatus === 'Return Request' ? 'selected' : (['Processing', 'Shipped', 'Delivered'].includes(order.orderStatus) ? '' : 'disabled') %>>Return Request</option>
+                                        <option value="Returned" <%= order.orderStatus === 'Returned' ? 'selected' : (['Processing', 'Shipped', 'Delivered', 'Return Request'].includes(order.orderStatus) ? '' : 'disabled') %>>Returned</option>
                                     </select>
                                 </td>
                                 <td class="text-center">
@@ -129,7 +122,22 @@
 
 
             <script>
-                function updateOrderStatus(orderId, newStatus) {
+                function handleStatusChange(selectElement, orderId) {
+                    const newStatus = selectElement.value;
+                    const options = selectElement.options;
+
+                    let disableAbove = false;
+                    for (let i = 0; i < options.length; i++) {
+                        if (options[i].value === newStatus) {
+                            disableAbove = true; 
+                        }
+
+                        if (disableAbove) {
+                            options[i].disabled = false; 
+                        } else {
+                            options[i].disabled = true; 
+                        }
+                    }
                     Swal.fire({
                         title: 'Are you sure?',
                         text: 'You want to change the status of this order?',

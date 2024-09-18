@@ -134,12 +134,12 @@
                                 <p><strong>Tax:</strong> ₹<%= order.tax.toFixed(2) %>
                                 </p>
                                 <% if (order.couponApplied) { %>
-                                 <p><strong>Coupon:</strong> ₹<%= order.couponId.offerPrice %>
-                                </p>
-                                <% } %>
-                                <hr>
-                                <h6><strong>Total Price: ₹<%= order.finalAmount.toFixed(2) %></strong>
-                                </p>
+                                    <p><strong>Coupon:</strong> ₹<%= order.couponId.offerPrice %>
+                                    </p>
+                                    <% } %>
+                                        <hr>
+                                        <h6><strong>Total Price: ₹<%= order.finalAmount.toFixed(2) %></strong>
+                                            </p>
                             </div>
                             <hr>
 
@@ -164,19 +164,23 @@
                     <div class="col-md-6 ">
                         <h3 class="text-center mb-3">Change Order Status</h3>
                         <select class="form-select shadow card form-control border border-2"
-                            onchange="updateOrderStatus('<%= order._id %>', this.value)">
-                            <option value="Processing" <%=order.orderStatus==='Processing' ? 'selected' : '' %>
-                                >Processing</option>
-                            <option value="Shipped" <%=order.orderStatus==='Shipped' ? 'selected' : '' %>
-                                >Shipped</option>
-                            <option value="Delivered" <%=order.orderStatus==='Delivered' ? 'selected' : '' %>>Delivered
+                            onchange="handleStatusChange(this, '<%= order._id %>')">
+                            <option value="Processing" <%=order.orderStatus==='Processing' ? 'selected' :
+                                (order.orderStatus !=='Processing' ? 'disabled' : '' ) %>>Processing</option>
+                            <option value="Shipped" <%=order.orderStatus==='Shipped' ? 'selected' :
+                                (order.orderStatus==='Processing' ? '' : 'disabled' ) %>>Shipped</option>
+                            <option value="Cancelled" <%=order.orderStatus==='Cancelled' ? 'selected' :
+                                (['Processing', 'Shipped' ].includes(order.orderStatus) ? '' : 'disabled' ) %>>Cancelled
                             </option>
-                            <option value="Cancelled" <%=order.orderStatus==='Cancelled' ? 'selected' : '' %>>Cancelled
+                            <option value="Delivered" <%=order.orderStatus==='Delivered' ? 'selected' :
+                                (['Processing', 'Shipped' ].includes(order.orderStatus) ? '' : 'disabled' ) %>>Delivered
                             </option>
-                            <option value="Return Request" <%=order.orderStatus==='Return Request' ? 'selected' : '' %>
-                                >Return Request</option>
-                            <option value="Returned" <%=order.orderStatus==='Returned' ? 'selected' : '' %>
-                                >Returned</option>
+                            <option value="Return Request" <%=order.orderStatus==='Return Request' ? 'selected' :
+                                (['Processing', 'Shipped' , 'Delivered' ].includes(order.orderStatus) ? '' : 'disabled'
+                                ) %>>Return Request</option>
+                            <option value="Returned" <%=order.orderStatus==='Returned' ? 'selected' :
+                                (['Processing', 'Shipped' , 'Delivered' , 'Return Request' ].includes(order.orderStatus)
+                                ? '' : 'disabled' ) %>>Returned</option>
                         </select>
                     </div>
 
@@ -187,8 +191,24 @@
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-            function updateOrderStatus(orderId, newStatus) {
-                Swal.fire({
+            function handleStatusChange(selectElement, orderId) {
+                const newStatus = selectElement.value;
+                const options = selectElement.options;
+
+                // Disable options that are before the selected status
+                let disableAbove = false;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].value === newStatus) {
+                        disableAbove = true; // From now on, disable previous options
+                    }
+
+                    if (disableAbove) {
+                        // Disable the options that are before the selected one
+                        options[i].disabled = false; // Enable current and future statuses
+                    } else {
+                        options[i].disabled = true; // Disable previous statuses
+                    }
+                } Swal.fire({
                     title: 'Are you sure?',
                     text: 'You want to change the status of this order?',
                     icon: 'warning',

@@ -4,8 +4,6 @@ const User = require('../models/userSchema');
 
 require('dotenv').config();
 
-
-
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -13,7 +11,6 @@ passport.use(new GoogleStrategy({
 },
     async (accessToken, refreshToken, profile, done) => {
         try {
-            //console.log(profile);
             let user = await User.findOne({ googleId: profile.id });
 
             if (user) {
@@ -34,13 +31,10 @@ passport.use(new GoogleStrategy({
     }
 ));
 
-
-
 passport.serializeUser((user,done)=>{
     done(null,user.id)
 
 });
-
 
 passport.deserializeUser((id,done)=>{
     User.findById(id)

@@ -10,12 +10,10 @@ const loadSalesReportPage = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = 5;
         const skip = (page - 1) * limit;
-
         let filter = {};
         const filterType = req.query.filterType || 'yearly';
         const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
         const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
-
         switch (filterType) {
             case 'daily':
                 filter.createdAt = {
@@ -51,24 +49,19 @@ const loadSalesReportPage = async (req, res) => {
             { $match: filter }, { $group: { _id: null, totalAmount: { $sum: "$finalAmount" } } }
         ]);
         // const totalOrderAmount = overallOrderAmount.length > 0 ? overallOrderAmount[0].totalAmount : 0;
-
         const overallDiscount = await Order.aggregate([
             { $match: filter }, { $group: { _id: null, totalDiscount: { $sum: "$discount" } } }
         ]);
-
         const totalAmount = overallOrderAmount.length > 0 ? overallOrderAmount[0].totalAmount : 0;
         const totalDiscount = overallDiscount.length > 0 ? overallDiscount[0].totalDiscount : 0;
-
         const salesReport = await Order.find(filter)
             .skip(skip)
             .limit(limit)
             .populate('userId', 'name email')
             .populate('orderedItems.product', 'productName category price').sort({ createdAt: -1 })
             .lean();
-
         const salesCount = await Order.countDocuments(filter);
         const totalPages = Math.ceil(salesCount / limit);
-
 
         res.render('salesReport', {
             salesCount,
@@ -85,7 +78,6 @@ const loadSalesReportPage = async (req, res) => {
     } catch (error) {
         console.log("Error loading sales report:", error);
         res.redirect("/admin/pageError")
-
     }
 };
 
@@ -96,8 +88,6 @@ const downloadSalesReportExcel = async (req, res) => {
         const filterType = req.query.filterType || 'yearly';
         const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
         const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
-
-
         switch (filterType) {
             case 'daily':
                 filter.createdAt = {
@@ -133,12 +123,9 @@ const downloadSalesReportExcel = async (req, res) => {
             .populate('userId', 'name email')
             .populate('orderedItems.product', 'productName category price')
             .lean();
-
-        // Create Excel sheet
+        //  Excel sheet
         const workbook = new excel.Workbook();
         const worksheet = workbook.addWorksheet('Sales Report');
-
-        // Add headers
         worksheet.columns = [
             { header: 'Order ID', key: 'orderId', width: 20 },
             { header: 'User Name', key: 'userName', width: 30 },
@@ -149,8 +136,6 @@ const downloadSalesReportExcel = async (req, res) => {
             { header: 'Payment Method', key: 'paymentMethod', width: 15 },
             { header: 'Order Status', key: 'orderStatus', width: 15 }
         ];
-
-        // Add data
         salesReport.forEach(order => {
             const productDetails = order.orderedItems.map(item =>
                 `${item.product.productName} (${item.size}, Qty: ${item.quantity})`
@@ -167,21 +152,16 @@ const downloadSalesReportExcel = async (req, res) => {
                 orderStatus: order.orderStatus
             });
         });
-
-        // Send Excel file as response
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename=sales-report.xlsx');
-
         return workbook.xlsx.write(res).then(() => {
             res.status(200).end();
         });
     } catch (error) {
         console.log("Error generating Excel:", error);    
         res.redirect("/admin/pageError")
-
     }
 };
-
 
 
 const downloadSalesReportPDF = async (req, res) => {
@@ -190,7 +170,6 @@ const downloadSalesReportPDF = async (req, res) => {
         const filterType = req.query.filterType || 'yearly';
         const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
         const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
-
         // Filter logic based on filterType
         switch (filterType) {
             case 'daily':

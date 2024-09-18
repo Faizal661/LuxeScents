@@ -6,7 +6,6 @@ const fetchCartCount = async (req, res, next) => {
       const userId = req.session.user;
       const cart = await Cart.findOne({ userId });
       const cartCount = cart ? cart.products.length : 0 ;
-
       res.locals.cartCount = cartCount;
       res.locals.userName = req.session.userName;
     } else {

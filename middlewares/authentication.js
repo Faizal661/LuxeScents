@@ -22,7 +22,6 @@ const userAuth = (req, res, next) => {
                 console.log("Error in user auth middleware", error)
                 res.redirect("/pageNotfound")
             })
-
     } else {
         res.redirect('/login')
     }

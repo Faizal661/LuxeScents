@@ -49,9 +49,9 @@ const loadCartPage = async (req, res) => {
 
             };
         });
-        
+
         //calculating subtotal,tax and grandtotal to display in the price details.
-        const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0)-totalOfferDiscount;
+        const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0) - totalOfferDiscount;
         const tax = (subtotal * 10) / 100;
 
         const grandTotal = subtotal + tax;
@@ -77,68 +77,53 @@ const addProductToCart = async (req, res) => {
     try {
         const userId = req.session.user;
         const { productId, quantity = 1, variation_id } = req.body;
-        // console.log(variation_id);
         const quantityNumber = parseInt(quantity);
-
-
         const product = await Product.findById(productId).select('variations')//FIND all the variations from the product data
         if (!product) {
             return errorResponse(res, {}, 'Product not found', 404);
         }
-        // console.log(product);
         let price = 0
         let variationID = variation_id;
-
         if (variation_id) {
             let selectedVariation = product.variations.filter((variation) => variation._id.toString() == variation_id.toString())
-            // console.log('variasdfas', selectedVariation);
             price = selectedVariation[0].salePrice
             variationID = selectedVariation[0]._id//in this case it take the id of filtered variation.it is filter like an array  so we need to gave an index.
         } else {
             price = product.variations[0].salePrice//In shop page, defaultly add first product into the cart
             variationID = product.variations[0]._id
         }
-        // console.log(price, variationID);
-
         const totalPrice = quantityNumber * price
-
-
         let cart = await Cart.findOne({ userId });//check for if the cart is already created for this user
-
         if (!cart) {
             cart = new Cart({ userId, products: [{ productId, quantity: quantityNumber, price, totalPrice, variationID }] });
         } else {
             // const productIndex = cart.products.findIndex(p => p.productId.equals(productId));//check this product is in user cart
             const variationIndex = cart.products.findIndex(v => v.variationID.equals(variationID))
-            if (variationIndex === -1) { //if product is not in cart this will add to the cart array
+            if (variationIndex === -1) {
                 cart.products.push({
                     productId,
-                    quantity: quantityNumber,//quantity of this product in cart
+                    quantity: quantityNumber,
                     price,
                     totalPrice,
                     variationID
                 });
-            } else {//if product is already in cart it will update the data.
+            } else {
                 cart.products[variationIndex].quantity = quantityNumber;
                 cart.products[variationIndex].totalPrice = cart.products[variationIndex].price * cart.products[variationIndex].quantity;
             }
         }
-
         await cart.save();
-
         successResponse(res, {}, 'Product added to cart');
     } catch (error) {
         console.error(error);
-        errorResponse(res, error, 'Server error');
+        res.redirect("/pageNotfound")
     }
 }
-
 
 const removeFromCart = async (req, res) => {
     try {
         const { itemId } = req.body;
         const userId = req.session.user;
-
         await Cart.updateOne(
             { userId },
             { $pull: { products: { _id: new mongoose.Types.ObjectId(itemId) } } }
@@ -154,9 +139,7 @@ const updateCartItem = async (req, res) => {
     const { productId, quantity } = req.body; // Here, productId is the _id of the product object in the products array, not the actual Product ID.
     try {
         const cart = await Cart.findOne({ "products._id": productId });
-
         if (cart) {
-
             const product = cart.products.find(p => p._id.toString() === productId);
             if (product) {
                 const totalPrice = product.price * quantity;
@@ -188,7 +171,6 @@ const cartTotal = async (req, res) => {
     try {
         const userId = req.session.user;
         const cart = await Cart.findOne({ userId });
-
         if (cart) {
             const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0);
             const tax = (subtotal * 10) / 100;

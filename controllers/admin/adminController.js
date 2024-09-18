@@ -17,7 +17,6 @@ const loadAdminLogin = async (req, res) => {
     }
 }
 
-
 const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -188,11 +187,9 @@ const adminLogout = async (req, res) => {
 
 const pageError = async (req, res) => {
     try {
-        // console.log('TRYPageNotFound')
         res.render('pageError') 
     }
     catch (error) {
-        // console.log('CATCHPageNotFound')
         res.redirect("/admin/pageError")
     }
 }

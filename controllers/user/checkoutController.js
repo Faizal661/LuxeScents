@@ -7,23 +7,18 @@ const Coupon = require('../../models/couponSchema')
 const Wallet = require('../../models/walletSchema')
 const Razorpay = require('razorpay');
 require('dotenv').config();
-
+const { successResponse, errorResponse } = require('../../helpers/responseHandler')
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_ID_KEY,
     key_secret: process.env.RAZORPAY_SECRET_KEY
 
 });
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
-
 
 const loadCheckoutPage = async (req, res) => {
     try {
         if (req.session.user) {
             const userId = req.session.user;
-
             let { couponCode } = req.body;
-            
-            // Find the coupon by code
             if (couponCode) {
                 const coupon = await Coupon.findOne({
                     code: couponCode,
@@ -36,28 +31,21 @@ const loadCheckoutPage = async (req, res) => {
                 }
             }
 
-
             const addresses = await Address.find({ userId: userId })
-
             const cart = await Cart.findOne({ userId })
                 .populate({
                     path: 'products.productId',
                     populate: { path: 'brand category' }
                 });
-
             if (!cart) {
                 return res.render('checkout', { products: [], addresses: addresses ? addresses : [] });
             }
-
             let totalOfferDiscount = 0;
-
             const products = cart.products.map(item => {
                 const product = item.productId;
                 const variation = product.variations.filter((vari) => vari._id.toString() === item.variationID.toString())
-
                 const offerDiscount = (product.offerPercentage * variation[0].salePrice / 100) * item.quantity;
                 totalOfferDiscount += offerDiscount;
-
                 return {
                     _id: item._id,//object id of objects in cart
                     productId: item.productId._id,//object id of product in 
@@ -72,13 +60,12 @@ const loadCheckoutPage = async (req, res) => {
                     offerDiscount: offerDiscount
                 };
             });
-
             //calculating subtotal,tax and grandtotal to display in the price details.
             const subtotal = cart.products.reduce((sum, item) => sum + (item.quantity * item.price), 0) - totalOfferDiscount;
             const tax = (subtotal * 10) / 100;
             const grandTotal = subtotal + tax;
-            let newGrandTotal=grandTotal
-            let discountApplied=false
+            let newGrandTotal = grandTotal
+            let discountApplied = false
             if (couponCode) {
                 const coupon = await Coupon.findOne({
                     code: couponCode,
@@ -89,20 +76,17 @@ const loadCheckoutPage = async (req, res) => {
                 if (!coupon) {
                     return res.redirect('/checkoutPage?error=Invalid or expired coupon');
                 }
-                
+
                 if (grandTotal < coupon.minimumPrice) {
                     return res.redirect('/checkoutPage?error=Grand total is less than coupon minimum price');
                 }
                 const couponDiscount = coupon.offerPrice;
                 newGrandTotal = grandTotal - couponDiscount;
-
                 coupon.usedBy.push(userId);
                 coupon.usedCount += 1;
                 await coupon.save();
-                 discountApplied=true
+                discountApplied = true
             }
-
-
             const coupons = await Coupon.find({
                 expireOn: { $gte: new Date() },
                 // usageLimit: { $gt: usedCount }, 
@@ -110,7 +94,6 @@ const loadCheckoutPage = async (req, res) => {
                 isActive: true,
                 usedBy: { $ne: userId }
             });
-
             const wallet = await Wallet.findOne({ userId: userId });
             const walletBalance = wallet ? wallet.balance : 0;
 
@@ -126,7 +109,6 @@ const loadCheckoutPage = async (req, res) => {
                 couponCode: couponCode,
                 discountApplied,
                 walletBalance
-
             });
         } else {
             res.redirect("/login")
@@ -151,14 +133,10 @@ const placeOrder = async (req, res) => {
             discount
         } = req.body;
 
-        console.log(req.body)
-
         const address = await Address.findById(selectedAddressId);
-
         if (!address) {
             return res.status(404).json({ error: 'Address not found' });
         }
-
         const newOrder = new Order({
             userId: req.session.user,
             orderedItems: orderedItems.map(item => ({
@@ -170,8 +148,7 @@ const placeOrder = async (req, res) => {
             })),
             subtotal: subtotal,
             tax: tax,
-            discount: 0,
-            finalAmount: subtotal + tax,
+            finalAmount: totalPrice,
             address: {
                 addressType: address.addressType,
                 name: address.name,
@@ -188,37 +165,38 @@ const placeOrder = async (req, res) => {
             couponApplied: false,
             discount: discount
         });
-
-        if(paymentMethod==='Wallet' || paymentMethod==='RazorPay'){
-            newOrder.paymentStatus = 'Paid';
-        }
-
         await newOrder.save();
-        // console.log(newOrder)
+        if (paymentMethod === 'Wallet') {
+            newOrder.paymentStatus = 'Paid';
+            let wallet = await Wallet.findOne({ userId: newOrder.userId });
+            wallet.balance -= newOrder.finalAmount;
+            wallet.transactions.push({
+                amount: newOrder.finalAmount,
+                type: 'debit',
+                orderId: newOrder._id,
+                description: `Purchased products for Order ID: ${newOrder.orderId}`
+            });
+            await wallet.save();
+        }
+        await newOrder.save();
         for (const item of orderedItems) {
             const product = await Product.findById(item.productId);
-
             if (product) {
                 const variation = product.variations.find(v => v._id.toString() === item.variationID);
                 if (variation) {
                     variation.quantity -= item.quantity;
-
                     if (variation.quantity < 0) {
                         return errorResponse(res, null, `Not enough stock for ${product.productName}`);
                     }
                 } else {
                     return errorResponse(res, null, `Variation not found for product ${product.productName}`);
                 }
-
                 await product.save();
             } else {
                 return errorResponse(res, null, 'Product not found');
             }
         }
-
         await Cart.deleteOne({ userId: req.session.user });
-
-
         successResponse(res, { orderId: newOrder._id }, 'Order placed successfully');
     } catch (error) {
         console.error('Error placing order:', error);
@@ -230,14 +208,12 @@ const placeOrder = async (req, res) => {
 const createRazorpayOrder = async (req, res) => {
     try {
         const { totalPrice } = req.body;
-
         const orderOptions = {
             amount: Math.round(totalPrice * 100), // Amount in paise (multiply by 100)
             currency: 'INR',
             receipt: `receipt_order_${Date.now()}`,
-            payment_capture: 1, // Auto capture the payment
+            payment_capture: 1,
         };
-
 
         const razorpayOrder = await razorpay.orders.create(orderOptions);
         res.status(200).json({
@@ -267,9 +243,6 @@ const handlePaymentSuccess = async (req, res) => {
                 message: 'Order not found',
             });
         }
-
-
-        // Update the order status to 'Paid'
         order.paymentStatus = 'Paid';
         order.razorpay = {
             paymentId,

@@ -13,26 +13,20 @@ const productInfo = async (req, res) => {
         if (req.query.search) {
             search = req.query.search;
         }
-
         let page = 1;
         if (req.query.page) {
             page = parseInt(req.query.page);
         }
-
         const limit = 5;
-
         let sort = 'createdAt';
         let order = 'desc';
         if (req.query.sort) {
             sort = req.query.sort;
         }
-
         if (req.query.order) {
             order = req.query.order;
         }
-
         const sortOrder = order === 'asc' ? 1 : -1;
-
         const productsData = await Product.find({
             productName: { $regex: ".*" + search + ".*", $options: 'i' }
         })
@@ -46,7 +40,6 @@ const productInfo = async (req, res) => {
         const count = await Product.find({
             productName: { $regex: ".*" + search + ".*", $options: 'i' }
         }).countDocuments();
-
         res.render('products', {
             data: productsData,
             totalPages: Math.ceil(count / limit),
@@ -73,8 +66,6 @@ const toggleProductListing = async (req, res) => {
         }
         const newStatus = !product.isBlocked;
         await Product.updateOne({ _id: productId }, { $set: { isBlocked: newStatus } });
-
-        // Remove unlisted product from user carts
         await Cart.updateMany(
             {}, 
             { $pull: { products: { productId } } } 
@@ -85,7 +76,6 @@ const toggleProductListing = async (req, res) => {
         res.redirect("/admin/pageError")
     }
 };
-
 
 const getAddProduct = async (req, res) => {
     try {
@@ -99,7 +89,6 @@ const getAddProduct = async (req, res) => {
 }
 
 const uploadImages = upload.array('productImages', 10);
-
 const addProduct = async (req, res) => {
     try {
         uploadImages(req, res, async (err) => {
@@ -110,15 +99,12 @@ const addProduct = async (req, res) => {
             if (!req.files || req.files.length === 0) {
                 return res.status(400).json({ error: "No files uploaded." });
             }
-
             const imagePaths = req.files.map(file => file.path);
             const imageURL = imagePaths.map(path => path.replace('public\\', ''));
-            
             const existingProduct = await Product.findOne({ productName:{ $regex: new RegExp(`^${req.body.productName}$`, 'i') }  });
             if (existingProduct) {
                 return res.status(400).json({ error: productAlreadyExists });
             }
-
             let variations = [];
             if (Array.isArray(req.body.variations)) {
                 variations = req.body.variations.map(variation => ({
@@ -128,7 +114,6 @@ const addProduct = async (req, res) => {
                     quantity: parseInt(variation.quantity, 10),
                 }));
             }
-
             const newProduct = new Product({
                 productName: req.body.productName,
                 description: req.body.description,
@@ -139,9 +124,7 @@ const addProduct = async (req, res) => {
                 productImages: imageURL,
                 status: req.body.status,
             });
-
             await newProduct.save();
-
             return res.json({ message: "Product added successfully" });
         });
     } catch (error) {
@@ -168,23 +151,19 @@ const getEditProduct = async (req, res) => {
 const editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
-
         uploadImages(req, res, async (err) => {
             if (err) {
                 console.error(err);
                 return res.status(400).json({ error: "Error uploading files." });
             }
-
             const existingProduct = await Product.findById(productId);
             if (!existingProduct) {
                 return res.status(404).json({ error: "Product not found" });
             }
-
             const AlreadyTakenName = await Product.findOne({ productName:{ $regex: new RegExp(`^${req.body.productName}$`, 'i') }  });
             if (AlreadyTakenName) {
                 return res.status(400).json({ error: productAlreadyExists });
             }
-
             let imageURL = [...existingProduct.productImages];
 
             if (req.body.removedImages && req.body.removedImages.length > 0) {
@@ -194,15 +173,12 @@ const editProduct = async (req, res) => {
 
                 imageURL = imageURL.filter(img => !removedImages.includes(img));
             }
-
             if (req.files && req.files.length > 0) {
                 const imagePaths = req.files.map(file => file.path);
                 const newImageURLs = imagePaths.map(path => path.replace('public\\', ''));
                 imageURL = imageURL.concat(newImageURLs);
             }
-
             imageURL = Array.isArray(imageURL) ? imageURL.flat() : [imageURL];
-
             let variations = [];
             if (Array.isArray(req.body.variations)) {
                 variations = req.body.variations.map(variation => ({
@@ -212,7 +188,6 @@ const editProduct = async (req, res) => {
                     quantity: parseInt(variation.quantity, 10),
                 }));
             }
-
             const updateProduct = await Product.findByIdAndUpdate(productId, {
                 productName: req.body.productName,
                 description: req.body.description,
@@ -223,9 +198,7 @@ const editProduct = async (req, res) => {
                 productImages: imageURL,
                 status: req.body.status,
             }, { new: true });
-
-            console.log('new updated data', updateProduct)
-
+            // console.log('new updated data', updateProduct)
             if (updateProduct) {
                 res.json({ message: "Product updated successfully" });
             } else {

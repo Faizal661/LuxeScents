@@ -38,12 +38,10 @@ const editUserProfile = async (req, res) => {
     try {
         const userId = req.params.id;
         const { name, phone } = req.body;
-
         const existingUser = await User.findOne({ name: name, _id: { $ne: userId } });
         if (existingUser) {
             return res.status(400).json({ error: 'Username is already taken.' });
         }
-
         await User.findByIdAndUpdate(userId, { name: name, phone: phone });
         req.session.userName = name;
         res.status(200).json({ message: 'Profile updated successfully.' });
@@ -74,11 +72,9 @@ const addAddress = async (req, res) => {
     try {
         const { addressType, name, phone, altPhone, locality, city, state, pincode, landMark, isActive } = req.body;
         const userId = req.params.id;
-
         if (isActive) {
             await addressSchema.updateMany({ userId }, { $set: { isActive: false } });
         }
-
         const newAddress = new addressSchema({
             userId,
             addressType,
@@ -92,10 +88,8 @@ const addAddress = async (req, res) => {
             landMark,
             isActive: isActive ? true : false
         });
-
         await newAddress.save();
         return successResponse(res, {}, 'Address added successfully!')
-
     } catch (error) {
         console.error('Error adding address:', error);
         res.redirect('/pageNotfound');
@@ -107,11 +101,9 @@ const loadEditAddressPage = async (req, res) => {
     try {
         const addressId = req.query.id;
         const address = await addressSchema.findById(addressId);
-
         if (!address) {
             return res.status(404).send('Address not found');
         }
-
         res.render('userProfile/editAddress', { address });
     } catch (error) {
         console.error("Error loading edit address page:", error);
@@ -124,8 +116,6 @@ const editAddress = async (req, res) => {
         const addressId = req.params.id;
         const userId = req.session.user;
         const { addressType, name, city, landMark, locality, state, pincode, phone, altPhone, isActive } = req.body;
-        console.log(req.body)
-
         const updatedData = {
             addressType,
             name,
@@ -139,19 +129,14 @@ const editAddress = async (req, res) => {
             isActive: isActive ? true : false
         };
         console.log('new Data', updatedData)
-
         if (updatedData.isActive) {
             await addressSchema.updateMany({ userId: userId, _id: { $ne: addressId } }, { isActive: false });
         }
-
         const updatedAddress = await addressSchema.findByIdAndUpdate(addressId, updatedData, { new: true });
-
         if (!updatedAddress) {
             return res.status(404).send('Address not found');
         }
-
         return successResponse(res, {}, 'Address updated successfully!')
-
     } catch (error) {
         console.error("Error updating address:", error);
         res.redirect('/pageNotfound');
@@ -163,9 +148,7 @@ const deleteAddress = async (req, res) => {
     try {
         const addressId = req.params.id;
         const userId = req.session.user;
-
         const deletedAddress = await addressSchema.findOneAndDelete({ _id: addressId, userId: userId });
-
         if (!deletedAddress) {
             return res.status(404).json({ error: 'Address not found or you do not have permission to delete this address' });
         }
@@ -192,25 +175,18 @@ const loadChangePassword = async (req, res) => {
 
 const changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
-
     try {
         const user = await User.findById(req.session.user);
-
         if (!user) {
             return errorResponse(res, {}, 'User not found', 404);
         }
-
         const isMatch = await bcrypt.compare(currentPassword, user.password);
-
         if (!isMatch) {
             return errorResponse(res, {}, 'Current password is incorrect', 400);
         }
-
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
-
         await user.save()
-
         return successResponse(res, {}, 'Password updated successfully');
     } catch (error) {
         console.log(error, 'Error while changing password');
@@ -228,16 +204,12 @@ const loadOtpVerify = async (req, res) => {
         const email = user.email
         const otp = generateOtp();
         const emailSent = await sendVerificationEmail(email, otp);
-
         if (!emailSent) {
             return res.json("email-error")
         }
-
         req.session.userOtp = otp;
-
         res.render('userProfile/verify-otp')
         console.log('OTP Sent', otp);
-
     } catch (error) {
         console.log(error, 'otp verify page loading error');
         res.redirect('/pageNotfound');
@@ -261,7 +233,6 @@ const verifyOtp = async (req, res) => {
 
 const resendOtp = async (req, res) => {
     try {
-        // console.log(req.session)
         const email = req.session.email
         if (!email) {
             return res.status(400).json({ success: false, message: "Email not found in session" })
@@ -294,19 +265,14 @@ const loadNewPassword = async (req, res) => {
 
 const resetPassword=async(req,res)=>{
     const { newPassword } = req.body;
-
     try {
         const user = await User.findById(req.session.user);
-
         if (!user) {
             return errorResponse(res, {}, 'User not found', 404);
         }
-
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
-
         await user.save()
-
         return successResponse(res, {}, 'Password updated successfully');
     } catch (error) {
         console.log(error, 'Error while resetting password');

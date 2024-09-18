@@ -1,4 +1,3 @@
-
 const multer = require('multer');
 const path = require('path');
 
@@ -11,7 +10,6 @@ const storage = multer.diskStorage({
     }
 });
 
-
 const fileFilter = (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
     if (allowedTypes.includes(file.mimetype)) {
@@ -20,7 +18,6 @@ const fileFilter = (req, file, cb) => {
         cb(new Error('Invalid file type'), false);
     }
 };
-
 
 const upload = multer({
     storage: storage,

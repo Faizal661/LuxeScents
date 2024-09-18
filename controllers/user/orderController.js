@@ -10,13 +10,10 @@ const downloadInvoice = async (req, res) => {
     try {
         const orderId = req.query.orderId;
         const order = await Order.findById(orderId).populate('orderedItems.product');
-
         if (!order) {
             return res.redirect("/pageNotFound");
         }
-
         const html = await ejs.renderFile(path.join(__dirname, '../../views/users/order/invoiceTemplate.ejs'), { order });
-
         const options = {
             format: 'A4',
             border: {
@@ -32,10 +29,8 @@ const downloadInvoice = async (req, res) => {
                 console.error('Error while generating PDF:', err);
                 res.redirect("/pageNotfound")
             }
-
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', `attachment; filename=Invoice_${order.orderId}.pdf`);
-
             stream.pipe(res);
         });
 
@@ -76,18 +71,14 @@ const cancelOrder = async (req, res) => {
     try {
         const { orderId } = req.body;
         const order = await Order.findById(orderId);
-
         if (!order) {
             return errorResponse(res, error, 'Order not found', 404);
         }
-
         if (order.orderStatus === 'Cancelled') {
             return errorResponse(res, error, 'Order is already cancelled', 400);
         }
-
         order.orderStatus = 'Cancelled';
         await order.save();
-
         for (const item of order.orderedItems) {
             const product = await Product.findById(item.product);
             if (product) {
@@ -98,10 +89,8 @@ const cancelOrder = async (req, res) => {
                 await product.save();
             }
         }
-
         if (order.paymentStatus === 'Paid') {
             let wallet = await Wallet.findOne({ userId: order.userId });
-
             if (!wallet) {
                 wallet = new Wallet({
                     userId: order.userId,
@@ -109,18 +98,15 @@ const cancelOrder = async (req, res) => {
                     transactions: []
                 });
             }
-
             wallet.balance += order.finalAmount;
-
             wallet.transactions.push({
                 amount: order.finalAmount,
                 type: 'credit',
-                orderId:order._id,
+                orderId: order._id,
                 description: `Cancelled order amount for Order ID: ${order.orderId}`
             });
             await wallet.save();
         }
-
         return successResponse(res, {}, 'Order cancelled successfully');
     } catch (error) {
         console.error('Error while cancelling order:', error);
@@ -132,19 +118,14 @@ const returnRequest = async (req, res) => {
     try {
         const { orderId } = req.body;
         const order = await Order.findById(orderId);
-
         if (!order) {
             return errorResponse(res, error, 'Order not found', 404);
         }
-
         if (order.orderStatus === 'Returned') {
             return errorResponse(res, error, 'Order is already returned', 400);
         }
-
         order.orderStatus = 'Return Request';
         await order.save();
-
-
         return successResponse(res, {}, 'Order return requested successfully');
     } catch (error) {
         console.error('Error while cancelling order:', error);
@@ -156,13 +137,11 @@ const returnRequest = async (req, res) => {
 const loadOrders = async (req, res) => {
     try {
         const userId = req.session.user;
-
         const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate('orderedItems.product')
-
         res.render('orders', { orders });
     } catch (error) {
         console.error('Error loading orders:', error);
-        res.status(500).send('Error loading orders');
+        res.redirect("/pageNotfound")
     }
 };
 
