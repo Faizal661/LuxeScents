@@ -66,6 +66,7 @@ const loadCheckoutPage = async (req, res) => {
             const grandTotal = subtotal + tax;
             let newGrandTotal = grandTotal
             let discountApplied = false
+            let couponDiscount = 0
             if (couponCode) {
                 const coupon = await Coupon.findOne({
                     code: couponCode,
@@ -78,12 +79,12 @@ const loadCheckoutPage = async (req, res) => {
                 }
 
                 if (grandTotal < coupon.minimumPrice) {
-                    return res.redirect('/checkoutPage?error=Grand total is less than coupon minimum price');
+                    return res.redirect('/checkoutPage?error=Total price is less than coupon minimum price');
                 }
-                const couponDiscount = coupon.offerPrice;
-                newGrandTotal = grandTotal - couponDiscount;
-                coupon.usedBy.push(userId);
-                coupon.usedCount += 1;
+                couponDiscount = coupon.offerPrice;
+                newGrandTotal -= couponDiscount;
+                //coupon.usedBy.push(userId);
+                // coupon.usedCount += 1;
                 await coupon.save();
                 discountApplied = true
             }
@@ -107,6 +108,7 @@ const loadCheckoutPage = async (req, res) => {
                 totalOfferDiscount,
                 coupons,
                 couponCode: couponCode,
+                couponDiscount,
                 discountApplied,
                 walletBalance
             });
@@ -130,9 +132,11 @@ const placeOrder = async (req, res) => {
             totalPrice,
             selectedAddressId,
             paymentMethod,
-            discount
+            discount,
+            couponApplied,
+            couponDiscount
         } = req.body;
-
+        console.log(req.body)
         const address = await Address.findById(selectedAddressId);
         if (!address) {
             return res.status(404).json({ error: 'Address not found' });
@@ -148,6 +152,7 @@ const placeOrder = async (req, res) => {
             })),
             subtotal: subtotal,
             tax: tax,
+            discount: discount,
             finalAmount: totalPrice,
             address: {
                 addressType: address.addressType,
@@ -162,8 +167,9 @@ const placeOrder = async (req, res) => {
             },
             paymentMethod,
             orderStatus: 'Processing',
-            couponApplied: false,
-            discount: discount
+            couponApplied,
+            couponDiscount
+            
         });
         await newOrder.save();
         if (paymentMethod === 'Wallet') {
@@ -214,7 +220,6 @@ const createRazorpayOrder = async (req, res) => {
             receipt: `receipt_order_${Date.now()}`,
             payment_capture: 1,
         };
-
         const razorpayOrder = await razorpay.orders.create(orderOptions);
         res.status(200).json({
             success: true,
@@ -234,7 +239,6 @@ const createRazorpayOrder = async (req, res) => {
 
 const handlePaymentSuccess = async (req, res) => {
     try {
-
         const { paymentId, razorpayOrderId, orderId } = req.body;
         const order = await Order.findOne({ _id: orderId });
         if (!order) {

@@ -118,9 +118,13 @@ const orderSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    couponId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Coupon",
+    // couponId: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Coupon",
+    // },
+    couponDiscount:{
+        type: Number,
+        required: false
     },
     expectedDeliveryDate: {
         type: Date, 

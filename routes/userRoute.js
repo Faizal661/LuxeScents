@@ -76,6 +76,7 @@ userRouter.get('/cartTotal', userAuth, cartController.cartTotal)
 
 //checkout
 userRouter.get('/checkoutPage', userAuth, checkoutController.loadCheckoutPage)
+userRouter.post('/checkoutPage', userAuth, checkoutController.loadCheckoutPage)
 userRouter.post('/placeOrder', userAuth, checkoutController.placeOrder)
 userRouter.post('/create-razorpay-order', userAuth, checkoutController.createRazorpayOrder);
 userRouter.post('/payment-success', checkoutController.handlePaymentSuccess);//razorpay successfull payment handling

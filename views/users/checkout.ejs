@@ -34,13 +34,24 @@
                 <% }else{ %>
                     <div class="row">
                         <div class="col-lg-6">
-
                             <div class="cart__discount col-9">
                                 <h6>Discount codes</h6>
-                                <form action="/checkoutPage" method="get">
-                                    <input type="text" name="couponCode" placeholder="Coupon code">
-                                    <button type="submit">Apply</button>
-                                </form>
+                                <% if (discountApplied) { %>
+                                    <!-- Display applied coupon -->
+                                    <p>Coupon Applied: <b> <%= couponCode %></b> - ₹<%= couponDiscount %>
+                                                    <button type="button" onclick="window.location.href='/checkoutPage'" class="btn btn-danger btn-sm ml-3">Remove Coupon</button>
+                                    </p>
+                                    <% } else { %>
+                                        <form action="/checkoutPage" method="post">
+                                            <input type="text" name="couponCode" placeholder="Coupon code"
+                                                value="<%= couponCode %>">
+                                            <button type="submit">Apply</button>
+                                        </form>
+
+                                        <div class="text-danger h5 pt-2" id="couponError">
+                                            <span></span>
+                                        </div>
+                                        <% } %>
                             </div>
 
                             <!-- Display available coupons -->
@@ -62,56 +73,58 @@
                                     <% } else { %>
                                         <p>No available coupons.</p>
                                         <% } %>
+                                        
                             </div>
+                           
 
-                            <!-- Address Selection Section -->
-                            <div class=" p-4 rounded mt-5 col-10">
-                                <% if (addresses.length===0) { %>
-                                    <p>No addresses found. Please add one to place an order.</p>
-                                    <button class="btn btn-success"
-                                        onclick="window.location.href='/loadAddAddressPage'">Add
-                                        Address</button>
-                                    <% } else { %>
-                                        <button class="btn btn-dark rounded-0 py-2 "
-                                            onclick="window.location.href='/loadAddAddressPage'">Add Another
+                                <!-- Address Selection Section -->
+                                <div class=" p-4 rounded mt-5 col-10">
+                                    <% if (addresses.length===0) { %>
+                                        <p>No addresses found. Please add one to place an order.</p>
+                                        <button class="btn btn-success"
+                                            onclick="window.location.href='/loadAddAddressPage'">Add
                                             Address</button>
-                                        <% addresses.forEach((address, index)=> { %>
-                                            <div
-                                                class="address_item border my-3 p-3 rounded-0 <%= address.isActive ? 'border-success' : 'border-dark' %> d-flex justify-content-between align-items-start">
-                                                <div class="address_info w-100">
-                                                    <div class="d-flex justify-content-between">
-                                                        <div>
-                                                            <input type="radio" name="selectedAddress"
-                                                                id="address-<%= index %>" value="<%= address._id %>"
-                                                                <%=address.isActive ? 'checked' : '' %>
-                                                            onchange="selectAddress('<%= address._id %>')">
-                                                                <label for="address-<%= index %>"
-                                                                    class="<%= address.isActive ? 'text-success h6' : '' %>">
-                                                                    <%= address.addressType %>
-                                                                        <%= address.isActive ? ' (Primary Address)' : ''
-                                                                            %>
-                                                                </label>
+                                        <% } else { %>
+                                            <button class="btn btn-dark rounded-0 py-2 "
+                                                onclick="window.location.href='/loadAddAddressPage'">Add Another
+                                                Address</button>
+                                            <% addresses.forEach((address, index)=> { %>
+                                                <div
+                                                    class="address_item border my-3 p-3 rounded-0 <%= address.isActive ? 'border-success' : 'border-dark' %> d-flex justify-content-between align-items-start">
+                                                    <div class="address_info w-100">
+                                                        <div class="d-flex justify-content-between">
+                                                            <div>
+                                                                <input type="radio" name="selectedAddress"
+                                                                    id="address-<%= index %>" value="<%= address._id %>"
+                                                                    <%=address.isActive ? 'checked' : '' %>
+                                                                onchange="selectAddress('<%= address._id %>')">
+                                                                    <label for="address-<%= index %>"
+                                                                        class="<%= address.isActive ? 'text-success h6' : '' %>">
+                                                                        <%= address.addressType %>
+                                                                            <%= address.isActive ? ' (Primary Address)'
+                                                                                : '' %>
+                                                                    </label>
+                                                            </div>
+                                                            <button class="btn btn-dark rounded-0 mb-1 btn-sm"
+                                                                onclick="window.location.href='/loadEditAddressPage?id=<%= address._id %>'">Edit</button>
                                                         </div>
-                                                        <button class="btn btn-dark rounded-0 mb-1 btn-sm"
-                                                            onclick="window.location.href='/loadEditAddressPage?id=<%= address._id %>'">Edit</button>
+                                                        <p class="mb-1"><strong>Name:</strong>
+                                                            <%= address.name %> &nbsp; <strong>Phone:</strong>
+                                                                <%= address.phone %> , <%= address.altPhone %>
+                                                        </p>
+                                                        <p class="mb-1">
+                                                            <%= address.locality %>, <%= address.city %>, <%=
+                                                                        address.landMark %>,
+                                                                        <%= address.state %>, <%= address.pincode %>
+                                                        </p>
                                                     </div>
-                                                    <p class="mb-1"><strong>Name:</strong>
-                                                        <%= address.name %> &nbsp; <strong>Phone:</strong>
-                                                            <%= address.phone %> , <%= address.altPhone %>
-                                                    </p>
-                                                    <p class="mb-1">
-                                                        <%= address.locality %>, <%= address.city %>, <%=
-                                                                    address.landMark %>,
-                                                                    <%= address.state %>, <%= address.pincode %>
-                                                    </p>
                                                 </div>
-                                            </div>
-                                            <% }); %>
+                                                <% }); %>
 
-                                                <% } %>
-                            </div>
-                            <hr>
-                            <!-- End Address Selection Section -->
+                                                    <% } %>
+                                </div>
+                                <hr>
+                                <!-- End Address Selection Section -->
 
 
                         </div>
@@ -144,29 +157,24 @@
                                         <% }); %>
                                 </ul>
                                 <ul class="checkout__total__all">
-                                    <% if (discountApplied) { %>
-                                        <li>Coupon Applied <span>-₹<%= discountApplied %></span></li>
-                                        <% } else { %>
-                                            <li>Coupon Applied <span>-₹ 0</span></li>
-                                            <% } %>
-                                                <li>Discount Price <span id="offerDiscount">-₹ <%= totalOfferDiscount %>
-                                                    </span>
-                                                </li>
-                                                <li>Delivery Charges <span>Free Delivery</span></li>
-                                                <hr>
-                                                <li>Subtotal <span id="cart-subtotal">₹<%= (products.reduce((total,
-                                                            product)=>
-                                                            total
-                                                            +
-                                                            product.totalPrice, -totalOfferDiscount)).toFixed(2)
-                                                            %></span></li>
+                                    <li>Discount Price <span id="offerDiscount">-₹ <%= totalOfferDiscount %>
+                                        </span>
+                                    </li>
+                                    <li>Delivery Charges <span>Free Delivery</span></li>
+                                    <hr>
+                                    <li>Subtotal <span id="cart-subtotal">₹<%= (products.reduce((total, product)=>
+                                                total
+                                                +
+                                                product.totalPrice, -totalOfferDiscount)).toFixed(2)
+                                                %></span></li>
 
-                                                <li>Tax (10%) <span id="cart-tax">₹ <%= tax %></span></li>
-                                                <hr>
-                                                <li>Total <span id="cart-total">₹<%= (products.reduce((total, product)=>
-                                                            total +
-                                                            product.totalPrice, tax -totalOfferDiscount)).toFixed(2)
-                                                            %></span></li>
+                                    <li>Tax (10%) <span id="cart-tax">₹ <%= tax %></span></li>
+                                    <li>Coupon Applied <span id="couponDiscount">-₹<%= couponDiscount %></span></li>
+                                    <hr>
+                                    <li>Total <span id="cart-total">₹<%= (products.reduce((total, product)=>
+                                                total +
+                                                product.totalPrice, tax -totalOfferDiscount-couponDiscount)).toFixed(2)
+                                                %></span></li>
                                 </ul>
 
 
@@ -199,8 +207,7 @@
                                     </label>
                                 </div> -->
                                 <button type="button" class="site-btn" onclick="placeOrder()"
-                                    id="placeOrderButton">PLACE
-                                    ORDER</button>
+                                    id="placeOrderButton">PLACE ORDER</button>
 
                                 <% } %>
 
@@ -218,7 +225,12 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script>
-
+        const url = window.location.search.substring(1, 6)
+        const msg = window.location.search.substring(7).replace(/%20/g, ' ')
+        if (url === 'error') {
+            const spanMsg = document.getElementById('couponError').querySelector('span');
+            spanMsg.innerText = msg;
+        }
 
 
         function gatherCheckoutData() {
@@ -237,6 +249,8 @@
             const tax = parseFloat(document.querySelector('#cart-tax').innerText.replace('₹', ''));
             const totalPrice = parseFloat(document.querySelector('#cart-total').innerText.replace('₹', ''));
             const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked')?.value;
+            const couponApplied= '<%= discountApplied %>'
+            const couponDiscount =  parseFloat(document.querySelector('#couponDiscount').innerText.replace('-₹', ''));
             const discount = parseFloat('<%= totalOfferDiscount %>')
             if (selectedAddressId == undefined) {
                 return Swal.fire({
@@ -253,13 +267,15 @@
                 totalPrice,
                 selectedAddressId,
                 paymentMethod,//
-                discount
+                discount,
+                couponApplied,//
+                couponDiscount
             };
         }
 
         async function placeOrder() {
             const orderData = await gatherCheckoutData();
-
+            // console.log(orderData)
             const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.id.split('-')[1];
 
             if (paymentMethod === 'RazorPay') {
@@ -338,7 +354,7 @@
                         });
                     });
             } else if (paymentMethod === 'Wallet') {
-                const walletBalance='<%= walletBalance.toFixed(2) %>'
+                const walletBalance = '<%= walletBalance.toFixed(2) %>'
                 if (orderData.totalPrice > walletBalance) {
                     Swal.fire({
                         text: 'Insufficient wallet balance. Please try another payment method.',

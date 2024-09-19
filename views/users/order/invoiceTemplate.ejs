@@ -130,7 +130,7 @@
             <p><strong>After Discount:</strong> ₹<%= order.subtotal %></p>
             <p><strong>Tax:</strong> ₹<%= order.tax.toFixed(2) %></p>
             <% if (order.couponApplied) { %>
-            <p><strong>Coupon Discount:</strong> ₹<%= order.couponId.offerPrice %></p>
+            <p><strong>Coupon Discount:</strong> -₹<%= order.couponDiscount %></p>
             <% } %>
             <hr>
             <p class="total"><strong>Total Price:</strong> ₹<%= order.finalAmount.toFixed(2) %></p>

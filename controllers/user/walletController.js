@@ -12,9 +12,12 @@ const loadWalletPage = async (req, res) => {
                 transactions: [] 
             });
             await wallet.save();
+        }else{
+            wallet.transactions.sort((a, b) => b.createdAt - a.createdAt);
         }
         res.render('wallet', {
-            wallet
+            wallet,
+            transactions: wallet.transactions
         }); 
     } catch (error) {
         console.log('Error while loading wallet page', error);

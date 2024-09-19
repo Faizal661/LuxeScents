@@ -173,13 +173,13 @@
                             <div class="pl-5 py-3 ">
                                 <p><strong>Subtotal:</strong> ₹<%= order.subtotal+order.discount %>
                                 </p>
-                                <p><strong>Offer Discount:</strong> ₹<%= order.discount %>
-                                </p>
-
+                                <p><strong>Offer Discount:</strong> -₹<%= order.discount %>
+                                </p><hr>
+                                <p><strong>After Discount:</strong> ₹<%= order.subtotal %></p>
                                 <p><strong>Tax:</strong> ₹<%= order.tax.toFixed(2) %>
                                 </p>
                                 <% if (order.couponApplied) { %>
-                                    <p><strong>Coupon:</strong> ₹<%= order.couponId.offerPrice %>
+                                    <p><strong>Coupon Discount:</strong> -₹<%= order.couponDiscount %>
                                     </p>
                                     <% } %>
                                         <hr>

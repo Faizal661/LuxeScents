@@ -10,15 +10,15 @@ const couponSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    usageLimit: {
-        type: Number,
-        required: true,
-        default: 1
-    },
-    usedCount: {
-        type: Number,
-        default: 0
-    },
+    // usageLimit: {
+    //     type: Number,
+    //     required: true,
+    //     default: 1
+    // },
+    // usedCount: {
+    //     type: Number,
+    //     default: 0
+    // },
     offerPrice: {
         type: Number,
         required: true
