@@ -14,7 +14,7 @@ const orderInfo = async (req, res) => {
             .limit(limit);
         const totalOrders = await Order.countDocuments({})
         const totalPages = Math.ceil(totalOrders / limit);
-        res.render('ordersInfo', {
+        res.render('orders/orders', {
             orders,
             currentPage: page,
             totalPages,
@@ -32,7 +32,7 @@ const orderDetails = async (req, res) => {
         if (!order) {
             return res.redirect("/admin/pageError")
         }
-        res.render('orderDetailed', {
+        res.render('orders/orderDetailed', {
             order,
         });
     } catch (error) {

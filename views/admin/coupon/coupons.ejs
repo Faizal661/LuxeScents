@@ -32,8 +32,6 @@
                                 <th>Coupon Code</th>
                                 <th>Offer Price</th>
                                 <th>Minimum Price</th>
-                                <th>Usage Limit</th>
-                                <th>Used Count</th>
                                 <th>Expire On</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -51,12 +49,7 @@
                                     <td>
                                         <%= coupon.minimumPrice %>
                                     </td>
-                                    <td>
-                                        <%= coupon.usageLimit %>
-                                    </td>
-                                    <td>
-                                        <%= coupon.usedCount %>
-                                    </td>
+                                  
                                     <td>
                                         <%= new Date(coupon.expireOn).toLocaleDateString() %>
                                     </td>

@@ -35,25 +35,21 @@
             background-color: #ffc107 !important;
         }
 
-        /* Spinner Styles */
         #loadingSpinner {
-            position: relative;
-            top: 15px;
-            left: 10px;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            z-index: 999999;
+           
         }
-
         .spinner {
             border: 5px solid #dbdbdb;
-            /* Light grey */
             border-top: 5px solid black;
-            /* Blue */
             border-radius: 50%;
-            width: 25px;
-            height: 25px;
+            width: 40px;
+            height: 40px;
             animation: spin 2s linear infinite;
-        }
+        } 
 
         @keyframes spin {
             0% {
@@ -69,7 +65,7 @@
         <div class="content-header d-flex shadow">
             <header class="card-header d-flex  justify-content-between">
                 <h2 class="content-title card-title">Sales Report</h2>
-            </header>   
+            </header>
             <div id="loadingSpinner" style="display: none;">
                 <div class="spinner"></div>
             </div>
@@ -87,17 +83,21 @@
         <div class="row my-4">
             <form action="/admin/salesReport" method="GET" class="d-flex align-items-center">
                 <select name="filterType" class="form-select me-3 rounded-0 border" style="width: 200px;">
-                    <option value="daily" <%= filterType === 'daily' ? 'selected' : '' %> >Daily</option>
-                    <option value="weekly" <%= filterType === 'weekly' ? 'selected' : '' %>>Weekly</option>
-                    <option value="yearly" <%= filterType === 'yearly' ? 'selected' : '' %>>Yearly</option>
-                    <option value="custom" <%= filterType === 'custom' ? 'selected' : '' %>>Custom Date</option>
+                    <option value="daily" <%=filterType==='daily' ? 'selected' : '' %> >Daily</option>
+                    <option value="weekly" <%=filterType==='weekly' ? 'selected' : '' %>>Weekly</option>
+                    <option value="yearly" <%=filterType==='yearly' ? 'selected' : '' %>>Yearly</option>
+                    <option value="custom" <%=filterType==='custom' ? 'selected' : '' %>>Custom Date</option>
                 </select>
                 <!-- Custom Date Range -->
                 <div id="custom-date" class=" align-items-center mt-2 d-none">
                     <label for="startDate" class="me-2">From:</label>
-                    <input type="date" name="startDate" id="startDate" value="<%=startDate ? new Date(startDate).toLocaleDateString('en-CA') :'' %>" class="form-control me-3 rounded-0 border">
+                    <input type="date" name="startDate" id="startDate"
+                        value="<%=startDate ? new Date(startDate).toLocaleDateString('en-CA') :'' %>"
+                        class="form-control me-3 rounded-0 border">
                     <label for="endDate" class="me-2">To:</label>
-                    <input type="date" name="endDate" id="endDate" value="<%=endDate ? new Date(endDate).toLocaleDateString('en-CA') : '' %>" class="form-control me-3 rounded-0 border">
+                    <input type="date" name="endDate" id="endDate"
+                        value="<%=endDate ? new Date(endDate).toLocaleDateString('en-CA') : '' %>"
+                        class="form-control me-3 rounded-0 border">
                 </div>
                 <button type="submit" class="btn btn-success text-light rounded-0 border me-4">Filter</button>
             </form>

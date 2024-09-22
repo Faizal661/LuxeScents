@@ -364,10 +364,10 @@
                 } else {
                     Swal.fire({
                         title: 'Confirm Order',
-                        html: `<p>Your wallet balance: <strong>${walletBalance}</strong></p>
-                               <p>Total price: <strong>${orderData.totalPrice}</strong></p>
-                               <p>Remaining balance after order: <strong>${(walletBalance - orderData.totalPrice)}</strong></p>
-                               <p>Do you want to proceed with the payment using your wallet?</p>`,
+                        html: `<h5>Your wallet balance: <strong>${walletBalance}</strong></h5>
+                               <h5>Total price: <strong>${orderData.totalPrice}</strong></h5>
+                               <h5>Remaining balance after order: <strong>${(walletBalance - orderData.totalPrice)}</strong></h5><br>
+                               <h5>Do you want to proceed with the payment using your wallet?</h5>`,
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonText: 'Yes, place order',

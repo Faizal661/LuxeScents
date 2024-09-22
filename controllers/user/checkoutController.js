@@ -83,7 +83,7 @@ const loadCheckoutPage = async (req, res) => {
                 }
                 couponDiscount = coupon.offerPrice;
                 newGrandTotal -= couponDiscount;
-                //coupon.usedBy.push(userId);
+                coupon.usedBy.push(userId);
                 // coupon.usedCount += 1;
                 await coupon.save();
                 discountApplied = true

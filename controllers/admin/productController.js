@@ -40,7 +40,7 @@ const productInfo = async (req, res) => {
         const count = await Product.find({
             productName: { $regex: ".*" + search + ".*", $options: 'i' }
         }).countDocuments();
-        res.render('products', {
+        res.render('product/products', {
             data: productsData,
             totalPages: Math.ceil(count / limit),
             currentPage: page,
@@ -81,7 +81,7 @@ const getAddProduct = async (req, res) => {
     try {
         const categories = await Category.find({ isListed: true });
         const brands = await Brand.find({ isBlocked: false });
-        res.render('addProducts', { categories: categories, brands: brands })
+        res.render('product/addProducts', { categories: categories, brands: brands })
     } catch (error) {
         console.error(error);
         res.redirect("/admin/pageError")
@@ -140,7 +140,7 @@ const getEditProduct = async (req, res) => {
         const product = await Product.findById(productId)
         const categories = await Category.find({});
         const brands = await Brand.find({});
-        res.render('editProduct', { categories: categories, brands: brands, product })
+        res.render('product/editProduct', { categories: categories, brands: brands, product })
     } catch (error) {
         console.error(error);
         res.redirect("/admin/pageError")

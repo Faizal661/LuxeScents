@@ -34,7 +34,7 @@ const categoryInfo = async (req, res) => {
 
         const totalPages = Math.ceil(totalCategories / limit);
 
-        res.render("category", {
+        res.render("category/category", {
             categoryData,
             currentPage: page,
             totalPages,
@@ -72,7 +72,7 @@ const getEditCategory = async (req, res) => {
     try {
         const categoryId = req.query.id
         const category = await Category.findOne({ _id: categoryId })
-        res.render("edit-category", { category: category })
+        res.render("category/edit-category", { category: category })
     } catch (error) {
         console.error(error, "Error while loading edit Category page.");
         res.redirect("/admin/pageError")

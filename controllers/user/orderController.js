@@ -43,7 +43,7 @@ const downloadInvoice = async (req, res) => {
 const orderSuccess = async (req, res) => {
     try {
         const orderId = req.query.orderId
-        res.render('orderSuccess', { orderId })
+        res.render('order/orderSuccess', { orderId })
     } catch (error) {
         console.error('Error while loading order Success page', error);
         res.redirect("/pageNotfound")
@@ -57,7 +57,7 @@ const orderDetails = async (req, res) => {
         if (!order) {
             return res.redirect("/pageNotFound");
         }
-        res.render('orderDetails', {
+        res.render('order/orderDetails', {
             order,
         });
     } catch (error) {
@@ -138,7 +138,7 @@ const loadOrders = async (req, res) => {
     try {
         const userId = req.session.user;
         const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate('orderedItems.product')
-        res.render('orders', { orders });
+        res.render('order/orders', { orders });
     } catch (error) {
         console.error('Error loading orders:', error);
         res.redirect("/pageNotfound")
