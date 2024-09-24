@@ -44,11 +44,11 @@
                     <canvas id="lineChart"></canvas>
                 </div>
                 <div class="col-lg-5 py-5 ps-5 ">
-                    <h3 class="mx-5 my-3">Total Sales : <%= filterType %>
+                    <h2 class="mx-5 my-3 text-decoration-underline">Total Sales : <%= filterType %>
                     </h3>
                     <h3>Total orders : <%= salesCount %>
                     </h3>
-                    <h3>Total Revenue : <%= totalAmount.toFixed(2) %>
+                    <h3>Total Revenue : ₹ <%= totalAmount.toFixed(2) %>
                     </h3>
                     <h3></h3>
                 </div>
@@ -59,13 +59,13 @@
                         <div class="col-8 my-5">
                             <canvas id="doughnut"></canvas>
                         </div>
-                        <h3 class="mx-5 mb-3">Profit & Sales : <%= filterType %>
+                        <h2 class="mx-5 my-3 text-decoration-underline">Profit & Sales : <%= filterType %>
                         </h3>
                         <h3>Total orders : <%= salesCount %>
                         </h3>
-                        <h3>Total Revenue : <%= totalAmount.toFixed(2) %>
+                        <h3>Total Revenue : ₹ <%= totalAmount.toFixed(2) %>
                         </h3>
-                        <h3>Total Discount : <%= totalDiscount.toFixed(2) %>
+                        <h3>Total Discount : ₹ <%= totalDiscount.toFixed(2) %>
                         </h3>
                         <h3></h3>
                     </div>
@@ -75,9 +75,9 @@
                         <div class="col-8 my-5">
                             <canvas id="polarArea"></canvas>
                         </div>
-                        <h3 class="mx-5 mb-3">Order Statuses : <%= filterType %>
+                        <h2 class="mx-5 my-3 text-decoration-underline">Order Statuses : <%= filterType %>
                         </h3>
-                        <h3>Total orders : <%= salesCount %>
+                        <h3 class="ps-5 statuses">Total orders : <%= salesCount %>
                         </h3>
                         <div class="ps-5 statuses">
                             <h4>Total Processing : <%= orderStatusMap.Processing %>
@@ -100,7 +100,7 @@
         </div>
         <hr>
 
-        <h1 class="text-center mb-4 h2">Best-Selling ( <%= filterType %> )</h1>
+        <h1 class="text-center mb-4 h2 text-decoration-underline">Best-Selling ( <%= filterType %> )</h1>
         <div class="container mt-5 d-flex">
             <div class="col-lg-4 px-2">
                 <h3 class="text-center my-3">Best-Selling Products</h3>
@@ -133,7 +133,7 @@
                 </ul>
             </div>
             <div class="col-lg-4 px-2">
-                <h3 class="text-center my-3">Best-Selling Brands</h3>
+                <h3 class="text-center my-3 ">Best-Selling Brands</h3>
                 <ul class="list-group">
                     <% topBrands.forEach(brand=> { %>
                         <li class="list-group-item d-flex justify-content-center gap-5 align-items-center h6">

@@ -52,139 +52,150 @@
         <div class="container">
             <h2 class="mb-4">
                 </h1>
+                <div class="d-flex">
 
-                <div class="row">
-                    <!-- Order Items Section -->
-                    <div class="col-md-6 order-items ">
-                        <h3 class="text-center mb-3">Ordered Items
-                        </h3>
-                        <ul class="list-group shadow card">
-                            <% order.orderedItems.forEach((item,index)=> { %>
-                                <li class="list-group-item d-flex cursor-pointer ms-3">
-                                    <div class="">
-                                        <%= index+1 %>.
-                                    </div>
-                                    <div class="col-6 ps-2">
-                                        <strong>Product:</strong>
-                                        <%= item.product.productName %><br>
-                                            <strong>Quantity:</strong>
-                                            <%= item.quantity %><br>
-                                                <strong>Size:</strong>
-                                                <%= item.size %><br>
-                                                    <strong>Price:</strong> ₹<%= item.price %><br>
-                                    </div>
-                                    <div class="col-6">
+                    <div class="col-md-6 mx-4">
+                        <!-- Order Items Section -->
+                        <div class="col-md-12 order-items ">
+                            <h3 class="text-center mb-3">Ordered Items
+                            </h3>
+                            <ul class="list-group shadow card">
+                                <% order.orderedItems.forEach((item,index)=> { %>
+                                    <li class="list-group-item d-flex cursor-pointer ms-3">
+                                        <div class="">
+                                            <%= index+1 %>.
+                                        </div>
+                                        <div class="col-6 ps-2">
+                                            <strong>Product:</strong>
+                                            <%= item.product.productName %><br>
+                                                <strong>Quantity:</strong>
+                                                <%= item.quantity %><br>
+                                                    <strong>Size:</strong>
+                                                    <%= item.size %><br>
+                                                        <strong>Price:</strong> ₹<%= item.price %><br>
+                                        </div>
+                                        <div class="col-6">
 
-                                    </div>
+                                        </div>
 
-                                </li>
-                                <hr>
-                                <% }); %>
-                        </ul>
-                    </div>
-
-                    <!-- Shipping Address Section -->
-                    <div class="col-md-6 ">
-                        <h3 class="text-center mb-3">Shipping Address</h3>
-                        <div class="card p-3 address shadow">
-                            <p><strong>Address Type:</strong>
-                                <%= order.address.addressType %>
-                            </p>
-                            <p><strong>Name:</strong>
-                                <%= order.address.name %>
-                            </p>
-                            <p><strong>Locality:</strong>
-                                <%= order.address.locality %>
-                            </p>
-                            <p><strong>City:</strong>
-                                <%= order.address.city %>
-                            </p>
-                            <p><strong>Landmark:</strong>
-                                <%= order.address.landMark %>
-                            </p>
-                            <p><strong>State:</strong>
-                                <%= order.address.state %>
-                            </p>
-                            <p><strong>Pin Code:</strong>
-                                <%= order.address.pincode %>
-                            </p>
-                            <p><strong>Phone:</strong>
-                                <%= order.address.phone %>
-                            </p>
-                            <p><strong>Alternate Phone:</strong>
-                                <%= order.address.altPhone %>
-                            </p>
+                                    </li>
+                                    <hr>
+                                    <% }); %>
+                            </ul>
                         </div>
-                    </div>
-                </div>
 
-                <div class="row my-4 ">
-                    <!-- Order Summary Section -->
-                    <div class="col-md-6 order-summary">
-                        <h3 class="text-center mb-3">Order Summary</h3>
-                        <div class="card p-3 shadow">
-                            <h5><strong>Price Details:</strong>
-                            </h5>
-                            <div class="pl-5 py-3 ">
-                                <p><strong>Subtotal:</strong> ₹<%= order.subtotal+order.discount %>
-                                </p>
-                                <p><strong>Offer Discount:</strong> -₹<%= order.discount %>
-                                </p><hr>
-                                <p><strong>After Discount:</strong> ₹<%= order.subtotal %></p>
-                                <p><strong>Tax:</strong> ₹<%= order.tax.toFixed(2) %>
-                                </p>
-                                <% if (order.couponApplied) { %>
-                                    <p><strong>Coupon Discount:</strong> -₹<%= order.couponDiscount %>
+                        <!-- Order Summary Section -->
+                        <div class="col-md-12 order-summary">
+                            <h3 class="text-center mb-3">Order Summary</h3>
+                            <div class="card p-3 shadow">
+                                <h5><strong>Price Details:</strong>
+                                </h5>
+                                <div class="pl-5 py-3 ">
+                                    <p><strong>Subtotal:</strong> ₹<%= order.subtotal+order.discount %>
                                     </p>
-                                    <% } %>
-                                        <hr>
-                                        <h6><strong>Total Price: ₹<%= order.finalAmount.toFixed(2) %></strong>
-                                            </p>
-                            </div>
-                            <hr><hr>
+                                    <p><strong>Offer Discount:</strong> -₹<%= order.discount %>
+                                    </p>
+                                    <hr>
+                                    <p><strong>After Discount:</strong> ₹<%= order.subtotal %>
+                                    </p>
+                                    <p><strong>Tax:</strong> ₹<%= order.tax.toFixed(2) %>
+                                    </p>
+                                    <% if (order.couponApplied) { %>
+                                        <p><strong>Coupon Discount:</strong> -₹<%= order.couponDiscount %>
+                                        </p>
+                                        <% } %>
+                                            <hr>
+                                            <h6><strong>Total Price: ₹<%= order.finalAmount.toFixed(2) %></strong>
+                                                </p>
+                                </div>
+                                <hr>
+                                <hr>
 
-                            <p><strong>Payment Method: </strong>
-                                <%= order.paymentMethod %>
-                            </p>
-                            <p><strong>Order Status: </strong>
-                                <%= order.orderStatus %>
-                            </p>
-                            <p><strong>Ordered Date:</strong>
-                                <%= order.createdAt.toLocaleString() %>
-                            </p>
-                            <p><strong>Delivery Date:</strong>
-                                <%= order.expectedDeliveryDate.toLocaleDateString() %> 11:00 am
-                            </p>
+                                <p><strong>Payment Method: </strong>
+                                    <%= order.paymentMethod %>
+                                </p>
+                                <p><strong>Order Status: </strong>
+                                    <%= order.orderStatus %>
+                                </p>
+                                <p><strong>Ordered Date:</strong>
+                                    <%= order.createdAt.toLocaleString() %>
+                                </p>
+                                <p><strong>Delivery Date:</strong>
+                                    <%= order.expectedDeliveryDate.toLocaleDateString() %> 11:00 am
+                                </p>
+                            </div>
+
+
+
                         </div>
 
 
 
                     </div>
 
-                    <div class="col-md-6 ">
-                        <h3 class="text-center mb-3">Change Order Status</h3>
-                        <select class="form-select shadow card form-control border border-2"
-                            onchange="handleStatusChange(this, '<%= order._id %>')">
-                            <option value="Processing" <%=order.orderStatus==='Processing' ? 'selected' :
-                                (order.orderStatus !=='Processing' ? 'disabled' : '' ) %>>Processing</option>
-                            <option value="Shipped" <%=order.orderStatus==='Shipped' ? 'selected' :
-                                (order.orderStatus==='Processing' ? '' : 'disabled' ) %>>Shipped</option>
-                            <option value="Cancelled" <%=order.orderStatus==='Cancelled' ? 'selected' :
-                                (['Processing', 'Shipped' ].includes(order.orderStatus) ? '' : 'disabled' ) %>>Cancelled
-                            </option>
-                            <option value="Delivered" <%=order.orderStatus==='Delivered' ? 'selected' :
-                                (['Processing', 'Shipped' ].includes(order.orderStatus) ? '' : 'disabled' ) %>>Delivered
-                            </option>
-                            <option value="Return Request" <%=order.orderStatus==='Return Request' ? 'selected' :
-                                (['Processing', 'Shipped' , 'Delivered' ].includes(order.orderStatus) ? '' : 'disabled'
-                                ) %>>Return Request</option>
-                            <option value="Returned" <%=order.orderStatus==='Returned' ? 'selected' :
-                                (['Processing', 'Shipped' , 'Delivered' , 'Return Request' ].includes(order.orderStatus)
-                                ? '' : 'disabled' ) %>>Returned</option>
-                        </select>
+                    <div class="col-md-5 mx-4 ">
+
+                        <!-- Shipping Address Section -->
+                        <div class="col-md-12 ">
+                            <h3 class="text-center mb-3">Shipping Address</h3>
+                            <div class="card p-3 address shadow">
+                                <p><strong>Address Type:</strong>
+                                    <%= order.address.addressType %>
+                                </p>
+                                <p><strong>Name:</strong>
+                                    <%= order.address.name %>
+                                </p>
+                                <p><strong>Locality:</strong>
+                                    <%= order.address.locality %>
+                                </p>
+                                <p><strong>City:</strong>
+                                    <%= order.address.city %>
+                                </p>
+                                <p><strong>Landmark:</strong>
+                                    <%= order.address.landMark %>
+                                </p>
+                                <p><strong>State:</strong>
+                                    <%= order.address.state %>
+                                </p>
+                                <p><strong>Pin Code:</strong>
+                                    <%= order.address.pincode %>
+                                </p>
+                                <p><strong>Phone:</strong>
+                                    <%= order.address.phone %>
+                                </p>
+                                <p><strong>Alternate Phone:</strong>
+                                    <%= order.address.altPhone %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <h3 class="text-center mb-3">Change Order Status</h3>
+                            <select class="form-select shadow card form-control border border-2"
+                                onchange="handleStatusChange(this, '<%= order._id %>')">
+                                <option value="Processing" <%=order.orderStatus==='Processing' ? 'selected' :
+                                    (order.orderStatus !=='Processing' ? 'disabled' : '' ) %>>Processing</option>
+                                <option value="Shipped" <%=order.orderStatus==='Shipped' ? 'selected' :
+                                    (order.orderStatus==='Processing' ? '' : 'disabled' ) %>>Shipped</option>
+                                <option value="Cancelled" <%=order.orderStatus==='Cancelled' ? 'selected' :
+                                    (['Processing', 'Shipped' ].includes(order.orderStatus) ? '' : 'disabled' ) %>
+                                    >Cancelled
+                                </option>
+                                <option value="Delivered" <%=order.orderStatus==='Delivered' ? 'selected' :
+                                    (['Processing', 'Shipped' ].includes(order.orderStatus) ? '' : 'disabled' ) %>
+                                    >Delivered
+                                </option>
+                                <option value="Return Request" <%=order.orderStatus==='Return Request' ? 'selected' :
+                                    (['Processing', 'Shipped' , 'Delivered' ].includes(order.orderStatus) ? ''
+                                    : 'disabled' ) %>>Return Request</option>
+                                <option value="Returned" <%=order.orderStatus==='Returned' ? 'selected' :
+                                    (['Processing', 'Shipped' , 'Delivered' , 'Return Request'
+                                    ].includes(order.orderStatus) ? '' : 'disabled' ) %>>Returned</option>
+                            </select>
+                        </div>
+
+
                     </div>
-
-
                 </div>
         </div>
 

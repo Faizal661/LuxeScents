@@ -1,7 +1,7 @@
 const User = require('../../models/userSchema')
 const Product = require('../../models/productSchema')
 const Cart = require('../../models/cartSchema')
-const Address = require('../../models/addressSchema')
+const Address = require('../../models/addressSchema') 
 const Order = require('../../models/orderSchema')
 const Coupon = require('../../models/couponSchema')
 const Wallet = require('../../models/walletSchema')
@@ -57,7 +57,7 @@ const loadCheckoutPage = async (req, res) => {
                     productImages: product.productImages,
                     stock: variation[0].quantity,
                     size: variation[0].size,
-                    offerDiscount: offerDiscount
+                    offerDiscount: offerDiscount 
                 };
             });
             //calculating subtotal,tax and grandtotal to display in the price details.
@@ -69,12 +69,12 @@ const loadCheckoutPage = async (req, res) => {
             let couponDiscount = 0
             if (couponCode) {
                 const coupon = await Coupon.findOne({
-                    code: couponCode,
+                    code: couponCode, 
                     expireOn: { $gte: new Date() },
                     isActive: true,
                     usedBy: { $ne: userId },
                 });
-                if (!coupon) {
+                if (!coupon) { 
                     return res.redirect('/checkoutPage?error=Invalid or expired coupon');
                 }
 
@@ -82,7 +82,7 @@ const loadCheckoutPage = async (req, res) => {
                     return res.redirect('/checkoutPage?error=Total price is less than coupon minimum price');
                 }
                 couponDiscount = coupon.offerPrice;
-                newGrandTotal -= couponDiscount;
+                newGrandTotal -= couponDiscount; 
                 coupon.usedBy.push(userId);
                 // coupon.usedCount += 1;
                 await coupon.save();

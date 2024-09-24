@@ -26,7 +26,7 @@
                             <label for="" class="float-start fw-semibold pt-3">Email</label>
                             <div class="form-group">
                                 <input type="email" class="form-control mb-3 border border-1 shadow"
-                                    value="admin@luxescent.com" name="email" required>
+                                     name="email"  placeholder="Enter your email" required>
                             </div>
                             <div class="pt-3">
                                 <label for="" class="float-start fw-semibold ">Password</label>
@@ -34,8 +34,8 @@
                                 class="float-end text-decoration-underline text-black">Forgot password?</span></a> -->
                             </div>
                             <div class="form-group">
-                                <input type="password" class="form-control border border-1 shadow" name="password"
-                                    value="1234567q" required>
+                                <input type="password" class="form-control border border-1 shadow"  placeholder="Enter your password" name="password"
+                                     required>
                             </div>
                             <% if(locals.message && message.length>0 ) {%>
                                 <div class="alert alert-danger text-center mt-2">

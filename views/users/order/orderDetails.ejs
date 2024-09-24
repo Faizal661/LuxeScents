@@ -68,145 +68,154 @@
         <div class="container">
             <h2 class="mb-4">
                 </h1>
+                <div class="d-flex">
 
-                <div class="row">
-                    <!-- Order Items Section -->
-                    <div class="col-md-6 order-items ">
-                        <h3 class="text-center mb-3">Order Items
-                        </h3>
-                        <ul class="list-group">
-                            <% order.orderedItems.forEach(item=> { %>
-                                <li class="list-group-item d-flex cursor-pointer"
-                                    onclick="window.location.href='/singleProduct?id=<%= item.product._id %>';">
-                                    <div class="col-6">
-                                        <strong>Product:</strong>
-                                        <%= item.product.productName %><br>
-                                            <strong>Quantity:</strong>
-                                            <%= item.quantity %><br>
-                                                <strong>Size:</strong>
-                                                <%= item.size %><br>
-                                                    <strong>Price:</strong> ₹<%= item.price %><br>
-                                    </div>
-                                    <div class="col-6">
-                                        <img src="<%= item.product.productImages[0].replace(/\\/g, '/') %>"
-                                            class="col-5 ">
-                                        <img src="<%= item.product.productImages[1].replace(/\\/g, '/') %>"
-                                            class="col-5 ">
-                                    </div>
+                    <div class="col-md-6 ">
+                        <!-- Order Items Section -->
+                        <div class="col-md-12 order-items ">
+                            <h3 class="text-center mb-3">Order Items
+                            </h3><hr>
+                            <ul class="list-group">
+                                <% order.orderedItems.forEach(item=> { %>
+                                    <li class="list-group-item d-flex cursor-pointer"
+                                        onclick="window.location.href='/singleProduct?id=<%= item.product._id %>';">
+                                        <div class="col-6">
+                                            <strong>Product:</strong>
+                                            <%= item.product.productName %><br>
+                                                <strong>Quantity:</strong>
+                                                <%= item.quantity %><br>
+                                                    <strong>Size:</strong>
+                                                    <%= item.size %><br>
+                                                        <strong>Price:</strong> ₹<%= item.price %><br>
+                                        </div>
+                                        <div class="col-6">
+                                            <img src="<%= item.product.productImages[0].replace(/\\/g, '/') %>"
+                                                class="col-5 ">
+                                            <img src="<%= item.product.productImages[1].replace(/\\/g, '/') %>"
+                                                class="col-5 ">
+                                        </div>
 
-                                </li>
-                                <% }); %>
-                        </ul>
-                    </div>
+                                    </li>
+                                    <% }); %>
+                            </ul>
+                        </div><hr>
 
-                    <!-- Shipping Address Section -->
-                    <div class="col-md-6">
-                        <h3 class="text-center mb-3">Shipping Address</h3>
-                        <div class="card p-3 address">
-                            <p><strong>Address Type:</strong>
-                                <%= order.address.addressType %>
-                            </p>
-                            <p><strong>Name:</strong>
-                                <%= order.address.name %>
-                            </p>
-                            <p><strong>Locality:</strong>
-                                <%= order.address.locality %>
-                            </p>
-                            <p><strong>City:</strong>
-                                <%= order.address.city %>
-                            </p>
-                            <p><strong>Landmark:</strong>
-                                <%= order.address.landMark %>
-                            </p>
-                            <p><strong>State:</strong>
-                                <%= order.address.state %>
-                            </p>
-                            <p><strong>Pin Code:</strong>
-                                <%= order.address.pincode %>
-                            </p>
-                            <p><strong>Phone:</strong>
-                                <%= order.address.phone %>
-                            </p>
-                            <p><strong>Alternate Phone:</strong>
-                                <%= order.address.altPhone %>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row my-4 ">
-                    <div class="col-md-6 p-5 d-block  text-center">
-                        <hr>
-                        <% if (order.orderStatus==='Processing' || order.orderStatus==='Shipped' ) { %>
-                            <p class="text-success mt-3 h3">Your order is on the way.</p><br>
-                            <button class="btn btn-danger mt-3" onclick="cancelOrder('<%= order._id %>')">Cancel
-                                Order</button>
-                            <% } else if(order.orderStatus==='Cancelled' ) { %>
-                                <p class="text-danger mt-3 h3">This order has been cancelled.</p>
-                                <% } else if(order.orderStatus==='Delivered' ) { %>
-                                    <p class=" mt-3 h4">Your order has been successfully Delivered.</p>
-                                    <button class="btn btn-danger mt-2"
-                                        onclick="returnRequest('<%= order._id %>')">Return Request</button>
-                                    <% } else if(order.orderStatus==='Return Request' ) { %>
-                                        <p class="text-info mt-3 h3">Return request is sented.</p>
-                                        <% } else if(order.orderStatus==='Returned' ) { %>
-                                            <p class="text-danger mt-3 h3">This order has been returned.</p>
-                                            <% } %>
-
-                                                <% if (order.orderStatus==='Delivered' ||
-                                                    order.orderStatus==='Return Request' ||
-                                                    order.orderStatus==='Returned' ) { %>
-                                                    <hr>
-                                                    <p class=" mt-5 h5">You can download Order invoice here...</p>
-                                                    <button class="btn btn-primary mt-1 text-dark" onclick="window.location.href='/downloadInvoice?orderId=<%= order._id %>'">Download
-                                                        Invoice</button>
-                                                    <% } %>
-                                                        <hr>
-                    </div>
-
-                    <!-- Order Summary Section -->
-                    <div class="col-md-6 order-summary">
-                        <h3 class="text-center mb-3">Order Summary</h3>
-                        <div class="card p-3">
-                            <h5><strong>Price Details:</strong>
-                            </h5>
-                            <div class="pl-5 py-3 ">
-                                <p><strong>Subtotal:</strong> ₹<%= order.subtotal+order.discount %>
-                                </p>
-                                <p><strong>Offer Discount:</strong> -₹<%= order.discount %>
-                                </p><hr>
-                                <p><strong>After Discount:</strong> ₹<%= order.subtotal %></p>
-                                <p><strong>Tax:</strong> ₹<%= order.tax.toFixed(2) %>
-                                </p>
-                                <% if (order.couponApplied) { %>
-                                    <p><strong>Coupon Discount:</strong> -₹<%= order.couponDiscount %>
+                        <!-- Order Summary Section -->
+                        <div class="col-md-12 order-summary">
+                            <h3 class="text-center mb-3">Order Summary</h3>
+                            <div class="card p-3">
+                                <h5><strong>Price Details:</strong>
+                                </h5>
+                                <div class="pl-5 py-3 ">
+                                    <p><strong>Subtotal:</strong> ₹<%= order.subtotal+order.discount %>
                                     </p>
-                                    <% } %>
-                                        <hr>
-                                        <h6><strong>Total Price: ₹<%= order.finalAmount.toFixed(2) %></strong>
-                                            </p>
-                            </div>
-                            <hr>
+                                    <p><strong>Offer Discount:</strong> -₹<%= order.discount %>
+                                    </p>
+                                    <hr>
+                                    <p><strong>After Discount:</strong> ₹<%= order.subtotal %>
+                                    </p>
+                                    <p><strong>Tax:</strong> ₹<%= order.tax.toFixed(2) %>
+                                    </p>
+                                    <% if (order.couponApplied) { %>
+                                        <p><strong>Coupon Discount:</strong> -₹<%= order.couponDiscount %>
+                                        </p>
+                                        <% } %>
+                                            <hr>
+                                            <h6><strong>Total Price: ₹<%= order.finalAmount.toFixed(2) %></strong>
+                                                </p>
+                                </div>
+                                <hr>
 
-                            <p><strong>Payment Method: </strong>
-                                <%= order.paymentMethod %>
-                            </p>
-                            <p><strong>Order Status: </strong>
-                                <%= order.orderStatus %>
-                            </p>
-                            <p><strong>Ordered Date:</strong>
-                                <%= order.createdAt.toLocaleString() %>
-                            </p>
-                            <p><strong>Delivery Date:</strong>
-                                <%= order.expectedDeliveryDate.toLocaleDateString() %> 11:00 am
-                            </p>
+                                <p><strong>Payment Method: </strong>
+                                    <%= order.paymentMethod %>
+                                </p>
+                                <p><strong>Order Status: </strong>
+                                    <%= order.orderStatus %>
+                                </p>
+                                <p><strong>Ordered Date:</strong>
+                                    <%= order.createdAt.toLocaleString() %>
+                                </p>
+                                <p><strong>Delivery Date:</strong>
+                                    <%= order.expectedDeliveryDate.toLocaleDateString() %> 11:00 am
+                                </p>
+                            </div>
+
                         </div>
 
-
-
+                      
                     </div>
 
+                    <div class="col-md-6">
+
+                          <!-- Shipping Address Section -->
+                          <div class="col-md-12">
+                            <h3 class="text-center mb-3">Shipping Address</h3>
+                            <div class="card p-3 address">
+                                <p><strong>Address Type:</strong>
+                                    <%= order.address.addressType %>
+                                </p>
+                                <p><strong>Name:</strong>
+                                    <%= order.address.name %>
+                                </p>
+                                <p><strong>Locality:</strong>
+                                    <%= order.address.locality %>
+                                </p>
+                                <p><strong>City:</strong>
+                                    <%= order.address.city %>
+                                </p>
+                                <p><strong>Landmark:</strong>
+                                    <%= order.address.landMark %>
+                                </p>
+                                <p><strong>State:</strong>
+                                    <%= order.address.state %>
+                                </p>
+                                <p><strong>Pin Code:</strong>
+                                    <%= order.address.pincode %>
+                                </p>
+                                <p><strong>Phone:</strong>
+                                    <%= order.address.phone %>
+                                </p>
+                                <p><strong>Alternate Phone:</strong>
+                                    <%= order.address.altPhone %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 p-5 d-block  text-center">
+                            <hr>
+                            <% if (order.orderStatus==='Processing' || order.orderStatus==='Shipped' ) { %>
+                                <p class="text-success mt-3 h3">Your order is on the way.</p><br>
+                                <button class="btn btn-danger mt-3" onclick="cancelOrder('<%= order._id %>')">Cancel
+                                    Order</button>
+                                <% } else if(order.orderStatus==='Cancelled' ) { %>
+                                    <p class="text-danger mt-3 h3">This order has been cancelled.</p>
+                                    <% } else if(order.orderStatus==='Delivered' ) { %>
+                                        <p class=" mt-3 h4">Your order has been successfully Delivered.</p>
+                                        <button class="btn btn-danger mt-2"
+                                            onclick="returnRequest('<%= order._id %>')">Return Request</button>
+                                        <% } else if(order.orderStatus==='Return Request' ) { %>
+                                            <p class="text-info mt-3 h3">Return request is sented.</p>
+                                            <% } else if(order.orderStatus==='Returned' ) { %>
+                                                <p class="text-danger mt-3 h3">This order has been returned.</p>
+                                                <% } %>
+
+                                                    <% if (order.orderStatus==='Delivered' ||
+                                                        order.orderStatus==='Return Request' ||
+                                                        order.orderStatus==='Returned' ) { %>
+                                                        <hr>
+                                                        <p class=" mt-5 h5">You can download Order invoice here...</p>
+                                                        <button class="btn btn-primary mt-1 text-dark"
+                                                            onclick="window.location.href='/downloadInvoice?orderId=<%= order._id %>'">Download
+                                                            Invoice</button>
+                                                        <% } %>
+                                                            <hr>
+                        </div>
+
+                        
+
+                    </div>
                 </div>
+
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

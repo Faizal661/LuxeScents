@@ -175,19 +175,19 @@ const adminLogout = async (req, res) => {
         req.session.destroy((err) => {
             if (err) {
                 console.log("Error destroying admin session", err)
-                return res.redirect("/pageError")
+                return res.redirect("/admin/pageError")
             }
             res.redirect('/admin/login?logout')
         })
     } catch (error) {
         console.log(error, 'Error at admin logout');
-        res.redirect("/admin/pageError")
+        res.redirect("/pageError")
     }
 }
 
 const pageError = async (req, res) => {
     try {
-        res.render('pageError') 
+        res.render('pageerror') 
     }
     catch (error) {
         res.redirect("/admin/pageError")
