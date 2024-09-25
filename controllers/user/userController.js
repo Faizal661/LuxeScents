@@ -56,14 +56,14 @@ const loadForgotPassword = async (req, res) => {
         res.redirect("/pageNotfound")
     }
 }
-    
+
 const verifyMail = async (req, res) => {
     const email = req.body.email;
     try {
         const user = await User.findOne({ email: email });
         if (user) {
-            req.session.user=user._id
-            req.session.userName=user.name
+            req.session.user = user._id
+            req.session.userName = user.name
             res.redirect('/loadOtpVerify')
         } else {
             res.redirect('/forgotPassword?invalid')
@@ -230,12 +230,12 @@ const loadHomepage = async (req, res) => {
         const cart = await Cart.findOne({ userId });
         const cartProductIds = cart ? cart.products.map(item => item.productId.toString()) : [];
 
-            res.render('homepage', {
-                bestSellers: filteredBestSellers,
-                newArrivals: filteredNewArrivals,
-                wishlistProductIds,
-                cartProductIds
-            })
+        res.render('homepage', {
+            bestSellers: filteredBestSellers,
+            newArrivals: filteredNewArrivals,
+            wishlistProductIds,
+            cartProductIds
+        })
     } catch (error) {
         console.log(error, 'Homepage not loading');
         res.redirect("/pageNotfound")
@@ -253,6 +253,19 @@ const loadShopPage = async (req, res) => {
         //sortingggg
         let sort = req.query.sort || 'createdAt';
         let order = req.query.order === 'desc' ? -1 : 1
+
+        let sortCriteria = {};
+
+        if (sort === 'salePrice') {
+            sortCriteria[sort] = order;
+        } else if (sort === 'productName') {
+            sortCriteria[sort] = order;
+        } else if (sort === 'createdAt') {
+            sortCriteria[sort] = order;
+        } else {
+            sortCriteria[sort] = order;
+        }
+
 
         const searchQuery = req.query.search || '';
         const stockFilter = req.query.stock || '';
@@ -300,16 +313,16 @@ const loadShopPage = async (req, res) => {
             limit,
             sort,
             order: req.query.order || 'asc',
-            startProduct,   
+            startProduct,
             endProduct,
             searchQuery,
             wishlistProductIds,
             cartProductIds,
             categories,
-            brands,  
+            brands,
             stockFilter,
-            categoryFilter,  
-            brandFilter,     
+            categoryFilter,
+            brandFilter,
             genderFilter
         })
     } catch (error) {

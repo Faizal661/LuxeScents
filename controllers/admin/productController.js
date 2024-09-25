@@ -160,7 +160,7 @@ const editProduct = async (req, res) => {
             if (!existingProduct) {
                 return res.status(404).json({ error: "Product not found" });
             }
-            const AlreadyTakenName = await Product.findOne({ productName:{ $regex: new RegExp(`^${req.body.productName}$`, 'i') }  });
+            const AlreadyTakenName = await Product.findOne({ productName:{ $regex: new RegExp(`^${req.body.productName}$`, 'i') },_id: { $ne: productId }  });
             if (AlreadyTakenName) {
                 return res.status(400).json({ error: productAlreadyExists });
             }
