@@ -202,7 +202,7 @@
         const discountAmounts = salesReport.map(order => order.discount);
 
         const doughnut = new Chart(document.getElementById('doughnut'), {
-            type: 'pie',
+            type: 'doughnut',
             data: {
                 labels: ['Total Sales', 'Total Discount'], 
                 datasets: [{

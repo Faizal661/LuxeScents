@@ -266,7 +266,6 @@ const loadShopPage = async (req, res) => {
             sortCriteria[sort] = order;
         }
 
-
         const searchQuery = req.query.search || '';
         const stockFilter = req.query.stock || '';
         const categoryFilter = req.query.category || '';
