@@ -13,14 +13,7 @@ const passport = require('passport')
 
 //goole authenticaion routes
 userRouter.get('/auth/google/', passport.authenticate('google', { scope: ['profile', 'email'] }));
-userRouter.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }), storeUserIdInSession);
-function storeUserIdInSession(req, res) {
-    if (req.user) {
-        req.session.user = req.user._id;
-        req.session.userName = req.user.name;
-        res.redirect('/homepage');
-    }
-}
+userRouter.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }), userController.googleAuthCallback);
 
 //user authentication
 userRouter.get('/login', userController.loadLogin)

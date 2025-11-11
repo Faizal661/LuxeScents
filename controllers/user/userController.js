@@ -47,6 +47,16 @@ const userLogin = async (req, res) => {
 
 }
 
+const googleAuthCallback = (req, res) => {
+    if (req.user) {
+        req.session.user = req.user._id;
+        req.session.userName = req.user.name;
+        res.redirect('/homepage');
+    } else {
+        res.redirect('/signup');
+    }
+};
+
 
 const loadForgotPassword = async (req, res) => {
     try {
@@ -395,6 +405,7 @@ const pageNotfound = async (req, res) => {
 module.exports = {
     loadLogin,
     userLogin,
+    googleAuthCallback,
     loadForgotPassword,
     verifyMail,
     loadSignup,
