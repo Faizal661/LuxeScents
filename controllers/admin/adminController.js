@@ -1,6 +1,6 @@
 const User = require('../../models/userSchema')
 const Order = require('../../models/orderSchema')
-const Product=require('../../models/productSchema')
+const Product = require('../../models/productSchema')
 const bcrypt = require("bcrypt")
 const moment = require('moment')
 const { successResponse, errorResponse } = require('../../helpers/responseHandler')
@@ -21,20 +21,17 @@ const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         const admin = await User.findOne({ email: email, isAdmin: true });
-        if (admin) {
-            //* await is neccessary, if await is removed only the admin email is validating, and it doesnt wait for passwordmatch
-            const passwordMatch = await bcrypt.compare(password, admin.password)
-            if (passwordMatch) {
-                req.session.admin = true;
-                req.session.adminName = admin.email
-                return res.redirect('/admin/dashboard');
-            } else {
-                console.error('password is not matching');
-                return res.render("admin-login", { message: "Incorrect Password" })
-            }
-        } else {
+        if (!admin) {
             return res.render("admin-login", { message: "Admin not found" })
         }
+
+        const passwordMatch = await bcrypt.compare(password, admin.password)
+        if (!passwordMatch) {
+            return res.render("admin-login", { message: "Incorrect Password" })
+        }
+        req.session.admin = true;
+        req.session.adminName = admin.email
+        return res.redirect('/admin/dashboard');
     } catch (error) {
         console.log(error, 'Admin login error');
         res.redirect("/admin/pageError")
@@ -148,7 +145,7 @@ const loadDashboard = async (req, res) => {
             { $unwind: "$variations" },
             { $match: { "variations.quantity": { $lt: 20 } } },
             { $project: { productName: 1, "variations.size": 1, "variations.quantity": 1 } }
-        ]).sort({"variations.quantity": 1});
+        ]).sort({ "variations.quantity": 1 });
 
         res.render('dashboard', {
             salesCount,
@@ -187,7 +184,7 @@ const adminLogout = async (req, res) => {
 
 const pageError = async (req, res) => {
     try {
-        res.render('pageerror') 
+        res.render('pageerror')
     }
     catch (error) {
         res.redirect("/admin/pageError")

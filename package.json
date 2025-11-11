@@ -1,13 +1,14 @@
 {
-  "name": "login-_page",
+  "name": "luxescents",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Mohammed Faizal T",
   "license": "ISC",
   "description": "",
   "dependencies": {

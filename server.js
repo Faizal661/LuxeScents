@@ -7,15 +7,13 @@ const userRouter = require('./routes/userRoute')
 const adminRouter = require('./routes/adminRoute')
 const userController = require('./controllers/user/userController')
 const adminController = require('./controllers/admin/adminController')
-const fetchCartCount = require('./middlewares/cartCount');
-const fetchWishlistCount = require('./middlewares/wishlistCount');
 const passport = require('./config/passport')
 const connectDB = require('./config/db');
+const fetchCartCount = require('./middlewares/cartCount');
+const fetchWishlistCount = require('./middlewares/wishlistCount');
 require('dotenv').config();
 
 const app = express()
-
-connectDB();
 
 const port = process.env.PORT || 3000;
 
@@ -64,9 +62,8 @@ app.use('/admin', adminRouter)
 
 app.get('*', userController.pageNotfound)
 app.get('/admin/*', adminController.pageError)
- 
 
-app.listen(port, () => {
-    console.log(`http://localhost:${port}`)
-})
+connectDB().then(()=>app.listen(port, () => {
+    console.log(`server  ✅`)
+}))
  
