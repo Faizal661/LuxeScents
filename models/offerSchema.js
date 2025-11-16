@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose';
 
 const ProductOfferSchema = new mongoose.Schema({
     offerName: {
@@ -49,11 +49,6 @@ const categoryOfferSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-const ProductOffer = mongoose.model('ProductOffer', ProductOfferSchema);
-const CategoryOffer = mongoose.model('CategoryOffer', categoryOfferSchema);
+export const ProductOffer= mongoose.model('ProductOffer', ProductOfferSchema);
+export const CategoryOffer= mongoose.model('CategoryOffer', categoryOfferSchema);
 
-
-module.exports = {
-    ProductOffer,
-    CategoryOffer
-};

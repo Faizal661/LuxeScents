@@ -1,5 +1,5 @@
-const mongoose = require("mongoose")
-const { v4: uuidv4 } = require('uuid')
+import mongoose from "mongoose";
+import { v4 as uuidv4 } from 'uuid'; 
 
 const generateOrderId = () => {
     const uuid = uuidv4().replace(/[^0-9]/g, '').slice(0, 16);
@@ -122,21 +122,21 @@ const orderSchema = new mongoose.Schema({
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: "Coupon",
     // },
-    couponDiscount:{
+    couponDiscount: {
         type: Number,
         required: false
     },
     expectedDeliveryDate: {
-        type: Date, 
+        type: Date,
     }
-}, { timestamps: true })
+}, { timestamps: true });
 
 orderSchema.pre('save', function (next) {
-    const deliveryDays = 7; 
+    const deliveryDays = 7;
     if (!this.expectedDeliveryDate) {
         this.expectedDeliveryDate = new Date(this.createdAt.getTime() + deliveryDays * 24 * 60 * 60 * 1000);
     }
     next();
 });
 
-module.exports = mongoose.model("Order", orderSchema)
+export default mongoose.model("Order", orderSchema);

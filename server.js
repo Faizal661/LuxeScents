@@ -1,17 +1,18 @@
-const express = require('express')
-const session = require('express-session')
-const nocache = require('nocache');
-const path = require('path')
-const { v4: uuidv4 } = require('uuid')
-const userRouter = require('./routes/userRoute')
-const adminRouter = require('./routes/adminRoute')
-const userController = require('./controllers/user/userController')
-const adminController = require('./controllers/admin/adminController')
-const passport = require('./config/passport')
-const connectDB = require('./config/db');
-const fetchCartCount = require('./middlewares/cartCount');
-const fetchWishlistCount = require('./middlewares/wishlistCount');
-require('dotenv').config();
+import express from 'express'
+import session from 'express-session'
+import nocache from 'nocache';
+import path from 'path'
+import dotenv from 'dotenv'
+dotenv.config();
+import * as userRouter from './routes/userRoute.js'
+import * as adminRouter from './routes/adminRoute.js'
+import { pageNotfound } from './controllers/user/userController.js'
+import { pageError } from './controllers/admin/adminController.js'
+import { fetchCartCount } from './middlewares/cartCount.js';
+import { fetchWishlistCount } from './middlewares/wishlistCount.js';
+import { v4 as uuidv4 } from 'uuid'
+import { connectDB } from './config/db.js'
+import passport from './config/passport.js'
 
 const app = express()
 
@@ -60,10 +61,9 @@ app.use(fetchWishlistCount);
 app.use('/', userRouter)
 app.use('/admin', adminRouter)
 
-app.get('*', userController.pageNotfound)
-app.get('/admin/*', adminController.pageError)
+app.get('*', pageNotfound)
+app.get('/admin/*', pageError)
 
-connectDB().then(()=>app.listen(port, () => {
+connectDB().then(() => app.listen(port, () => {
     console.log(`server  ✅`)
 }))
- 

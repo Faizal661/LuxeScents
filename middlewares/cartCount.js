@@ -1,6 +1,6 @@
-const Cart = require('../models/cartSchema');
+import Cart from '../models/cartSchema.js';
 
-const fetchCartCount = async (req, res, next) => {
+export const fetchCartCount = async (req, res, next) => {
   try {
     if (req.session.user) {
       const userId = req.session.user;
@@ -18,4 +18,3 @@ const fetchCartCount = async (req, res, next) => {
   next();
 };
 
-module.exports = fetchCartCount;

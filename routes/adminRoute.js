@@ -1,5 +1,6 @@
-var express = require('express')
-var adminRouter = express.Router();
+import { Router } from 'express'
+const adminRouter = Router();
+
 const { adminAuth } = require('../middlewares/authentication');
 const adminController = require('../controllers/admin/adminController')
 const customerController = require('../controllers/admin/customerController')
@@ -8,7 +9,7 @@ const productController = require('../controllers/admin/productController')
 const orderController = require('../controllers/admin/orderController')
 const offerController = require('../controllers/admin/offerController')
 const couponController = require('../controllers/admin/couponController')
-const salesReportController= require('../controllers/admin/salesReportController')
+const salesReportController = require('../controllers/admin/salesReportController')
 
 
 //authentication
@@ -21,9 +22,9 @@ adminRouter.get('/dashboard', adminAuth, adminController.loadDashboard)
 adminRouter.get('/', adminAuth, adminController.loadDashboard)
 
 //salesReport 
-adminRouter.get('/salesReport',adminAuth,salesReportController.loadSalesReportPage)
-adminRouter.get('/salesReport/excel',adminAuth, salesReportController.downloadSalesReportExcel);
-adminRouter.get('/salesReport/pdf',adminAuth, salesReportController.downloadSalesReportPDF);
+adminRouter.get('/salesReport', adminAuth, salesReportController.loadSalesReportPage)
+adminRouter.get('/salesReport/excel', adminAuth, salesReportController.downloadSalesReportExcel);
+adminRouter.get('/salesReport/pdf', adminAuth, salesReportController.downloadSalesReportPDF);
 
 //users
 adminRouter.get('/users', adminAuth, customerController.customerInfo)
@@ -77,4 +78,4 @@ adminRouter.patch('/toggleCoupon/:couponId', couponController.toggleCouponStatus
 adminRouter.get('/pageError', adminAuth, adminController.pageError)
 adminRouter.get('*', adminController.pageError)
 
-module.exports = adminRouter;  
+export default adminRouter;

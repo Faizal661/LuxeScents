@@ -1,60 +1,52 @@
-const User = require("../models/userSchema")
+import User from "../models/userSchema.js"; 
 
-const userAuth = (req, res, next) => {
+export const userAuth = async (req, res, next) => {
     if (req.session.user) {
-        User.findById(req.session.user)
-            .then(data => {
-                if (data && !data.isBlocked) {
-                    next();
-                }else if(data.isBlocked){
-                    req.session.destroy((err) => {
-                        if (err) {
-                            console.log("Session destruction error", err.message)
-                            return res.redirect("/pageNotfound")
-                        }
-                        return res.redirect('/login?blocked')
-                    })
-                }else {
-                    res.redirect('/login')
-                } 
-            }) 
-            .catch(error => {
-                console.log("Error in user auth middleware", error)
-                res.redirect("/pageNotfound")
-            })
+        try {
+            const data = await User.findById(req.session.user);
+
+            if (data && !data.isBlocked) {
+                // User is authenticated and not blocked
+                next();
+            } else if (data && data.isBlocked) {
+                // User is blocked, destroy session and redirect
+                req.session.destroy((err) => {
+                    if (err) {
+                        console.log("Session destruction error", err.message);
+                        return res.redirect("/pageNotfound");
+                    }
+                    return res.redirect('/login?blocked');
+                });
+            } else {
+                // User ID in session doesn't match a user (deleted user)
+                res.redirect('/login');
+            }
+        } catch (error) {
+            console.log("Error in user auth middleware", error);
+            res.redirect("/pageNotfound");
+        }
     } else {
-        res.redirect('/login')
+        // No user ID in session
+        res.redirect('/login');
     }
-}
- 
+};
 
-const adminAuth = (req, res, next) => {
+export const adminAuth = async (req, res, next) => {
     if (req.session.admin) {
-        User.findOne({ isAdmin: true })
-            .then(data => {
-                if (data) {
-                    res.locals.adminName= req.session.adminName
-                    next();
-                } else {
-                    res.redirect('/admin/login')
-                }
-            })
-            .catch(error => {
-                console.log("Error in adminauth middleware", error)
-                res.status(500).send("Internal Server error")
-            })
-    } else{
-        res.redirect('/admin/login')
+        try {            
+            const data = await User.findOne({ isAdmin: true });
+
+            if (data) {
+                res.locals.adminName = req.session.adminName;
+                next();
+            } else {
+                res.redirect('/admin/login');
+            }
+        } catch (error) {
+            console.log("Error in adminauth middleware", error);
+            res.status(500).send("Internal Server error");
+        }
+    } else {
+        res.redirect('/admin/login');
     }
-        
-    
-}
-
-
-
-
-module.exports = {
-    userAuth,
-    adminAuth
-
-}; 
+};

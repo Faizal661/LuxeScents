@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose';
 
 const walletSchema = new mongoose.Schema({
     userId: {
@@ -25,10 +25,10 @@ const walletSchema = new mongoose.Schema({
             description: {
                 type: String
             },
-            orderId:{
-                type:mongoose.Schema.Types.ObjectId,
-                ref:'Order',
-                required:false
+            orderId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Order',
+                required: false
             },
             createdAt: {
                 type: Date,
@@ -38,4 +38,4 @@ const walletSchema = new mongoose.Schema({
     ]
 }, { timestamps: true });
 
-module.exports = mongoose.model('Wallet', walletSchema)
+export default mongoose.model('Wallet', walletSchema)
