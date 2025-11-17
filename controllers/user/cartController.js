@@ -1,11 +1,11 @@
-const Cart = require('../../models/cartSchema')
-const Product = require('../../models/productSchema')
-const mongoose = require('mongoose');
+import Cart from '../../models/cartSchema.js'
+import Product from '../../models/productSchema.js'
+import mongoose from 'mongoose';
 
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
 
 
-const loadCartPage = async (req, res) => {
+export const loadCartPage = async (req, res) => {
     try {
         const userId = req.session.user;
 
@@ -73,7 +73,7 @@ const loadCartPage = async (req, res) => {
     }
 }
 
-const addProductToCart = async (req, res) => {
+export const addProductToCart = async (req, res) => {
     try {
         const userId = req.session.user;
         const { productId, quantity = 1, variation_id } = req.body;
@@ -120,7 +120,7 @@ const addProductToCart = async (req, res) => {
     }
 }
 
-const removeFromCart = async (req, res) => {
+export const removeFromCart = async (req, res) => {
     try {
         const { itemId } = req.body;
         const userId = req.session.user;
@@ -135,7 +135,7 @@ const removeFromCart = async (req, res) => {
 };
 
 
-const updateCartItem = async (req, res) => {
+export const updateCartItem = async (req, res) => {
     const { productId, quantity } = req.body; // Here, productId is the _id of the product object in the products array, not the actual Product ID.
     try {
         const cart = await Cart.findOne({ "products._id": productId });
@@ -167,7 +167,7 @@ const updateCartItem = async (req, res) => {
 };
 
 
-const cartTotal = async (req, res) => {
+export const cartTotal = async (req, res) => {
     try {
         const userId = req.session.user;
         const cart = await Cart.findOne({ userId });
@@ -184,13 +184,3 @@ const cartTotal = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error fetching cart total.' });
     }
 };
-
-
-module.exports = {
-    loadCartPage,
-    addProductToCart,
-    removeFromCart,
-    updateCartItem,
-    cartTotal
-
-}

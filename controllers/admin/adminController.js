@@ -1,11 +1,11 @@
-const User = require('../../models/userSchema')
-const Order = require('../../models/orderSchema')
-const Product = require('../../models/productSchema')
-const bcrypt = require("bcrypt")
-const moment = require('moment')
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
+import User from '../../models/userSchema.js'; 
+import Order from '../../models/orderSchema.js';  
+import Product from '../../models/productSchema.js';  
+import bcrypt from 'bcrypt'; 
+import moment from 'moment'; 
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js';
 
-const loadAdminLogin = async (req, res) => {
+export const loadAdminLogin = async (req, res) => {
     try {
         if (req.session.admin) {
             return res.redirect('/admin/dashboard');
@@ -17,7 +17,7 @@ const loadAdminLogin = async (req, res) => {
     }
 }
 
-const adminLogin = async (req, res) => {
+export const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         const admin = await User.findOne({ email: email, isAdmin: true });
@@ -39,7 +39,7 @@ const adminLogin = async (req, res) => {
 }
 
 
-const loadDashboard = async (req, res) => {
+export const loadDashboard = async (req, res) => {
     try {
         let filter = {};
         const filterType = req.query.filterType || 'yearly';
@@ -167,7 +167,7 @@ const loadDashboard = async (req, res) => {
     }
 };
 
-const adminLogout = async (req, res) => {
+export const adminLogout = async (req, res) => {
     try {
         req.session.destroy((err) => {
             if (err) {
@@ -182,19 +182,11 @@ const adminLogout = async (req, res) => {
     }
 }
 
-const pageError = async (req, res) => {
+export const pageError = async (req, res) => {
     try {
         res.render('pageerror')
     }
     catch (error) {
         res.redirect("/admin/pageError")
     }
-}
-
-module.exports = {
-    loadAdminLogin,
-    adminLogin,
-    loadDashboard,
-    pageError,
-    adminLogout
 }

@@ -1,15 +1,16 @@
 import { Router } from 'express'
 const adminRouter = Router();
 
-const { adminAuth } = require('../middlewares/authentication');
-const adminController = require('../controllers/admin/adminController')
-const customerController = require('../controllers/admin/customerController')
-const categoryController = require('../controllers/admin/categoryController')
-const productController = require('../controllers/admin/productController')
-const orderController = require('../controllers/admin/orderController')
-const offerController = require('../controllers/admin/offerController')
-const couponController = require('../controllers/admin/couponController')
-const salesReportController = require('../controllers/admin/salesReportController')
+import { adminAuth } from '../middlewares/authentication.js'
+
+import * as adminController from '../controllers/admin/adminController.js'
+import * as customerController from '../controllers/admin/customerController.js'
+import * as categoryController from '../controllers/admin/categoryController.js'
+import * as productController from '../controllers/admin/productController.js'
+import * as orderController from '../controllers/admin/orderController.js'
+import * as offerController from '../controllers/admin/offerController.js'
+import * as couponController from '../controllers/admin/couponController.js'
+import * as salesReportController from '../controllers/admin/salesReportController.js'
 
 
 //authentication

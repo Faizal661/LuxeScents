@@ -1,9 +1,9 @@
-const Category = require("../../models/categorySchema")
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
+import Category from "../../models/categorySchema.js"; 
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js';
 
 const CategoryAlreadyExists = "Category already exists"
 
-const categoryInfo = async (req, res) => {
+export const categoryInfo = async (req, res) => {
     try {
         let search = req.query.search || "";
 
@@ -49,7 +49,7 @@ const categoryInfo = async (req, res) => {
     }
 }
 
-const addCategory = async (req, res) => {
+export const addCategory = async (req, res) => {
     try {
         const { name, description } = req.body;
 
@@ -68,7 +68,7 @@ const addCategory = async (req, res) => {
     }
 }
 
-const getEditCategory = async (req, res) => {
+export const getEditCategory = async (req, res) => {
     try {
         const categoryId = req.query.id
         const category = await Category.findOne({ _id: categoryId })
@@ -79,7 +79,7 @@ const getEditCategory = async (req, res) => {
     }
 }
 
-const EditCategory = async (req, res) => {
+export const EditCategory = async (req, res) => {
     try {
         const categoryId = req.params.id
         const { categoryName, description } = req.body
@@ -106,7 +106,7 @@ const EditCategory = async (req, res) => {
 }
 
 
-const toggleCategoryListing = async (req, res) => {
+export const toggleCategoryListing = async (req, res) => {
     try {
         const categoryId = req.query.id;
 
@@ -122,12 +122,3 @@ const toggleCategoryListing = async (req, res) => {
         res.redirect("/admin/pageError")
     }
 };
-
-
-module.exports = {
-    categoryInfo,
-    addCategory,
-    getEditCategory,
-    EditCategory,
-    toggleCategoryListing,
-}

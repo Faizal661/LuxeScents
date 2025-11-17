@@ -1,12 +1,12 @@
-const Product = require('../../models/productSchema')
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
-const Wallet = require('../../models/walletSchema')
-const Order = require('../../models/orderSchema');
-const pdf = require('html-pdf');
-const path = require('path');
-const ejs = require('ejs');
+import Product from '../../models/productSchema.js'
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
+import Wallet from '../../models/walletSchema.js'
+import Order from '../../models/orderSchema.js'
+import pdf from 'html-pdf'
+import path from 'path'
+import ejs from 'ejs'
 
-const downloadInvoice = async (req, res) => {
+export const downloadInvoice = async (req, res) => {
     try {
         const orderId = req.query.orderId;
         const order = await Order.findById(orderId).populate('orderedItems.product');
@@ -40,7 +40,7 @@ const downloadInvoice = async (req, res) => {
     }
 };
 
-const orderSuccess = async (req, res) => {
+export const orderSuccess = async (req, res) => {
     try {
         const orderId = req.query.orderId
         res.render('order/orderSuccess', { orderId })
@@ -50,7 +50,7 @@ const orderSuccess = async (req, res) => {
     }
 };
 
-const orderDetails = async (req, res) => {
+export const orderDetails = async (req, res) => {
     try {
         const orderId = req.query.orderId;
         const order = await Order.findById(orderId).populate('orderedItems.product');
@@ -67,7 +67,7 @@ const orderDetails = async (req, res) => {
 };
 
 
-const cancelOrder = async (req, res) => {
+export const cancelOrder = async (req, res) => {
     try {
         const { orderId } = req.body;
         const order = await Order.findById(orderId);
@@ -114,7 +114,7 @@ const cancelOrder = async (req, res) => {
     }
 };
 
-const returnRequest = async (req, res) => {
+export const returnRequest = async (req, res) => {
     try {
         const { orderId } = req.body;
         const order = await Order.findById(orderId);
@@ -134,7 +134,7 @@ const returnRequest = async (req, res) => {
 };
 
 
-const loadOrders = async (req, res) => {
+export const loadOrders = async (req, res) => {
     try {
         const userId = req.session.user;
         const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate('orderedItems.product')
@@ -147,12 +147,3 @@ const loadOrders = async (req, res) => {
 
 
 
-
-module.exports = {
-    orderSuccess,
-    orderDetails,
-    downloadInvoice,
-    cancelOrder,
-    returnRequest,
-    loadOrders
-}

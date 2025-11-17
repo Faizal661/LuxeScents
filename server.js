@@ -4,19 +4,23 @@ import nocache from 'nocache';
 import path from 'path'
 import dotenv from 'dotenv'
 dotenv.config();
-import * as userRouter from './routes/userRoute.js'
-import * as adminRouter from './routes/adminRoute.js'
+import userRouter from './routes/userRoute.js'
+import adminRouter from './routes/adminRoute.js'
 import { pageNotfound } from './controllers/user/userController.js'
 import { pageError } from './controllers/admin/adminController.js'
 import { fetchCartCount } from './middlewares/cartCount.js';
 import { fetchWishlistCount } from './middlewares/wishlistCount.js';
 import { v4 as uuidv4 } from 'uuid'
-import { connectDB } from './config/db.js'
+import connectDB  from './config/db.js'
 import passport from './config/passport.js'
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express()
 
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(nocache())
 
@@ -61,9 +65,9 @@ app.use(fetchWishlistCount);
 app.use('/', userRouter)
 app.use('/admin', adminRouter)
 
-app.get('*', pageNotfound)
 app.get('/admin/*', pageError)
+app.get('*', pageNotfound)
 
-connectDB().then(() => app.listen(port, () => {
+connectDB().then(() => app.listen(PORT, () => {
     console.log(`server  ✅`)
 }))

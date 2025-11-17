@@ -1,10 +1,10 @@
-const Category = require("../../models/categorySchema")
-const Product = require('../../models/productSchema')
-const User = require('../../models/userSchema')
-const Coupon = require('../../models/couponSchema')
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
+import Category from "../../models/categorySchema.js"
+import Product from '../../models/productSchema.js'
+import User from '../../models/userSchema.js'
+import Coupon from '../../models/couponSchema.js'
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
 
-const loadCouponListingPage = async (req, res) => {
+export const loadCouponListingPage = async (req, res) => {
     try {
         let search = req.query.search || "";
         const page = parseInt(req.query.page) || 1 ;
@@ -30,7 +30,7 @@ const loadCouponListingPage = async (req, res) => {
     }
 };
 
-const loadAddCouponPage = async (req, res) => {
+export const loadAddCouponPage = async (req, res) => {
     try {
         res.render('coupon/addCouponPage', {});
     } catch (error) {
@@ -39,7 +39,7 @@ const loadAddCouponPage = async (req, res) => {
     }
 };
 
-const addCoupon = async (req, res) => {
+export const addCoupon = async (req, res) => {
     try {
         const { code, expireOn, usageLimit, offerPrice, minimumPrice } = req.body;
         const newCoupon = new Coupon({
@@ -59,7 +59,7 @@ const addCoupon = async (req, res) => {
 };
 
 
-const toggleCouponStatus = async (req, res) => {
+export const toggleCouponStatus = async (req, res) => {
     try {
         const { couponId } = req.params;
 
@@ -77,10 +77,3 @@ const toggleCouponStatus = async (req, res) => {
     }
 };
 
-
-module.exports = {
-    loadCouponListingPage,
-    loadAddCouponPage,
-    addCoupon,
-    toggleCouponStatus,
-}

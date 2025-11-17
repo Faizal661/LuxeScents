@@ -1,8 +1,8 @@
-const User = require('../../models/userSchema')
-const Order = require('../../models/orderSchema')
-const Wallet = require('../../models/walletSchema')
+import User from '../../models/userSchema.js'
+import Order from '../../models/orderSchema.js'
+import Wallet from '../../models/walletSchema.js'
 
-const loadWalletPage = async (req, res) => {
+export const loadWalletPage = async (req, res) => {
     try {
         let wallet = await Wallet.findOne({ userId: req.session.user }); 
         if (!wallet) {
@@ -23,8 +23,4 @@ const loadWalletPage = async (req, res) => {
         console.log('Error while loading wallet page', error);
         res.redirect("/pageNotfound")
     }
-}
-
-module.exports = {
-    loadWalletPage
 }

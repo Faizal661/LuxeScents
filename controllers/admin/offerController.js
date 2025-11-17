@@ -1,14 +1,14 @@
-const Category = require("../../models/categorySchema")
-const Product = require('../../models/productSchema')
-const { ProductOffer, CategoryOffer } = require('../../models/offerSchema')
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
+import Category from "../../models/categorySchema.js"
+import Product from '../../models/productSchema.js'
+import { ProductOffer, CategoryOffer } from '../../models/offerSchema.js'
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
 
 //--------------------------------------------------------------------------
 //---------------         product offer management      -----------------//
 //--------------------------------------------------------------------------
 
 
-const loadProductOffers = async (req, res) => {
+export const loadProductOffers = async (req, res) => {
     try {
         let search = req.query.search || "";
         const page = parseInt(req.query.page) || 1;
@@ -34,7 +34,7 @@ const loadProductOffers = async (req, res) => {
     }
 };
 
-const loadAddProductOfferPage = async (req, res) => {
+export const loadAddProductOfferPage = async (req, res) => {
     try {
         const products = await Product.find({}).sort({ productName: 1 });
         res.render('offers/addProductOffer', { products });
@@ -44,7 +44,7 @@ const loadAddProductOfferPage = async (req, res) => {
     }
 };
 
-const addProductOffer = async (req, res) => {
+export const addProductOffer = async (req, res) => {
     const { offerName, productId, offerPercentage } = req.body;
     try {
         const product = await Product.findById(productId);
@@ -67,7 +67,7 @@ const addProductOffer = async (req, res) => {
     }
 };
 
-const toggleProductOffer = async (req, res) => {
+export const toggleProductOffer = async (req, res) => {
     const offerId = req.params.id;
     try {
         const offer = await ProductOffer.findById(offerId);
@@ -99,7 +99,7 @@ const toggleProductOffer = async (req, res) => {
     }
 };
 
-const deleteProductOffer = async (req, res) => {
+export const deleteProductOffer = async (req, res) => {
     const offerId = req.params.id;
     try {
         const offer = await ProductOffer.findByIdAndDelete(offerId);
@@ -122,7 +122,7 @@ const deleteProductOffer = async (req, res) => {
 //---------------         category offer management      -----------------//
 //--------------------------------------------------------------------------
 
-const loadCategoryOffers = async (req, res) => {
+export const loadCategoryOffers = async (req, res) => {
     try {
         let search = req.query.search || "";
         const page = parseInt(req.query.page) || 1;
@@ -147,7 +147,7 @@ const loadCategoryOffers = async (req, res) => {
     }
 }
 
-const loadAddCategoryOfferPage = async (req, res) => {
+export const loadAddCategoryOfferPage = async (req, res) => {
     try {
         const category = await Category.find({}).sort({ name: 1 })
         res.render('offers/addCategoryOffer', { category });
@@ -157,7 +157,7 @@ const loadAddCategoryOfferPage = async (req, res) => {
     }
 }
 
-const addCategoryOffer = async (req, res) => {
+export const addCategoryOffer = async (req, res) => {
     const { offerName, categoryId, offerPercentage } = req.body;
     try {
         const category = await Category.findById(categoryId);
@@ -187,7 +187,7 @@ const addCategoryOffer = async (req, res) => {
     }
 }
 
-const toggleCategoryOffer = async (req, res) => {
+export const toggleCategoryOffer = async (req, res) => {
     const offerId = req.params.id;
     try {
         const offer = await CategoryOffer.findById(offerId);
@@ -229,7 +229,7 @@ const toggleCategoryOffer = async (req, res) => {
     }
 };
 
-const deleteCategoryOffer = async (req, res) => {
+export const deleteCategoryOffer = async (req, res) => {
     const offerId = req.params.id;
     try {
         const offer = await CategoryOffer.findByIdAndDelete(offerId);
@@ -252,17 +252,3 @@ const deleteCategoryOffer = async (req, res) => {
         res.redirect("/admin/pageError")
     }
 };
-
-module.exports = {
-    loadProductOffers,
-    loadAddProductOfferPage,
-    addProductOffer,
-    toggleProductOffer,
-    deleteProductOffer,
-
-    loadCategoryOffers,
-    loadAddCategoryOfferPage,
-    addCategoryOffer,
-    toggleCategoryOffer,
-    deleteCategoryOffer,
-}

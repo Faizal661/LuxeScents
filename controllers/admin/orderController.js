@@ -1,11 +1,10 @@
-const User = require('../../models/userSchema')
-const Order = require('../../models/orderSchema')
-const Product = require('../../models/productSchema')
-const Wallet = require('../../models/walletSchema')
+import User from '../../models/userSchema.js'
+import Order from '../../models/orderSchema.js'
+import Product from '../../models/productSchema.js'
+import Wallet from '../../models/walletSchema.js'
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
 
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
-
-const orderInfo = async (req, res) => {
+export const orderInfo = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = 4;
@@ -25,7 +24,7 @@ const orderInfo = async (req, res) => {
     }
 }
 
-const orderDetails = async (req, res) => {
+export const orderDetails = async (req, res) => {
     try {
         const orderId = req.query.orderId;
         const order = await Order.findById(orderId).populate('orderedItems.product');
@@ -41,7 +40,7 @@ const orderDetails = async (req, res) => {
     }
 };
 
-const updateOrderStatus = async (req, res) => {
+export  const updateOrderStatus = async (req, res) => {
     try {
         const { orderId, newStatus } = req.body;
         const validStatuses = ['Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Returned'];
@@ -93,9 +92,3 @@ const updateOrderStatus = async (req, res) => {
         res.redirect("/admin/pageError")
     }
 };
-
-module.exports = {
-    orderInfo,
-    updateOrderStatus,
-    orderDetails
-}

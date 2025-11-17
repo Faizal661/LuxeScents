@@ -1,17 +1,17 @@
-const User = require('../../models/userSchema')
-const Product = require('../../models/productSchema')
-const Wishlist = require('../../models/wishlistSchema')
-const Cart = require('../../models/cartSchema')
-const Category = require('../../models/categorySchema')
-const Brand = require('../../models/brandSchema')
-const Order = require('../../models/orderSchema')
-const nodemailer = require("nodemailer")
-const bcrypt = require('bcrypt');
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
+import User from '../../models/userSchema.js';
+import Product from '../../models/productSchema.js';
+import Wishlist from '../../models/wishlistSchema.js';
+import Cart from '../../models/cartSchema.js';
+import Category from '../../models/categorySchema.js';
+import Brand from '../../models/brandSchema.js';
+import Order from '../../models/orderSchema.js';
+import nodemailer from 'nodemailer';
+import bcrypt from 'bcrypt';
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js';
 
 
 //--------------------Log In 
-const loadLogin = async (req, res) => {
+export const loadLogin = async (req, res) => {
     try {
         if (!req.session.user) {
             return res.render('authentication/signin', { title: 'Login page' })
@@ -23,7 +23,7 @@ const loadLogin = async (req, res) => {
     }
 }
 
-const userLogin = async (req, res) => {
+export const userLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         const findUser = await User.findOne({ isAdmin: 0, email: email });
@@ -47,7 +47,7 @@ const userLogin = async (req, res) => {
 
 }
 
-const googleAuthCallback = (req, res) => {
+export const googleAuthCallback = (req, res) => {
     if (req.user) {
         req.session.user = req.user._id;
         req.session.userName = req.user.name;
@@ -58,7 +58,7 @@ const googleAuthCallback = (req, res) => {
 };
 
 
-const loadForgotPassword = async (req, res) => {
+export const loadForgotPassword = async (req, res) => {
     try {
         res.render('userProfile/forgotPassword')
     } catch (error) {
@@ -67,7 +67,7 @@ const loadForgotPassword = async (req, res) => {
     }
 }
 
-const verifyMail = async (req, res) => {
+export const verifyMail = async (req, res) => {
     const email = req.body.email;
     try {
         const user = await User.findOne({ email: email });
@@ -85,7 +85,7 @@ const verifyMail = async (req, res) => {
 }
 
 //------------------sign Up
-const loadSignup = async (req, res) => {
+export const loadSignup = async (req, res) => {
     try {
         if (!req.session.user) {
             return res.render('authentication/signup')
@@ -98,11 +98,11 @@ const loadSignup = async (req, res) => {
     }
 }
 
-function generateOtp() {
+export function generateOtp() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-async function sendVerificationEmail(email, otp) {
+export async function sendVerificationEmail(email, otp) {
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -129,7 +129,7 @@ async function sendVerificationEmail(email, otp) {
     }
 }
 
-const registerNew = async (req, res) => {
+export const registerNew = async (req, res) => {
 
     try {
         const { email, username, phone, password } = req.body;
@@ -158,7 +158,7 @@ const registerNew = async (req, res) => {
     }
 }
 
-const securePassword = async (password) => {
+export const securePassword = async (password) => {
     try {
         const passwordHash = await bcrypt.hash(password, 10)
         return passwordHash;
@@ -168,7 +168,7 @@ const securePassword = async (password) => {
     }
 }
 
-const verifyOtp = async (req, res) => {
+export const verifyOtp = async (req, res) => {
     try {
         const { otp } = req.body
         console.log(otp)
@@ -194,7 +194,7 @@ const verifyOtp = async (req, res) => {
 }
 
 
-const resendOtp = async (req, res) => {
+export const resendOtp = async (req, res) => {
     try {
         const { email } = req.session.userData
         if (!email) {
@@ -216,7 +216,7 @@ const resendOtp = async (req, res) => {
 }
 
 
-const loadHomepage = async (req, res) => {
+export const loadHomepage = async (req, res) => {
     try {
         const userId = req.session.user;
         const bestSellers = await Order.aggregate([
@@ -253,7 +253,7 @@ const loadHomepage = async (req, res) => {
 }
 
 
-const loadShopPage = async (req, res) => {
+export const loadShopPage = async (req, res) => {
     try {
         const userId = req.session.user;
         //pagination
@@ -341,7 +341,7 @@ const loadShopPage = async (req, res) => {
 }
 
 
-const loadSingleProduct = async (req, res) => {
+export const loadSingleProduct = async (req, res) => {
     try {
         const userId = req.session.user
         const ProductID = req.query.id
@@ -369,7 +369,7 @@ const loadSingleProduct = async (req, res) => {
     }
 }
 
-const userLogout = async (req, res) => {
+export const userLogout = async (req, res) => {
     try {
         req.session.destroy((err) => {
             if (err) {
@@ -387,7 +387,7 @@ const userLogout = async (req, res) => {
 
 
 
-const pageNotfound = async (req, res) => {
+export const pageNotfound = async (req, res) => {
     try {
         res.render('404', { url: req.url })
     }
@@ -397,30 +397,3 @@ const pageNotfound = async (req, res) => {
     }
 }
 
-
-
-
-
-
-module.exports = {
-    loadLogin,
-    userLogin,
-    googleAuthCallback,
-    loadForgotPassword,
-    verifyMail,
-    loadSignup,
-    registerNew,
-    verifyOtp,
-    resendOtp,
-
-    loadHomepage,
-    loadShopPage,
-    loadSingleProduct,
-
-    userLogout,
-    pageNotfound,
-
-    generateOtp,
-    sendVerificationEmail
-
-} 

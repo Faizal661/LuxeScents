@@ -1,13 +1,13 @@
-const Product = require('../../models/productSchema')
-const Category = require('../../models/categorySchema')
-const Brand = require('../../models/brandSchema')
-const Cart = require('../../models/cartSchema')
-const upload = require('../../middlewares/multer')
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
+import Product from '../../models/productSchema.js'
+import Category from '../../models/categorySchema.js'
+import Brand from '../../models/brandSchema.js'
+import Cart from '../../models/cartSchema.js'
+import upload from '../../middlewares/multer.js'
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
 
 const productAlreadyExists = "Product already exists"
 
-const productInfo = async (req, res) => {
+export const productInfo = async (req, res) => {
     try {
         let search = "";
         if (req.query.search) {
@@ -57,7 +57,7 @@ const productInfo = async (req, res) => {
 
 
 
-const toggleProductListing = async (req, res) => {
+export const toggleProductListing = async (req, res) => {
     try {
         const productId = req.query.id;
         const product = await Product.findById(productId);
@@ -77,7 +77,7 @@ const toggleProductListing = async (req, res) => {
     }
 };
 
-const getAddProduct = async (req, res) => {
+export const getAddProduct = async (req, res) => {
     try {
         const categories = await Category.find({ isListed: true });
         const brands = await Brand.find({ isBlocked: false });
@@ -88,8 +88,8 @@ const getAddProduct = async (req, res) => {
     }
 }
 
-const uploadImages = upload.array('productImages', 10);
-const addProduct = async (req, res) => {
+export const uploadImages = upload.array('productImages', 10);
+export const addProduct = async (req, res) => {
     try {
         uploadImages(req, res, async (err) => {
             if (err) {
@@ -134,7 +134,7 @@ const addProduct = async (req, res) => {
 };
 
 
-const getEditProduct = async (req, res) => {
+export const getEditProduct = async (req, res) => {
     try {
         const productId = req.params.id
         const product = await Product.findById(productId)
@@ -148,7 +148,7 @@ const getEditProduct = async (req, res) => {
 }
 
 
-const editProduct = async (req, res) => {
+export const editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
         uploadImages(req, res, async (err) => {
@@ -212,16 +212,5 @@ const editProduct = async (req, res) => {
     }
 };
 
-
-
-module.exports = {
-    productInfo,
-    toggleProductListing,
-    getAddProduct,
-    addProduct,
-    uploadImages,
-    getEditProduct,
-    editProduct
-}
 
 

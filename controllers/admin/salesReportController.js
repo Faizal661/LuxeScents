@@ -1,11 +1,11 @@
-const Order = require('../../models/orderSchema');
-const excel = require('exceljs');
-const pdf = require('html-pdf');
+import Order from '../../models/orderSchema.js';
+import excel from 'exceljs';
+import pdf from 'html-pdf';
 
-const moment = require('moment');
+import moment from 'moment';
 
 
-const loadSalesReportPage = async (req, res) => {
+export const loadSalesReportPage = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = 5;
@@ -82,7 +82,7 @@ const loadSalesReportPage = async (req, res) => {
 };
 
 
-const downloadSalesReportExcel = async (req, res) => {
+export const downloadSalesReportExcel = async (req, res) => {
     try {
         let filter = {};
         const filterType = req.query.filterType || 'yearly';
@@ -164,7 +164,7 @@ const downloadSalesReportExcel = async (req, res) => {
 };
 
 
-const downloadSalesReportPDF = async (req, res) => {
+export const downloadSalesReportPDF = async (req, res) => {
     try {
         let filter = {};
         const filterType = req.query.filterType || 'yearly';
@@ -300,14 +300,3 @@ const downloadSalesReportPDF = async (req, res) => {
         res.redirect("/admin/pageError")
     }
 };
-
-
-module.exports = {
-    loadSalesReportPage,
-    downloadSalesReportExcel,
-    downloadSalesReportPDF
-
-}
-
-
-

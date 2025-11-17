@@ -1,8 +1,8 @@
-const Wishlist = require('../../models/wishlistSchema')
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
+import Wishlist from '../../models/wishlistSchema.js'
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
 
 
-const loadWishlist = async (req, res) => {
+export const loadWishlist = async (req, res) => {
     try {
         const userId = req.session.user;  
         const wishlist = await Wishlist.findOne({ userId })
@@ -31,7 +31,7 @@ const loadWishlist = async (req, res) => {
 }
 
 
-const removeFromWishlist = async (req, res) => {
+export const removeFromWishlist = async (req, res) => {
     try {
         const { productId } = req.body;
         const userId = req.session.user;
@@ -45,7 +45,7 @@ const removeFromWishlist = async (req, res) => {
     }
 };
 
-const toggleWishlist = async (req, res) => {
+export const toggleWishlist = async (req, res) => {
     try {
         const userId = req.session.user;
         const { productId } = req.body;
@@ -69,11 +69,4 @@ const toggleWishlist = async (req, res) => {
         console.error('Error toggling wishlist:', error);
         return errorResponse(res, error, "Failed to update wishlist.");
     }
-}
-
-
-module.exports = {
-    toggleWishlist,
-    loadWishlist,
-    removeFromWishlist
 }

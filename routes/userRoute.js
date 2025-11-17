@@ -2,13 +2,13 @@ import { Router } from 'express';
 import passport from 'passport';
 
 // --- Controllers ---
-import userController from '../controllers/user/userController.js';
-import cartController from '../controllers/user/cartController.js';
-import checkoutController from '../controllers/user/checkoutController.js';
-import userProfileController from '../controllers/user/userProfileController.js';
-import wishlistController from '../controllers/user/wishlistController.js';
-import OrderController from '../controllers/user/orderController.js';
-import walletController from '../controllers/user/walletController.js';
+import * as userController from '../controllers/user/userController.js';
+import * as cartController from '../controllers/user/cartController.js';
+import * as checkoutController from '../controllers/user/checkoutController.js';
+import * as userProfileController from '../controllers/user/userProfileController.js';
+import * as wishlistController from '../controllers/user/wishlistController.js';
+import * as OrderController from '../controllers/user/orderController.js';
+import * as walletController from '../controllers/user/walletController.js';
 
 // --- Middleware  ---
 import { userAuth } from '../middlewares/authentication.js';

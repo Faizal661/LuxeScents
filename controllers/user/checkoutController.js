@@ -1,20 +1,23 @@
-const User = require('../../models/userSchema')
-const Product = require('../../models/productSchema')
-const Cart = require('../../models/cartSchema')
-const Address = require('../../models/addressSchema') 
-const Order = require('../../models/orderSchema')
-const Coupon = require('../../models/couponSchema')
-const Wallet = require('../../models/walletSchema')
-const Razorpay = require('razorpay');
-require('dotenv').config();
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
+import User from '../../models/userSchema.js'
+import Product from '../../models/productSchema.js'
+import Cart from '../../models/cartSchema.js'
+import Address from '../../models/addressSchema.js'
+import Order from '../../models/orderSchema.js'
+import Coupon from '../../models/couponSchema.js'
+import Wallet from '../../models/walletSchema.js'
+import Razorpay from 'razorpay'
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
+
+import dotenv from 'dotenv'
+dotenv.config();
+
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_ID_KEY,
     key_secret: process.env.RAZORPAY_SECRET_KEY
 
 });
 
-const loadCheckoutPage = async (req, res) => {
+export const loadCheckoutPage = async (req, res) => {
     try {
         if (req.session.user) {
             const userId = req.session.user;
@@ -123,7 +126,7 @@ const loadCheckoutPage = async (req, res) => {
 
 
 
-const placeOrder = async (req, res) => {
+export const placeOrder = async (req, res) => {
     try {
         const {
             orderedItems,
@@ -211,7 +214,7 @@ const placeOrder = async (req, res) => {
 }
 
 
-const createRazorpayOrder = async (req, res) => {
+export const createRazorpayOrder = async (req, res) => {
     try {
         const { totalPrice } = req.body;
         const orderOptions = {
@@ -237,7 +240,7 @@ const createRazorpayOrder = async (req, res) => {
 };
 
 
-const handlePaymentSuccess = async (req, res) => {
+export const handlePaymentSuccess = async (req, res) => {
     try {
         const { paymentId, razorpayOrderId, orderId } = req.body;
         const order = await Order.findOne({ _id: orderId });
@@ -263,11 +266,3 @@ const handlePaymentSuccess = async (req, res) => {
         });
     }
 };
-
-module.exports = {
-    loadCheckoutPage,
-    placeOrder,
-    createRazorpayOrder,
-    handlePaymentSuccess
-
-}

@@ -1,10 +1,10 @@
-const User = require('../../models/userSchema')
-const addressSchema = require('../../models/addressSchema')
-const bcrypt = require('bcrypt');
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
-const { generateOtp, sendVerificationEmail } = require('../../controllers/user/userController')
+import User from '../../models/userSchema.js'
+import addressSchema from '../../models/addressSchema.js'
+import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
+import { generateOtp, sendVerificationEmail } from '../../controllers/user/userController.js'
+import bcrypt from 'bcrypt'
 
-const loadUserProfilePage = async (req, res) => {
+export const loadUserProfilePage = async (req, res) => {
     try {
         const userName = req.session.userName
         const user = await User.findOne({ name: userName })
@@ -19,7 +19,7 @@ const loadUserProfilePage = async (req, res) => {
     }
 }
 
-const loadEditUserProfilePage = async (req, res) => {
+export const loadEditUserProfilePage = async (req, res) => {
     try {
         const userId = req.session.user
         const user = await User.findOne({ _id: userId })
@@ -34,7 +34,7 @@ const loadEditUserProfilePage = async (req, res) => {
 }
 
 
-const editUserProfile = async (req, res) => {
+export const editUserProfile = async (req, res) => {
     try {
         const userId = req.params.id;
         const { name, phone } = req.body;
@@ -54,7 +54,7 @@ const editUserProfile = async (req, res) => {
 
 
 
-const loadAddAddressPage = async (req, res) => {
+export const loadAddAddressPage = async (req, res) => {
     try {
         const userId = req.session.user;
         if (userId) {
@@ -68,7 +68,7 @@ const loadAddAddressPage = async (req, res) => {
 };
 
 
-const addAddress = async (req, res) => {
+export const addAddress = async (req, res) => {
     try {
         const { addressType, name, phone, altPhone, locality, city, state, pincode, landMark, isActive } = req.body;
         const userId = req.params.id;
@@ -97,7 +97,7 @@ const addAddress = async (req, res) => {
 };
 
 
-const loadEditAddressPage = async (req, res) => {
+export const loadEditAddressPage = async (req, res) => {
     try {
         const addressId = req.query.id;
         const address = await addressSchema.findById(addressId);
@@ -111,7 +111,7 @@ const loadEditAddressPage = async (req, res) => {
     }
 };
 
-const editAddress = async (req, res) => {
+export const editAddress = async (req, res) => {
     try {
         const addressId = req.params.id;
         const userId = req.session.user;
@@ -144,7 +144,7 @@ const editAddress = async (req, res) => {
 };
 
 
-const deleteAddress = async (req, res) => {
+export const deleteAddress = async (req, res) => {
     try {
         const addressId = req.params.id;
         const userId = req.session.user;
@@ -163,7 +163,7 @@ const deleteAddress = async (req, res) => {
 
 //---------------------------change password-----------
 
-const loadChangePassword = async (req, res) => {
+export const loadChangePassword = async (req, res) => {
     try {
         res.render('userProfile/changePassword')
     } catch (error) {
@@ -173,7 +173,7 @@ const loadChangePassword = async (req, res) => {
 }
 
 
-const changePassword = async (req, res) => {
+export const changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     try {
         const user = await User.findById(req.session.user);
@@ -197,7 +197,7 @@ const changePassword = async (req, res) => {
 
 //-----------------------Forget Password------------
 
-const loadOtpVerify = async (req, res) => {
+export const loadOtpVerify = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.session.user })
         req.session.email = user.email
@@ -216,7 +216,7 @@ const loadOtpVerify = async (req, res) => {
     }
 }
 
-const verifyOtp = async (req, res) => {
+export const verifyOtp = async (req, res) => {
     try {
         const { otp } = req.body
         console.log(otp)
@@ -231,7 +231,7 @@ const verifyOtp = async (req, res) => {
     }
 }
 
-const resendOtp = async (req, res) => {
+export const resendOtp = async (req, res) => {
     try {
         const email = req.session.email
         if (!email) {
@@ -254,7 +254,7 @@ const resendOtp = async (req, res) => {
 }
 
 
-const loadNewPassword = async (req, res) => {
+export const loadNewPassword = async (req, res) => {
     try {
         res.render('userProfile/newPassword')
     } catch (error) {
@@ -263,7 +263,7 @@ const loadNewPassword = async (req, res) => {
     }
 }
 
-const resetPassword=async(req,res)=>{
+export const resetPassword=async(req,res)=>{
     const { newPassword } = req.body;
     try {
         const user = await User.findById(req.session.user);
@@ -278,30 +278,4 @@ const resetPassword=async(req,res)=>{
         console.log(error, 'Error while resetting password');
         res.redirect('/pageNotfound');
     }
-}
-
-
-
-
-
-module.exports = {
-    loadUserProfilePage,
-    loadEditUserProfilePage,
-    editUserProfile,
-
-    loadAddAddressPage,
-    addAddress,
-    loadEditAddressPage,
-    editAddress,
-    deleteAddress,
-
-    loadChangePassword,
-    changePassword,
-
-    loadOtpVerify,
-    verifyOtp,
-    resendOtp,
-    loadNewPassword,
-    resetPassword
-
 }

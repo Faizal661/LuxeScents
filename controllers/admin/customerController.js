@@ -1,7 +1,7 @@
-const User= require('../../models/userSchema')
-const { successResponse, errorResponse } = require('../../helpers/responseHandler')
+import User from '../../models/userSchema.js'
+import { successResponse, errorResponse }  from '../../helpers/responseHandler.js'
 
-const customerInfo= async(req,res)=>{
+export const customerInfo= async(req,res)=>{
     try { 
         let search= "";
         if(req.query.search){
@@ -51,7 +51,7 @@ const customerInfo= async(req,res)=>{
     }
 }
 
-const toggleCustomerBlocking=async(req,res)=>{
+export const toggleCustomerBlocking=async(req,res)=>{
     try {
          const customerId= req.query.id;
 
@@ -68,11 +68,3 @@ const toggleCustomerBlocking=async(req,res)=>{
     }
 }
 
-
-
-
-module.exports={
-    customerInfo,
-    toggleCustomerBlocking
-
-}
