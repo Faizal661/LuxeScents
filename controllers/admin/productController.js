@@ -4,8 +4,7 @@ import Brand from '../../models/brandSchema.js'
 import Cart from '../../models/cartSchema.js'
 import upload from '../../middlewares/multer.js'
 import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
-
-const productAlreadyExists = "Product already exists"
+import { RESPONSE_MESSAGE } from '../../constants/responseMessage.constants.js'
 
 export const productInfo = async (req, res) => {
     try {
@@ -103,7 +102,7 @@ export const addProduct = async (req, res) => {
             const imageURL = imagePaths.map(path => path.replace('public\\', ''));
             const existingProduct = await Product.findOne({ productName:{ $regex: new RegExp(`^${req.body.productName}$`, 'i') }  });
             if (existingProduct) {
-                return res.status(400).json({ error: productAlreadyExists });
+                return res.status(400).json({ error: RESPONSE_MESSAGE.PRODUCT_ALREADY_EXISTS });
             }
             let variations = [];
             if (Array.isArray(req.body.variations)) {
@@ -162,7 +161,7 @@ export const editProduct = async (req, res) => {
             }
             const AlreadyTakenName = await Product.findOne({ productName:{ $regex: new RegExp(`^${req.body.productName}$`, 'i') },_id: { $ne: productId }  });
             if (AlreadyTakenName) {
-                return res.status(400).json({ error: productAlreadyExists });
+                return res.status(400).json({ error: RESPONSE_MESSAGE.PRODUCT_ALREADY_EXISTS });
             }
             let imageURL = [...existingProduct.productImages];
 

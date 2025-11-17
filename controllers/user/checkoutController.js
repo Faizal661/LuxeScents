@@ -5,17 +5,8 @@ import Address from '../../models/addressSchema.js'
 import Order from '../../models/orderSchema.js'
 import Coupon from '../../models/couponSchema.js'
 import Wallet from '../../models/walletSchema.js'
-import Razorpay from 'razorpay'
 import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
-
-import dotenv from 'dotenv'
-dotenv.config();
-
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_ID_KEY,
-    key_secret: process.env.RAZORPAY_SECRET_KEY
-
-});
+import { razorpay } from '../../config/razorpay.config.js'
 
 export const loadCheckoutPage = async (req, res) => {
     try {

@@ -3,10 +3,8 @@ import Product from '../../models/productSchema.js'
 import { ProductOffer, CategoryOffer } from '../../models/offerSchema.js'
 import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
 
-//--------------------------------------------------------------------------
-//---------------         product offer management      -----------------//
-//--------------------------------------------------------------------------
 
+//---------------         product offer management      -----------------//
 
 export const loadProductOffers = async (req, res) => {
     try {
@@ -118,9 +116,7 @@ export const deleteProductOffer = async (req, res) => {
 };
 
 
-//--------------------------------------------------------------------------
 //---------------         category offer management      -----------------//
-//--------------------------------------------------------------------------
 
 export const loadCategoryOffers = async (req, res) => {
     try {

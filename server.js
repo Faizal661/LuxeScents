@@ -11,12 +11,10 @@ import { pageError } from './controllers/admin/adminController.js'
 import { fetchCartCount } from './middlewares/cartCount.js';
 import { fetchWishlistCount } from './middlewares/wishlistCount.js';
 import { v4 as uuidv4 } from 'uuid'
-import connectDB  from './config/db.js'
-import passport from './config/passport.js'
+import connectDB  from './config/db.config.js'
+import passport from './config/passport.config.js'
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express()
 
@@ -52,6 +50,8 @@ app.use((req, res, next) => {
     next();
 });
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.static(path.join(__dirname, 'public', 'user-assets')));
 
@@ -70,4 +70,5 @@ app.get('*', pageNotfound)
 
 connectDB().then(() => app.listen(PORT, () => {
     console.log(`server  ✅`)
+    console.log(`http://localhost:${PORT}`)
 }))

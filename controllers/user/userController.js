@@ -5,9 +5,10 @@ import Cart from '../../models/cartSchema.js';
 import Category from '../../models/categorySchema.js';
 import Brand from '../../models/brandSchema.js';
 import Order from '../../models/orderSchema.js';
-import nodemailer from 'nodemailer';
 import bcrypt from 'bcrypt';
 import { successResponse, errorResponse } from '../../helpers/responseHandler.js';
+import { generateOtp } from '../../utils/generateOtp.js';
+import { transporter } from '../../config/mailer.config.js';
 
 
 //--------------------Log In 
@@ -98,22 +99,8 @@ export const loadSignup = async (req, res) => {
     }
 }
 
-export function generateOtp() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
 export async function sendVerificationEmail(email, otp) {
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            port: 587,
-            secure: false,
-            requireTLS: true,
-            auth: {
-                user: "mohammedfaizal.t.bca.2@gmail.com",
-                pass: "uzsd xbey dlox ehbx"
-            }
-        })
         const info = await transporter.sendMail({
             from: "mohammedfaizal.t.bca.2@gmail.com",
             to: email,

@@ -1,7 +1,7 @@
-import Category from "../../models/categorySchema.js"; 
+import Category from "../../models/categorySchema.js";
+import { RESPONSE_MESSAGE } from "../../constants/responseMessage.constants.js";
 import { successResponse, errorResponse } from '../../helpers/responseHandler.js';
 
-const CategoryAlreadyExists = "Category already exists"
 
 export const categoryInfo = async (req, res) => {
     try {
@@ -12,7 +12,7 @@ export const categoryInfo = async (req, res) => {
         const skip = (page - 1) * limit;
 
         let sort = req.query.sort || 'createdAt';
-        
+
         let order = req.query.order === 'desc' ? 1 : -1;
 
         const categoryData = await Category.find({
@@ -53,9 +53,9 @@ export const addCategory = async (req, res) => {
     try {
         const { name, description } = req.body;
 
-        const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') }  });
+        const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
         if (existingCategory) {
-            return res.status(400).json({ error: CategoryAlreadyExists })
+            return res.status(400).json({ error: RESPONSE_MESSAGE.CATEGORY_ALREADY_EXISTS })
         }
 
         const newCategory = new Category({ name, description })
@@ -84,9 +84,9 @@ export const EditCategory = async (req, res) => {
         const categoryId = req.params.id
         const { categoryName, description } = req.body
 
-        const existingCategory = await Category.findOne({ name:{ $regex: new RegExp(`^${categoryName}$`, 'i') }  })
+        const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${categoryName}$`, 'i') } })
         if (existingCategory && existingCategory._id.toString() !== categoryId) {
-            return res.status(400).json({ error: CategoryAlreadyExists })
+            return res.status(400).json({ error: RESPONSE_MESSAGE.CATEGORY_ALREADY_EXISTS })
         }
 
         const updateCategory = await Category.findByIdAndUpdate(categoryId, {

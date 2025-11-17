@@ -1,8 +1,9 @@
 import User from '../../models/userSchema.js'
 import addressSchema from '../../models/addressSchema.js'
 import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
-import { generateOtp, sendVerificationEmail } from '../../controllers/user/userController.js'
+import { sendVerificationEmail } from '../../controllers/user/userController.js'
 import bcrypt from 'bcrypt'
+import { generateOtp } from '../../utils/generateOtp.js'
 
 export const loadUserProfilePage = async (req, res) => {
     try {
