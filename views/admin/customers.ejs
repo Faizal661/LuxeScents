@@ -4,9 +4,9 @@
         <header class="card-header d-flex  justify-content-between">
             <h2 class="content-title card-title">Customers</h2>
             <form action="/admin/users/" method="get" class="col-lg-5 me-5">
-                <div class="input-group input-group-sm border border-2 shadow rounded-pill "> <input type="text"
-                        class="form-control border-0 rounded-pill bg-transparent" placeholder=" Search Users..."
-                        name="search">
+                <div class="input-group input-group-sm border border-2 shadow rounded-pill ">
+                    <input type="text" class="form-control border-0 rounded-pill bg-transparent"
+                        placeholder=" Search Users..." name="search" value="<%= searchTerm || '' %>">
                     <button class="btn border border-2 border-end-0 border-top-0 border-bottom-0"
                         type="submit">Search</button>
                 </div>
@@ -65,19 +65,13 @@
                                     <%= userData[i].phone %>
                                         <% } %>
                         </td>
+
                         <td class=" border border-2 text-center ">
-                            <% if(userData[i].isBlocked===false) {%>
-                                <a href="/admin/blockCustomer?id=<%= userData[i]._id %>" class=""
-                                    style="text-decoration: none;"> <button class="btn btn-danger text-white" style="width: 80px;">
-                                        Block</button></a>
-
-                                <% }else{ %>
-
-                                    <a href="/admin/unblockCustomer?id=<%= userData[i]._id %>" class=""
-                                        style="text-decoration: none;"> <button class="btn btn-success text-white"
-                                            style="width: 85px;">Unblock </button></a>
-
-                                    <% } %>
+                            <button class="btn text-white toggle-block-btn" data-user-id="<%= userData[i]._id %>"
+                                style="width: 85px; 
+                                       <%= userData[i].isBlocked ? 'background-color: #198754;' : 'background-color: #dc3545;' %>">
+                                <%= userData[i].isBlocked ? 'Unblock' : 'Block' %>
+                            </button>
                         </td>
                     </tr>
                     <% } %>
@@ -100,6 +94,100 @@
             </ul>
         </nav>
     </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.toggle-block-btn');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    e.preventDefault();
+
+                    const userId = button.getAttribute('data-user-id');
+
+                    const originalText = button.textContent;
+                    button.textContent = '...';
+                    button.disabled = true;
+
+                    try {
+                        const response = await fetch(`/admin/user/toggle-block/${userId}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        });
+
+                        const result = await response.json();
+
+
+                        if (response.ok && result.success) {
+                            const newStatus = result.data.isBlocked;
+
+                            if (newStatus) {
+                                button.textContent = 'Unblock';
+                                button.style.backgroundColor = '#198754';
+
+                            } else {
+                                button.textContent = 'Block';
+                                button.style.backgroundColor = '#dc3545';
+                            }
+
+                            Swal.fire({
+                                toast: true,
+                                timer: 2000,
+                                timerProgressBar: true,
+                                icon: 'success',
+                                title: "Success",
+                                text: result.message,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                customClass: {
+                                    popup: 'custom-toast'
+                                }
+                            })
+
+                        } else {
+                            console.error('Error toggling status:', result.message || 'Unknown error');
+                            button.textContent = originalText;
+                            Swal.fire({
+                                toast: true,
+                                timer: 2000,
+                                timerProgressBar: true,
+                                icon: 'error',
+                                title: 'Error!',
+                                text: result.message,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                customClass: {
+                                    popup: 'custom-toast'
+                                }
+                            });
+                        }
+
+                    } catch (error) {
+                        console.error('Network Error:', error);
+                        button.textContent = originalText;
+                        Swal.fire({
+                            toast: true,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            icon: 'error',
+                            title: "Connection Error",
+                            text: 'Could not connect to the server.',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'custom-toast'
+                            }
+                        });
+                    } finally {
+                        button.disabled = false;
+                    }
+                });
+            });
+        });
+    </script>
 
 
     <%- include("../../views/partials/admin/footer") %>

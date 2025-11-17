@@ -29,8 +29,7 @@ adminRouter.get('/salesReport/pdf', adminAuth, salesReportController.downloadSal
 
 //users
 adminRouter.get('/users', adminAuth, customerController.customerInfo)
-adminRouter.get('/blockCustomer', adminAuth, customerController.toggleCustomerBlocking)
-adminRouter.get('/unblockCustomer', adminAuth, customerController.toggleCustomerBlocking)
+adminRouter.patch('/user/toggle-block/:id', adminAuth, customerController.toggleCustomerBlocking)
 
 //category
 adminRouter.get('/category', adminAuth, categoryController.categoryInfo)
