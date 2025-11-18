@@ -36,8 +36,7 @@ adminRouter.get('/category', adminAuth, categoryController.categoryInfo)
 adminRouter.post('/addCategory', adminAuth, categoryController.addCategory)
 adminRouter.get('/editCategory', adminAuth, categoryController.getEditCategory)
 adminRouter.post('/editCategory/:id', adminAuth, categoryController.EditCategory)
-adminRouter.get('/unlistCategory', adminAuth, categoryController.toggleCategoryListing)
-adminRouter.get('/listCategory', adminAuth, categoryController.toggleCategoryListing)
+adminRouter.patch('/toggleCategoryListing', adminAuth, categoryController.toggleCategoryListing)
 
 //product
 adminRouter.get('/products', adminAuth, productController.productInfo)

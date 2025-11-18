@@ -18,10 +18,10 @@
 
     <div class="right mt-5 mx-5 card p-3 shadow col-sm col-md col-lg ">
         <table class="table table-striped border border-2 table-hover table-light ">
-            <thead>
-                <% if(userData.length==0){ %>
-                    <h1 class="text-center">No users found</h1>
-                    <% } else{%>
+            <% if(userData.length==0){ %>
+                <h1 class="text-center">No users found</h1>
+                <% } else { %>
+                    <thead>
                         <tr>
                             <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold"> ID </th>
 
@@ -45,39 +45,38 @@
 
                             <th scope="col" class="border border-2 text-center h6 text-uppercase fw-bold"> Action </th>
                         </tr>
-            </thead>
-            <tbody>
-                <% for(let i=0;i<userData.length;i++) {%>
-                    <tr class="">
-                        <td class=" border border-2 text-center">
-                            <%= i+1+(limit*(currentPage-1)) %>
-                        </td>
-                        <td class=" border border-2 text-center">
-                            <%= userData[i].name %>
-                        </td>
-                        <td class=" border border-2 text-center">
-                            <%= userData[i].email %>
-                        </td>
-                        <td class=" border border-2 text-center">
-                            <% if(userData[i].phone==null){ %>
-                                Google user
-                                <% }else{ %>
-                                    <%= userData[i].phone %>
-                                        <% } %>
-                        </td>
+                    </thead>
+                    <tbody>
+                        <% for(let i=0;i<userData.length;i++) {%>
+                            <tr class="">
+                                <td class=" border border-2 text-center">
+                                    <%= i+1+(limit*(currentPage-1)) %>
+                                </td>
+                                <td class=" border border-2 text-center">
+                                    <%= userData[i].name %>
+                                </td>
+                                <td class=" border border-2 text-center">
+                                    <%= userData[i].email %>
+                                </td>
+                                <td class=" border border-2 text-center">
+                                    <% if(userData[i].phone==null){ %>
+                                        Google user
+                                        <% }else{ %>
+                                            <%= userData[i].phone %>
+                                                <% } %>
+                                </td>
 
-                        <td class=" border border-2 text-center ">
-                            <button class="btn text-white toggle-block-btn" data-user-id="<%= userData[i]._id %>"
-                                style="width: 85px; 
-                                       <%= userData[i].isBlocked ? 'background-color: #198754;' : 'background-color: #dc3545;' %>">
-                                <%= userData[i].isBlocked ? 'Unblock' : 'Block' %>
-                            </button>
-                        </td>
-                    </tr>
+                                <td class=" border border-2 text-center ">
+                                    <button class="btn text-white toggle-block-btn <%= userData[i].isBlocked ? 'unblock' : 'block' %>" 
+                                        data-user-id="<%= userData[i]._id %>" style="width: 85px;">
+                                        <%= userData[i].isBlocked ? 'Unblock' : 'Block' %>
+                                    </button>
+                                </td>
+                            </tr>
+                            <% } %>
+                    </tbody>
                     <% } %>
-                        <% } %>
 
-            </tbody>
         </table>
     </div>
 
@@ -101,6 +100,7 @@
             const buttons = document.querySelectorAll('.toggle-block-btn');
 
             buttons.forEach(button => {
+
                 button.addEventListener('click', async (e) => {
                     e.preventDefault();
 

@@ -1,6 +1,7 @@
 import Category from "../../models/categorySchema.js";
 import { RESPONSE_MESSAGE } from "../../constants/responseMessage.constants.js";
 import { successResponse, errorResponse } from '../../helpers/responseHandler.js';
+import capitalizeWords from "../../utils/capitalizeText.js";
 
 
 export const categoryInfo = async (req, res) => {
@@ -39,6 +40,7 @@ export const categoryInfo = async (req, res) => {
             currentPage: page,
             totalPages,
             totalCategories,
+            searchTerm: search,
             limit,
             sort,
             order: req.query.order || 'asc'
@@ -51,7 +53,8 @@ export const categoryInfo = async (req, res) => {
 
 export const addCategory = async (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { description } = req.body;
+        const name = capitalizeWords(req.body.name)
 
         const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
         if (existingCategory) {
@@ -108,17 +111,27 @@ export const EditCategory = async (req, res) => {
 
 export const toggleCategoryListing = async (req, res) => {
     try {
-        const categoryId = req.query.id;
+        const categoryId = req.body.categoryId;
+
+        if (!categoryId) {
+            return res.status(400).json({ success: false, message: "Category ID is required." });
+        }
 
         const category = await Category.findById(categoryId);
         if (!category) {
-            return res.redirect("/admin/pageError")
+            return res.status(404).json({ success: false, message: "Category not found." });
         }
         const newIsListedValue = !category.isListed;
         await Category.updateOne({ _id: categoryId }, { $set: { isListed: newIsListedValue } });
-        res.redirect("/admin/category");
+
+        return res.json({
+            success: true,
+            isListed: newIsListedValue,
+            categoryId: categoryId,
+            message: `Category successfully ${newIsListedValue ? 'Listed' : 'Unlisted'}.`
+        });
     } catch (error) {
-        console.error(error, "Error while isListed of category.");
-        res.redirect("/admin/pageError")
+        console.error("Error while toggling isListed of category:", error);
+        return res.status(500).json({ success: false, message: "Server error during category update." });
     }
 };

@@ -11,8 +11,14 @@ export const loadSalesReportPage = async (req, res) => {
         const skip = (page - 1) * limit;
         let filter = {};
         const filterType = req.query.filterType || 'yearly';
-        const startDate = req.query.startDate ? new Date(req.query.startDate) : null;
-        const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
+        let startDate = null;
+        let endDate = null;
+
+        if (filterType === 'custom') {
+            startDate = req.query.startDate ? new Date(req.query.startDate) : moment().startOf('year').toDate();
+            endDate = req.query.endDate ? new Date(req.query.endDate) : new Date();
+        }
+
         switch (filterType) {
             case 'daily':
                 filter.createdAt = {
@@ -157,7 +163,7 @@ export const downloadSalesReportExcel = async (req, res) => {
             res.status(200).end();
         });
     } catch (error) {
-        console.log("Error generating Excel:", error);    
+        console.log("Error generating Excel:", error);
         res.redirect("/admin/pageError")
     }
 };
@@ -249,7 +255,7 @@ export const downloadSalesReportPDF = async (req, res) => {
                     <tbody>`;
 
         salesReport.forEach(order => {
-            const productDetails = order.orderedItems.map(item => 
+            const productDetails = order.orderedItems.map(item =>
                 `${item.product.productName} (${item.size}, Qty: ${item.quantity})`
             ).join(', ');
 
@@ -289,7 +295,7 @@ export const downloadSalesReportPDF = async (req, res) => {
                 console.error("Error generating PDF:", err);
                 return res.redirect("/admin/pageError")
             }
-            
+
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
             stream.pipe(res);
