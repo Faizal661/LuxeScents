@@ -7,6 +7,7 @@ import Coupon from '../../models/couponSchema.js'
 import Wallet from '../../models/walletSchema.js'
 import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
 import { razorpay } from '../../config/razorpay.config.js'
+import mongoose from 'mongoose';
 
 export const loadCheckoutPage = async (req, res) => {
     try {
@@ -51,7 +52,7 @@ export const loadCheckoutPage = async (req, res) => {
                     productImages: product.productImages,
                     stock: variation[0].quantity,
                     size: variation[0].size,
-                    offerDiscount: offerDiscount 
+                    offerDiscount: offerDiscount
                 };
             });
             //calculating subtotal,tax and grandtotal to display in the price details.
@@ -63,12 +64,12 @@ export const loadCheckoutPage = async (req, res) => {
             let couponDiscount = 0
             if (couponCode) {
                 const coupon = await Coupon.findOne({
-                    code: couponCode, 
+                    code: couponCode,
                     expireOn: { $gte: new Date() },
                     isActive: true,
                     usedBy: { $ne: userId },
                 });
-                if (!coupon) { 
+                if (!coupon) {
                     return res.redirect('/checkoutPage?error=Invalid or expired coupon');
                 }
 
@@ -76,7 +77,7 @@ export const loadCheckoutPage = async (req, res) => {
                     return res.redirect('/checkoutPage?error=Total price is less than coupon minimum price');
                 }
                 couponDiscount = coupon.offerPrice;
-                newGrandTotal -= couponDiscount; 
+                newGrandTotal -= couponDiscount;
                 coupon.usedBy.push(userId);
                 // coupon.usedCount += 1;
                 await coupon.save();
@@ -118,7 +119,11 @@ export const loadCheckoutPage = async (req, res) => {
 
 
 export const placeOrder = async (req, res) => {
+    const session = await mongoose.startSession();
+
     try {
+        session.startTransaction();
+
         const {
             orderedItems,
             subtotal,
@@ -131,10 +136,12 @@ export const placeOrder = async (req, res) => {
             couponDiscount
         } = req.body;
         console.log(req.body)
-        const address = await Address.findById(selectedAddressId);
+
+        const address = await Address.findById(selectedAddressId).session(session);
         if (!address) {
             return res.status(404).json({ error: 'Address not found' });
         }
+
         const newOrder = new Order({
             userId: req.session.user,
             orderedItems: orderedItems.map(item => ({
@@ -163,12 +170,19 @@ export const placeOrder = async (req, res) => {
             orderStatus: 'Processing',
             couponApplied,
             couponDiscount
-            
+
         });
-        await newOrder.save();
+        await newOrder.save({ session: session });
+
         if (paymentMethod === 'Wallet') {
             newOrder.paymentStatus = 'Paid';
-            let wallet = await Wallet.findOne({ userId: newOrder.userId });
+
+            let wallet = await Wallet.findOne({ userId: newOrder.userId }).session(session);
+
+            if (wallet.balance < newOrder.finalAmount) {
+                throw new Error("Insufficient wallet balance for this purchase.");
+            }
+
             wallet.balance -= newOrder.finalAmount;
             wallet.transactions.push({
                 amount: newOrder.finalAmount,
@@ -176,31 +190,51 @@ export const placeOrder = async (req, res) => {
                 orderId: newOrder._id,
                 description: `Purchased products for Order ID: ${newOrder.orderId}`
             });
-            await wallet.save();
+            await wallet.save({ session: session });
+
         }
-        await newOrder.save();
+
+        await newOrder.save({ session: session });
+
         for (const item of orderedItems) {
-            const product = await Product.findById(item.productId);
-            if (product) {
-                const variation = product.variations.find(v => v._id.toString() === item.variationID);
-                if (variation) {
-                    variation.quantity -= item.quantity;
-                    if (variation.quantity < 0) {
-                        return errorResponse(res, null, `Not enough stock for ${product.productName}`);
-                    }
-                } else {
-                    return errorResponse(res, null, `Variation not found for product ${product.productName}`);
-                }
-                await product.save();
-            } else {
-                return errorResponse(res, null, 'Product not found');
+            const product = await Product.findById(item.productId).session(session);
+
+            if (!product) {
+                throw new Error('Product not found');
             }
+
+            const variation = product.variations.find(v => v._id.toString() === item.variationID);
+
+            if (!variation) {
+                throw new Error(`Variation not found for product ${product.productName}`);
+            }
+
+            if (variation.quantity < item.quantity) {
+                throw new Error(`Not enough stock for ${product.productName}`);
+            }
+            variation.quantity -= item.quantity;
+
+            await product.save({ session: session });
+
         }
-        await Cart.deleteOne({ userId: req.session.user });
+
+        await Cart.deleteOne({ userId: req.session.user }, { session: session });
+
+        await session.commitTransaction();
+
         successResponse(res, { orderId: newOrder._id }, 'Order placed successfully');
     } catch (error) {
         console.error('Error placing order:', error);
+        
+        await session.abortTransaction();
+
+        if (error.message.includes("stock") || error.message.includes("balance")) {
+            return errorResponse(res, null, error.message);
+        }
+
         errorResponse(res, error, 'Failed to place order');
+    } finally {
+        session.endSession();
     }
 }
 
