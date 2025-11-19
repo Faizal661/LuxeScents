@@ -10,7 +10,6 @@ passport.use(new GoogleStrategy({
     async (accessToken, refreshToken, profile, done) => {
         try {
             // Case 1: User found by Google ID (already logged in via Google)
-            console.log("🚀 ~ found:", found)
             let user = await User.findOne({ googleId: profile.id });
             if (user) {
                 return done(null, user);
