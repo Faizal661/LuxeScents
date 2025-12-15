@@ -113,6 +113,7 @@ document.getElementById('add-variation-btn').addEventListener('click', function 
                     <option value="100ml">100ml</option>
                     <option value="150ml">150ml</option>
                 </select>
+                <div id="variation-${variationCount}-size-error" class="error-message"></div>
             </div>
             <div class="col-md-2">
                 <label class="form-label">Quantity</label>
@@ -176,8 +177,12 @@ function validateForm() {
         isValid = false;
     }
 
+    let added_sizes = new Set()
+
+
     const variationItems = document.querySelectorAll('.variation-item');
     variationItems.forEach((item, index) => {
+        const sizeInput = item.querySelector(`[name="variations[${index}][size]"]`).value.trim();
         const quantityInput = item.querySelector(`[name="variations[${index}][quantity]"]`).value.trim();
         const regularPriceInput = item.querySelector(`[name="variations[${index}][regularPrice]"]`).value.trim();
         const salePriceInput = item.querySelector(`[name="variations[${index}][salePrice]"]`).value.trim();
@@ -185,6 +190,13 @@ function validateForm() {
         const quantity = quantityInput === "" ? NaN : parseFloat(quantityInput);
         const regularPrice = regularPriceInput === "" ? NaN : parseFloat(regularPriceInput);
         const salePrice = salePriceInput === "" ? NaN : parseFloat(salePriceInput);
+
+        if (added_sizes.has(sizeInput)) {
+            displayErrorMessage(`variation-${index}-size-error`, "Please select a different size, This size is already selected!.");
+            isValid = false;
+        } else {
+            added_sizes.add(sizeInput)
+        }
 
         if (isNaN(quantity)) {
             displayErrorMessage(`variation-${index}-quantity-error`, "Please enter the stock of the product");
