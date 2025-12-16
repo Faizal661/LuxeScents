@@ -14,9 +14,10 @@ export const loadCheckoutPage = async (req, res) => {
         if (req.session.user) {
             const userId = req.session.user;
             let { couponCode } = req.body;
+            let coupon;
             if (couponCode) {
-                const coupon = await Coupon.findOne({
-                    code: couponCode,
+                coupon = await Coupon.findOne({
+                    code: couponCode.trim(),
                     expireOn: { $gte: new Date() },
                     isActive: true,
                     usedBy: { $ne: userId },
@@ -62,17 +63,8 @@ export const loadCheckoutPage = async (req, res) => {
             let newGrandTotal = grandTotal
             let discountApplied = false
             let couponDiscount = 0
-            if (couponCode) {
-                const coupon = await Coupon.findOne({
-                    code: couponCode,
-                    expireOn: { $gte: new Date() },
-                    isActive: true,
-                    usedBy: { $ne: userId },
-                });
-                if (!coupon) {
-                    return res.redirect('/checkoutPage?error=Invalid or expired coupon');
-                }
 
+            if (couponCode) {
                 if (grandTotal < coupon.minimumPrice) {
                     return res.redirect('/checkoutPage?error=Total price is less than coupon minimum price');
                 }
@@ -116,7 +108,33 @@ export const loadCheckoutPage = async (req, res) => {
     }
 }
 
+export const removeCoupon = async (req, res) => {
+    try {
+        const userId = req.session.user;
 
+        const { couponCode } = req.body
+
+        if (!couponCode) {
+            return errorResponse(res,{},"No coupon is Applied!",404)
+        }
+
+        let result=await Coupon.updateOne(
+            { code: couponCode.trim() },
+            {
+                $pull: { usedBy: userId }
+            }
+        );
+
+        return successResponse(res,{},"Coupon removed successfully")
+
+    } catch (error) {
+        console.error('Error removing coupon:', error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+}
 
 export const placeOrder = async (req, res) => {
     const session = await mongoose.startSession();
@@ -225,7 +243,7 @@ export const placeOrder = async (req, res) => {
         successResponse(res, { orderId: newOrder._id }, 'Order placed successfully');
     } catch (error) {
         console.error('Error placing order:', error);
-        
+
         await session.abortTransaction();
 
         if (error.message.includes("stock") || error.message.includes("balance")) {

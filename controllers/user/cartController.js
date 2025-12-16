@@ -9,7 +9,7 @@ export const loadCartPage = async (req, res) => {
     try {
         const userId = req.session.user;
 
-        const cart = await Cart.findOne({ userId })//looking for user cart is already there or not
+        const cart = await Cart.findOne({ userId })
             .populate({
                 path: 'products.productId',
                 populate: { path: 'brand category' }
@@ -23,8 +23,9 @@ export const loadCartPage = async (req, res) => {
 
         const products = cart.products.map(item => {
             const product = item.productId;
+            // console.log("🚀 ~ loadCartPage ~ product:", product)
             const variation = product.variations.filter((vari) => vari._id.toString() === item.variationID.toString())
-            // console.log('variation',variation)
+            // console.log("🚀 ~ loadCartPage ~ variation:", variation)
 
             const offerDiscount = (product.offerPercentage * variation[0].salePrice / 100) * item.quantity;
             // console.log('product.offerPercentage',product.offerPercentage)

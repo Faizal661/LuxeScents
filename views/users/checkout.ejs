@@ -38,8 +38,11 @@
                                 <h6>Discount codes</h6>
                                 <% if (discountApplied) { %>
                                     <!-- Display applied coupon -->
-                                    <p>Coupon Applied: <b> <%= couponCode %></b> - ₹<%= couponDiscount %>
-                                                    <button type="button" onclick="window.location.href='/checkoutPage'" class="btn btn-danger btn-sm ml-3">Remove Coupon</button>
+                                    <p>Coupon Applied: <b>
+                                            <%= couponCode %>
+                                        </b> - ₹<%= couponDiscount %>
+                                            <button type="button" onclick="removeCoupon()"
+                                                class="btn btn-danger btn-sm ml-3">Remove Coupon</button>
                                     </p>
                                     <% } else { %>
                                         <form action="/checkoutPage" method="post">
@@ -73,58 +76,58 @@
                                     <% } else { %>
                                         <p>No available coupons.</p>
                                         <% } %>
-                                        
+
                             </div>
-                           
 
-                                <!-- Address Selection Section -->
-                                <div class=" p-4 rounded mt-5 col-10">
-                                    <% if (addresses.length===0) { %>
-                                        <p>No addresses found. Please add one to place an order.</p>
-                                        <button class="btn btn-success"
-                                            onclick="window.location.href='/loadAddAddressPage'">Add
+
+                            <!-- Address Selection Section -->
+                            <div class=" p-4 rounded mt-5 col-10">
+                                <% if (addresses.length===0) { %>
+                                    <p>No addresses found. Please add one to place an order.</p>
+                                    <button class="btn btn-success"
+                                        onclick="window.location.href='/loadAddAddressPage'">Add
+                                        Address</button>
+                                    <% } else { %>
+                                        <button class="btn btn-dark rounded-0 py-2 "
+                                            onclick="window.location.href='/loadAddAddressPage'">Add Another
                                             Address</button>
-                                        <% } else { %>
-                                            <button class="btn btn-dark rounded-0 py-2 "
-                                                onclick="window.location.href='/loadAddAddressPage'">Add Another
-                                                Address</button>
-                                            <% addresses.forEach((address, index)=> { %>
-                                                <div
-                                                    class="address_item border my-3 p-3 rounded-0 <%= address.isActive ? 'border-success' : 'border-dark' %> d-flex justify-content-between align-items-start">
-                                                    <div class="address_info w-100">
-                                                        <div class="d-flex justify-content-between">
-                                                            <div>
-                                                                <input type="radio" name="selectedAddress"
-                                                                    id="address-<%= index %>" value="<%= address._id %>"
-                                                                    <%=address.isActive ? 'checked' : '' %>
-                                                                onchange="selectAddress('<%= address._id %>')">
-                                                                    <label for="address-<%= index %>"
-                                                                        class="<%= address.isActive ? 'text-success h6' : '' %>">
-                                                                        <%= address.addressType %>
-                                                                            <%= address.isActive ? ' (Primary Address)'
-                                                                                : '' %>
-                                                                    </label>
-                                                            </div>
-                                                            <button class="btn btn-dark rounded-0 mb-1 btn-sm"
-                                                                onclick="window.location.href='/loadEditAddressPage?id=<%= address._id %>'">Edit</button>
+                                        <% addresses.forEach((address, index)=> { %>
+                                            <div
+                                                class="address_item border my-3 p-3 rounded-0 <%= address.isActive ? 'border-success' : 'border-dark' %> d-flex justify-content-between align-items-start">
+                                                <div class="address_info w-100">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <input type="radio" name="selectedAddress"
+                                                                id="address-<%= index %>" value="<%= address._id %>"
+                                                                <%=address.isActive ? 'checked' : '' %>
+                                                            onchange="selectAddress('<%= address._id %>')">
+                                                                <label for="address-<%= index %>"
+                                                                    class="<%= address.isActive ? 'text-success h6' : '' %>">
+                                                                    <%= address.addressType %>
+                                                                        <%= address.isActive ? ' (Primary Address)' : ''
+                                                                            %>
+                                                                </label>
                                                         </div>
-                                                        <p class="mb-1"><strong>Name:</strong>
-                                                            <%= address.name %> &nbsp; <strong>Phone:</strong>
-                                                                <%= address.phone %> , <%= address.altPhone %>
-                                                        </p>
-                                                        <p class="mb-1">
-                                                            <%= address.locality %>, <%= address.city %>, <%=
-                                                                        address.landMark %>,
-                                                                        <%= address.state %>, <%= address.pincode %>
-                                                        </p>
+                                                        <button class="btn btn-dark rounded-0 mb-1 btn-sm"
+                                                            onclick="window.location.href='/loadEditAddressPage?id=<%= address._id %>'">Edit</button>
                                                     </div>
+                                                    <p class="mb-1"><strong>Name:</strong>
+                                                        <%= address.name %> &nbsp; <strong>Phone:</strong>
+                                                            <%= address.phone %> , <%= address.altPhone %>
+                                                    </p>
+                                                    <p class="mb-1">
+                                                        <%= address.locality %>, <%= address.city %>, <%=
+                                                                    address.landMark %>,
+                                                                    <%= address.state %>, <%= address.pincode %>
+                                                    </p>
                                                 </div>
-                                                <% }); %>
+                                            </div>
+                                            <% }); %>
 
-                                                    <% } %>
-                                </div>
-                                <hr>
-                                <!-- End Address Selection Section -->
+                                                <% } %>
+                            </div>
+                            <hr>
+                            <!-- End Address Selection Section -->
 
 
                         </div>
@@ -249,8 +252,8 @@
             const tax = parseFloat(document.querySelector('#cart-tax').innerText.replace('₹', ''));
             const totalPrice = parseFloat(document.querySelector('#cart-total').innerText.replace('₹', ''));
             const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked')?.value;
-            const couponApplied= '<%= discountApplied %>'
-            const couponDiscount =  parseFloat(document.querySelector('#couponDiscount').innerText.replace('-₹', ''));
+            const couponApplied = '<%= discountApplied %>'
+            const couponDiscount = parseFloat(document.querySelector('#couponDiscount').innerText.replace('-₹', ''));
             const discount = parseFloat('<%= totalOfferDiscount %>')
             if (selectedAddressId == undefined) {
                 return Swal.fire({
@@ -448,6 +451,66 @@
         }
 
 
+    </script>
+
+    <script>
+        async function removeCoupon() {
+            try {
+                const couponCode = '<%= couponCode %>'
+                const result = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to remove the applied coupon?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, remove it!'
+                });
+
+                if (!result.isConfirmed) return;
+
+                const response = await fetch('/removeCoupon', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        couponCode: couponCode
+                    })
+
+                });
+
+                const data = await response.json();
+
+                console.log('ressss',data)
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Coupon Removed',
+                        text: 'The coupon has been removed successfully.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href="/checkoutPage"
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Could not remove coupon'
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error removing coupon:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'System Error',
+                    text: 'Something went wrong. Please try again.'
+                });
+            }
+        }
     </script>
 
     <%- include('../partials/users/userFooter') %>
