@@ -112,7 +112,7 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
         default: 'Processing',
-        enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Returned']
+        enum: ['Pending','Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Returned']
     },
     couponApplied: {
         type: Boolean,

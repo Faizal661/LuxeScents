@@ -88,12 +88,12 @@
                                         onclick="window.location.href='/loadAddAddressPage'">Add
                                         Address</button>
                                     <% } else { %>
-                                        <button class="btn btn-dark rounded-0 py-2 "
+                                        <button class="btn btn-dark rounded py-2 "
                                             onclick="window.location.href='/loadAddAddressPage'">Add Another
                                             Address</button>
                                         <% addresses.forEach((address, index)=> { %>
                                             <div
-                                                class="address_item border my-3 p-3 rounded-0 <%= address.isActive ? 'border-success' : 'border-dark' %> d-flex justify-content-between align-items-start">
+                                                class="address_item border my-3 p-3 rounded <%= address.isActive ? 'border-success' : 'border-dark' %> d-flex justify-content-between align-items-start">
                                                 <div class="address_info w-100">
                                                     <div class="d-flex justify-content-between">
                                                         <div>
@@ -108,7 +108,7 @@
                                                                             %>
                                                                 </label>
                                                         </div>
-                                                        <button class="btn btn-dark rounded-0 mb-1 btn-sm"
+                                                        <button class="btn btn-dark rounded mb-1 btn-sm"
                                                             onclick="window.location.href='/loadEditAddressPage?id=<%= address._id %>'">Edit</button>
                                                     </div>
                                                     <p class="mb-1"><strong>Name:</strong>
@@ -235,7 +235,6 @@
             spanMsg.innerText = msg;
         }
 
-
         function gatherCheckoutData() {
             const orderedItems = [];
             document.querySelectorAll('.checkout__total__products li').forEach(item => {
@@ -283,6 +282,7 @@
 
             if (paymentMethod === 'RazorPay') {
                 const razorpayOrder = await axios.post('/create-razorpay-order', orderData);
+                console.log("🚀 ~ createRazorpayOrder ~ razorpayOrder:", razorpayOrder)
 
                 if (razorpayOrder.data.success) {
                     const options = {
@@ -306,13 +306,17 @@
                         }
                     };
                     const rzp = new Razorpay(options);
-                    rzp.on('payment failed', function (response) {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Payment Failed . Please try again.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
+                    rzp.on('payment.failed', function (response) {
+                        axios.post('/placeOrder', orderData).then(() => {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Payment Failed . Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = `/loadOrders`;
+                            })
+                        })
                     })
                     rzp.open();
                 }
@@ -482,7 +486,7 @@
 
                 const data = await response.json();
 
-                console.log('ressss',data)
+                console.log('ressss', data)
 
                 if (data.success) {
                     Swal.fire({
@@ -492,7 +496,7 @@
                         timer: 1500,
                         showConfirmButton: false
                     }).then(() => {
-                        window.location.href="/checkoutPage"
+                        window.location.href = "/checkoutPage"
                     });
                 } else {
                     Swal.fire({
