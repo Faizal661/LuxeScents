@@ -1,29 +1,27 @@
-import Category from "../../models/categorySchema.js"
-import Product from '../../models/productSchema.js'
-import User from '../../models/userSchema.js'
 import Coupon from '../../models/couponSchema.js'
 import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
+import { RESPONSE_MESSAGE } from "../../constants/responseMessage.constants.js"
 
 export const loadCouponListingPage = async (req, res) => {
     try {
         let search = req.query.search || "";
-        const page = parseInt(req.query.page) || 1 ;
+        const page = parseInt(req.query.page) || 1;
         const limit = 5;
         const skip = (page - 1) * limit;
-        const coupons = await Coupon.find({code: { $regex: ".*" + search + ".*", $options: "i" }}).sort({ createdAt: -1 })
+        const coupons = await Coupon.find({ code: { $regex: ".*" + search + ".*", $options: "i" } }).sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
-        const totalCoupons = await Coupon.countDocuments({code: { $regex: ".*" + search + ".*", $options: "i" }})
+        const totalCoupons = await Coupon.countDocuments({ code: { $regex: ".*" + search + ".*", $options: "i" } })
         const totalPages = Math.ceil(totalCoupons / limit);
 
-        res.render('coupon/coupons', 
-        { 
-            coupons ,
-            currentPage: page,
-            totalPages,
-            totalCoupons,
-            limit
-        });
+        res.render('coupon/coupons',
+            {
+                coupons,
+                currentPage: page,
+                totalPages,
+                totalCoupons,
+                limit
+            });
     } catch (error) {
         console.error('Error loading coupon listing page:', err);
         res.redirect("/admin/pageError")
@@ -41,20 +39,25 @@ export const loadAddCouponPage = async (req, res) => {
 
 export const addCoupon = async (req, res) => {
     try {
-        const { code, expireOn, usageLimit, offerPrice, minimumPrice } = req.body;
+        const { code, expireOn, offerPrice, minimumPrice } = req.body;
+
+        const existingCoupon = await Coupon.findOne({ code: { $regex: new RegExp(`^${code}$`, 'i') } });
+        if (existingCoupon) {
+            return errorResponse(res, {}, RESPONSE_MESSAGE.COUPON_ALREADY_EXISTS, 400)
+        }
+
         const newCoupon = new Coupon({
             code,
             expireOn,
-            usageLimit,
             offerPrice,
             minimumPrice
         });
 
         await newCoupon.save();
-        res.redirect('/admin/coupons');
+        return successResponse(res, {}, RESPONSE_MESSAGE.COUPON_CREATED, 201)
     } catch (error) {
-        console.error('Error adding coupon:', err);
-        res.redirect("/admin/pageError")
+        console.error('Error adding coupon:', error);
+        return errorResponse(res, {}, RESPONSE_MESSAGE.INTERNAL_SERVER_ERROR)
     }
 };
 
