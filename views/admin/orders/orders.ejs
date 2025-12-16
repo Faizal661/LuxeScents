@@ -6,14 +6,6 @@
             <div class="content-header row shadow-sm">
                 <header class="card-header d-flex  justify-content-between">
                     <h2 class="content-title card-title">Orders</h2>
-                    <form action="/admin/users/" method="get" class="col-lg-5 me-5">
-                        <!-- <div class="input-group input-group-sm border border-2 shadow rounded-pill "> <input type="text"
-                                class="form-control border-0 rounded-pill bg-transparent" placeholder=" Search Users..."
-                                name="search">
-                            <button class="btn border border-2 border-end-0 border-top-0 border-bottom-0"
-                                type="submit">Search</button> -->
-                        <!-- </div> -->
-                    </form>
                 </header>
             </div>
             </div>
@@ -67,12 +59,21 @@
                                 <td>
                                     <select class="form-select shadow-sm form-control rounded-0"
                                         onchange="handleStatusChange(this, '<%= order._id %>')">
-                                        <option value="Processing" <%= order.orderStatus === 'Processing' ? 'selected' : (order.orderStatus !== 'Processing' ? 'disabled' : '') %>>Processing</option>
-                                        <option value="Shipped" <%= order.orderStatus === 'Shipped' ? 'selected' : (order.orderStatus === 'Processing' ? '' : 'disabled') %>>Shipped</option>
-                                        <option value="Cancelled" <%= order.orderStatus === 'Cancelled' ? 'selected' : (['Processing', 'Shipped'].includes(order.orderStatus) ? '' : 'disabled') %>>Cancelled</option>
-                                        <option value="Delivered" <%= order.orderStatus === 'Delivered' ? 'selected' : (['Processing', 'Shipped'].includes(order.orderStatus) ? '' : 'disabled') %>>Delivered</option>
-                                        <option value="Return Request" <%= order.orderStatus === 'Return Request' ? 'selected' : (['Processing', 'Shipped', 'Delivered'].includes(order.orderStatus) ? '' : 'disabled') %>>Return Request</option>
-                                        <option value="Returned" <%= order.orderStatus === 'Returned' ? 'selected' : (['Processing', 'Shipped', 'Delivered', 'Return Request'].includes(order.orderStatus) ? '' : 'disabled') %>>Returned</option>
+                                        <option value="Processing" <%=order.orderStatus==='Processing' ? 'selected' :
+                                            (order.orderStatus !=='Processing' ? 'disabled' : '' ) %>>Processing
+                                        </option>
+                                        <option value="Shipped" <%=order.orderStatus==='Shipped' ? 'selected' :
+                                            (order.orderStatus==='Processing' ? '' : 'disabled' ) %>>Shipped</option>
+                                        <option value="Cancelled" <%=order.orderStatus==='Cancelled' ? 'selected' :
+                                            (['Processing', 'Shipped' ].includes(order.orderStatus) ? '' : 'disabled' )
+                                            %>>Cancelled</option>
+                                        <option value="Delivered" <%=order.orderStatus==='Delivered' ? 'selected' : (
+                                            order.orderStatus==='Shipped' ? '' : 'disabled' ) %>>Delivered</option>
+                                        <option value="Return Request" <%=order.orderStatus==='Return Request'
+                                            ? 'selected' : 'disabled' %>>Return Request</option>
+                                        <option value="Returned" <%=order.orderStatus==='Returned' ? 'selected' :
+                                            (order.orderStatus==='Return Request' ? '' : 'disabled' ) %>>Returned
+                                        </option>
                                     </select>
                                 </td>
                                 <td class="text-center">
@@ -126,18 +127,28 @@
                     const newStatus = selectElement.value;
                     const options = selectElement.options;
 
-                    let disableAbove = false;
-                    for (let i = 0; i < options.length; i++) {
-                        if (options[i].value === newStatus) {
-                            disableAbove = true; 
-                        }
+                    const statusRules = {
+                        'Processing': ['Shipped', 'Cancelled'],
+                        'Shipped': ['Delivered', 'Cancelled'],
+                        'Delivered': [],
+                        'Cancelled': [],
+                        'Return Request': ['Returned'],
+                        'Returned': []
+                    };
+                    const allowedNextSteps = statusRules[newStatus] || [];
 
-                        if (disableAbove) {
-                            options[i].disabled = false; 
+                    for (let i = 0; i < options.length; i++) {
+                        const optionValue = options[i].value;
+
+                        if (optionValue === newStatus) {
+                            options[i].disabled = false;
+                        } else if (allowedNextSteps.includes(optionValue)) {
+                            options[i].disabled = false;
                         } else {
-                            options[i].disabled = true; 
+                            options[i].disabled = true;
                         }
                     }
+
                     Swal.fire({
                         title: 'Are you sure?',
                         text: 'You want to change the status of this order?',
