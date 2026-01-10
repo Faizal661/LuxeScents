@@ -1,9 +1,9 @@
 import User from '../../models/userSchema.js'
 import addressSchema from '../../models/addressSchema.js'
 import { successResponse, errorResponse } from '../../helpers/responseHandler.js'
-import { sendVerificationEmail } from '../../controllers/user/userController.js'
 import bcrypt from 'bcrypt'
 import { generateOtp } from '../../utils/generateOtp.js'
+import { sendVerificationEmail } from '../../config/mailer.config.js'
 
 export const loadUserProfilePage = async (req, res) => {
     try {
@@ -264,7 +264,7 @@ export const loadNewPassword = async (req, res) => {
     }
 }
 
-export const resetPassword=async(req,res)=>{
+export const resetPassword = async (req, res) => {
     const { newPassword } = req.body;
     try {
         const user = await User.findById(req.session.user);

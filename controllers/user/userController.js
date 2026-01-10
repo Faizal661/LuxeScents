@@ -8,7 +8,7 @@ import Order from '../../models/orderSchema.js';
 import bcrypt from 'bcrypt';
 import { successResponse, errorResponse } from '../../helpers/responseHandler.js';
 import { generateOtp } from '../../utils/generateOtp.js';
-import { transporter } from '../../config/mailer.config.js';
+import { sendVerificationEmail } from '../../config/mailer.config.js';
 
 
 //--------------------Log In 
@@ -99,22 +99,6 @@ export const loadSignup = async (req, res) => {
     }
 }
 
-export async function sendVerificationEmail(email, otp) {
-    try {
-        const info = await transporter.sendMail({
-            from: "mohammedfaizal.t.bca.2@gmail.com",
-            to: email,
-            subject: "Verify your account for sign up to Luxe Scent",
-            text: `Your OTP is ${otp}`,
-            html: `<b> Your OTP : ${otp} </b>`
-        })
-        return info.accepted.length > 0
-
-    } catch (error) {
-        console.error("Error sending email", error);
-        res.redirect("/pageNotfound")
-    }
-}
 
 export const registerNew = async (req, res) => {
 
